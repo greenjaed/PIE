@@ -1,0 +1,76 @@
+﻿Possible Class structure:
+ data
+  text
+  graphics
+  tables
+  asm
+  music
+  combo
+
+data (abstract)
+methods:
+ display();
+ edit();
+ write();
+ update();
+properties:
+ stream parentStream;
+ byte[] data -- add
+ int start;
+ length;
+
+things to do with text:
+ (multi) table support
+ program control codes
+
+things to do with graphics:
+ allow for different color depths, bitmaps
+ editing
+ have different tile layouts
+ sprite viewing/mapping/editing
+ tile maps
+
+things to do with tables
+ pointers
+ tilemaps
+ sprite data
+ generic data (numbers, words, characters)
+
+things to do with asm
+ display it
+ rudimentary code interpretation/system emulation
+ edit it
+
+things to do with combo
+ allow it
+ data object followed by another data object
+ possibly combine with tables?
+
+things to do with music
+ play
+ display (loops, notes)
+ edit
+
+
+project file - probably going to be an xaml document describing the different slices set up
+
+program features
+ export - not the entire thing, but individual parts (text, graphics, tables, etc.)
+ action history - it would be nice to have undo/redo functionality in the program
+ different views - be able to see the data in different ways (hex, text, graphics mostly)
+ ability to slice file into banks of different sizes
+ ability to split data into sub-groups
+ ability to transform data and work on it
+  by decompressing it using common algorithms
+  by running assembly over the code
+ ability to change line info offset
+ ability to change font
+
+todo:
+work on context menu for treeview
+ functionality: slice, rename (unnecessary), delete (check), show (check)
+get a project file format up and running
+implement an overwrite paste
+expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc)
+create an insert mode where, starting at a certain point, bytes get overwritten when inserting:
+  01 02 03 | 04 05 + 00 = 00 01 02 | 04 05
