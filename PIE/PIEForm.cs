@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
 using Be.Windows.Forms;
 
@@ -263,9 +264,8 @@ namespace PIE
 
         private void performSearch()
         {
-            search = new FindForm();
+            search = new FindForm(displayHexBox);
             search.Location = this.Location;
-            search.searchMedium = displayHexBox;
             search.Show(this);
         }
 
@@ -373,6 +373,30 @@ namespace PIE
                 fileBytes = new DynamicFileByteProvider(filePath);
                 initializeProjectTree(Path.GetFileNameWithoutExtension(filePath));
                 displayHexBox.ByteProvider = fileBytes;
+            }
+        }
+
+        private void pasteOverToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            IDataObject da = Clipboard.GetDataObject();
+            long size = 0;
+            long start = displayHexBox.SelectionLength > 0 ? displayHexBox.SelectionStart : currentPosition;
+
+            if (da.GetDataPresent("BinaryData"))
+            {
+                MemoryStream ms = (MemoryStream)da.GetData("BinaryData");
+                size = ms.Length;
+            }
+            else if (da.GetDataPresent(typeof(string)))
+            {
+                string buffer = (string)da.GetData(typeof(string));
+                size = buffer.Length;
+            }
+
+            if (size > 0)
+            {
+                fileBytes.DeleteBytes(start, size);
+                paste();
             }
         }
 

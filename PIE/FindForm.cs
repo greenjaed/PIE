@@ -12,13 +12,20 @@ namespace PIE
 {
     public partial class FindForm : Form
     {
-        public FindOptions findOptions { get; set; }
+        private FindOptions findOptions;
         public HexBox searchMedium { get; set; }
 
         public FindForm()
         {
             InitializeComponent();
             findOptions = new FindOptions();
+        }
+
+        public FindForm(HexBox toSearch)
+        {
+            InitializeComponent();
+            findOptions = new FindOptions();
+            searchMedium = toSearch;
         }
 
         private void textRadioButton_CheckedChanged(object sender, EventArgs e)

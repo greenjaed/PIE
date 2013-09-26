@@ -38,6 +38,7 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,7 +92,7 @@
             this.selectAllHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hexFontDialog = new System.Windows.Forms.FontDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteOverHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -139,7 +140,7 @@
             this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.newToolStripMenuItem.Text = "&New";
             // 
             // openToolStripMenuItem
@@ -148,14 +149,14 @@
             this.openToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
-            this.toolStripSeparator.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator.Size = new System.Drawing.Size(143, 6);
             // 
             // saveToolStripMenuItem
             // 
@@ -164,7 +165,7 @@
             this.saveToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -172,23 +173,31 @@
             // 
             this.saveAsToolStripMenuItem.Enabled = false;
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As";
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(143, 6);
+            // 
+            // reloadToolStripMenuItem
+            // 
+            this.reloadToolStripMenuItem.Enabled = false;
+            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.reloadToolStripMenuItem.Text = "Reload";
+            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(143, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -250,6 +259,7 @@
             | System.Windows.Forms.Keys.V)));
             this.pasteOverToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.pasteOverToolStripMenuItem.Text = "Paste &Over";
+            this.pasteOverToolStripMenuItem.Click += new System.EventHandler(this.pasteOverToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
@@ -475,6 +485,7 @@
             this.pasteOverToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.pasteOverToolStripButton.Text = "toolStripButton1";
             this.pasteOverToolStripButton.ToolTipText = "Paste Over";
+            this.pasteOverToolStripButton.Click += new System.EventHandler(this.pasteOverToolStripMenuItem_Click);
             // 
             // toolStripSeparator7
             // 
@@ -591,30 +602,32 @@
             this.cutHexToolStripMenuItem,
             this.copyHexToolStripMenuItem,
             this.pasteHexToolStripMenuItem,
+            this.pasteOverHexToolStripMenuItem,
             this.toolStripSeparator9,
             this.selectAllHexToolStripMenuItem});
             this.hexContextMenuStrip.Name = "hexContextMenuStrip";
-            this.hexContextMenuStrip.Size = new System.Drawing.Size(123, 126);
+            this.hexContextMenuStrip.Size = new System.Drawing.Size(204, 148);
             // 
             // sliceHexToolStripMenuItem
             // 
             this.sliceHexToolStripMenuItem.Enabled = false;
             this.sliceHexToolStripMenuItem.Name = "sliceHexToolStripMenuItem";
-            this.sliceHexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.sliceHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.sliceHexToolStripMenuItem.Text = "Slice";
             this.sliceHexToolStripMenuItem.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(200, 6);
             // 
             // cutHexToolStripMenuItem
             // 
             this.cutHexToolStripMenuItem.Enabled = false;
             this.cutHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Cut;
             this.cutHexToolStripMenuItem.Name = "cutHexToolStripMenuItem";
-            this.cutHexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.cutHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+            this.cutHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.cutHexToolStripMenuItem.Text = "Cut";
             this.cutHexToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
@@ -623,7 +636,8 @@
             this.copyHexToolStripMenuItem.Enabled = false;
             this.copyHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Copy;
             this.copyHexToolStripMenuItem.Name = "copyHexToolStripMenuItem";
-            this.copyHexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.copyHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.copyHexToolStripMenuItem.Text = "Copy";
             this.copyHexToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
@@ -632,20 +646,22 @@
             this.pasteHexToolStripMenuItem.Enabled = false;
             this.pasteHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Paste;
             this.pasteHexToolStripMenuItem.Name = "pasteHexToolStripMenuItem";
-            this.pasteHexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.pasteHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.pasteHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.pasteHexToolStripMenuItem.Text = "Paste";
             this.pasteHexToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(119, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(200, 6);
             // 
             // selectAllHexToolStripMenuItem
             // 
             this.selectAllHexToolStripMenuItem.Enabled = false;
             this.selectAllHexToolStripMenuItem.Name = "selectAllHexToolStripMenuItem";
-            this.selectAllHexToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.selectAllHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            this.selectAllHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.selectAllHexToolStripMenuItem.Text = "Select All";
             this.selectAllHexToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
@@ -657,13 +673,16 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // reloadToolStripMenuItem
+            // pasteOverHexToolStripMenuItem
             // 
-            this.reloadToolStripMenuItem.Enabled = false;
-            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
-            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.reloadToolStripMenuItem.Text = "Reload";
-            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
+            this.pasteOverHexToolStripMenuItem.Enabled = false;
+            this.pasteOverHexToolStripMenuItem.Image = global::PIE.Properties.Resources.PasteOver;
+            this.pasteOverHexToolStripMenuItem.Name = "pasteOverHexToolStripMenuItem";
+            this.pasteOverHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.V)));
+            this.pasteOverHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.pasteOverHexToolStripMenuItem.Text = "Paste Over";
+            this.pasteOverHexToolStripMenuItem.Click += new System.EventHandler(this.pasteOverToolStripMenuItem_Click);
             // 
             // PIEForm
             // 
@@ -761,6 +780,7 @@
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem pasteOverToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteOverHexToolStripMenuItem;
     }
 }
 
