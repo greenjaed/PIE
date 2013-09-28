@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,25 @@ namespace PIE
 {
     public partial class PIEForm : Form
     {
+        //the opened file
         DynamicFileByteProvider fileBytes;
+        //the filepath of the opened file
         String filePath;
+        //the current data being worked on
         Data activeData;
+        //the treenode containing the active data
         TreeNode currentTreeNode;
+        //indicates whether data is being selected
         bool isSelecting;
+        //the current position in the data
         long currentPosition;
-        public int idIndex { get; set; }
+        //generates a unique ID
+        public int uniqueID { get { return idIndex++; } }
+        //the unique ID
+        private int idIndex;
+        //searches for data
         FindForm search;
+        //the name of the opened file
         string currentFileName;
 
         public PIEForm()
@@ -80,6 +92,7 @@ namespace PIE
             currentTreeNode = projectTreeView.SelectedNode;
             activeData = currentTreeNode.Tag as Data;
             activeData.Display(displayPanel.Controls);
+            activeData.fillAddresses(startAddrToolStripComboBox);
         }
 
         private void enableItems()
@@ -92,6 +105,7 @@ namespace PIE
             fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = true;
             standardToolStrip.Items["saveToolStripButton"].Enabled = true;
             hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = true;
+            startAddrToolStripComboBox.Enabled = true;
         }
 
         private void enablePaste()
@@ -109,8 +123,7 @@ namespace PIE
             Data rootData;
 
             rootNode = new TreeNode(fileName);
-            rootNode.Name = idIndex.ToString();
-            ++idIndex;
+            rootNode.Name = uniqueID.ToString();
             rootData = new Data(fileBytes);
             rootData.display = displayHexBox;
             rootNode.Tag = rootData;
@@ -151,6 +164,7 @@ namespace PIE
                 fileName = Path.GetFileNameWithoutExtension(filePath);
                 this.Text = "PIE - " + fileName;
                 initializeProjectTree(fileName);
+                activeData.fillAddresses(startAddrToolStripComboBox);
                 hexContextMenuStrip.Enabled = true;
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
@@ -183,8 +197,7 @@ namespace PIE
             previous = (currentTreeNode.Parent != null ? currentTreeNode.Parent.Tag : currentTreeNode.Tag) as Data;
             view = new Data(previous, start, size);
             slice = new TreeNode();
-            slice.Name = idIndex.ToString();
-            ++idIndex;
+            slice.Name = uniqueID.ToString();
             slice.Text = start.ToString("X") + "-" + (start + size).ToString("X");
             slice.Tag = view;
             currentTreeNode.Nodes.Add(slice);
@@ -473,6 +486,32 @@ namespace PIE
                     displayData();
                 else if (e.KeyCode == Keys.Delete)
                     deleteNode();
+            }
+        }
+
+        private void startAddrToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            displayHexBox.LineInfoOffset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
+        }
+
+        private void startAddrToolStripComboBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                long potentialAddress;
+                try
+                {
+                    potentialAddress = long.Parse(startAddrToolStripComboBox.Text, NumberStyles.HexNumber);
+                    if (activeData.customStart == 0)
+                        startAddrToolStripComboBox.Items.Add(startAddrToolStripComboBox.Text);
+                    activeData.customStart = potentialAddress;
+                    displayHexBox.LineInfoOffset = potentialAddress;
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine(ex.Message);
+                    startAddrToolStripComboBox.Text = "";
+                }
             }
         }
     }

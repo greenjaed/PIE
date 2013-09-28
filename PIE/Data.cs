@@ -12,6 +12,7 @@ namespace PIE
     {
         protected Data parentData;
         public Byte[] dataBytes { get; set; }
+        public long customStart { get; set; }
         public long start { get; set; }
         protected long size;
         public IByteProvider dataByteProvider { get; set; }
@@ -37,6 +38,14 @@ namespace PIE
                 bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
             dataByteProvider = new DynamicByteProvider(bytes);
 
+        }
+
+        public void fillAddresses(ToolStripComboBox addrSelector)
+        {
+            addrSelector.Items.Clear();
+            addrSelector.Items.AddRange(new string[] { "0", start.ToString("X") });
+            if (customStart != 0)
+                addrSelector.Items.Add(customStart.ToString("X"));
         }
 
         //Displays the data

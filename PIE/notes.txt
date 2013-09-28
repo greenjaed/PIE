@@ -67,11 +67,24 @@ program features
  ability to change font
 
 todo:
-allow the user to change to starting address
+allow the user to change to starting address (done)
 allow dragging and dropping of tree nodes (done)
-implement a sort on the treeview
+implement a sort on the treeview (maybe?)
 create a way of updating other slices when editing a slice
 get a project file format up and running
 expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc)
+ hexbox properties to expose:
+  Backcolor
+  ForeColor
+  Bytes per line
+  Byte Location (enable/disable)
+  Font
+  Group Separator (enable/disable)
+  Group Size
+  Hex casing (upper/lower)
+  Address Color?
+  Line Address (enable/disable)
+  String Value (enable/disable)
+
 create an insert mode where, starting at a certain point, bytes get overwritten when inserting:
   01 02 03 | 04 05 + 00 = 00 01 02 | 04 05

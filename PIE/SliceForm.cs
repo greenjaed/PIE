@@ -139,8 +139,7 @@ namespace PIE
         private void createNode(long position, int name)
         {
             TreeNode subnode = new TreeNode();
-            subnode.Name = (Owner as PIEForm).idIndex.ToString();
-            ++(Owner as PIEForm).idIndex;
+            subnode.Name = (Owner as PIEForm).uniqueID.ToString();
             subnode.Text = "block " + name.ToString("X");
             Data subslice = new Data(dataSource, position, size);
             subnode.Tag = subslice;
