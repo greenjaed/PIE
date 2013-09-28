@@ -61,6 +61,66 @@ namespace PIE
             return true;
         }
 
+        private void copy()
+        {
+            activeData.Copy();
+            //enablePaste();
+        }
+
+        private void cut()
+        {
+            activeData.Cut();
+            //enablePaste();
+        }
+
+        private void displayData()
+        {
+            if (activeData != null && currentTreeNode.Tag != activeData)
+                activeData.Hide();
+            currentTreeNode = projectTreeView.SelectedNode;
+            activeData = currentTreeNode.Tag as Data;
+            activeData.Display(displayPanel.Controls);
+        }
+
+        private void enableItems()
+        {
+            editToolStripMenuItem.DropDownItems["findToolStripMenuItem"].Enabled = true;
+            editToolStripMenuItem.DropDownItems["selectAllToolStripMenuItem"].Enabled = true;
+            editToolStripMenuItem.DropDownItems["findNextToolStripMenuItem"].Enabled = true;
+            fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = true;
+            fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = true;
+            fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = true;
+            standardToolStrip.Items["saveToolStripButton"].Enabled = true;
+            hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = true;
+        }
+
+        private void enablePaste()
+        {
+            editToolStripMenuItem.DropDownItems["pasteToolStripMenuItem"].Enabled = true;
+            hexContextMenuStrip.Items["pasteHexToolStripMenuItem"].Enabled = true;
+            standardToolStrip.Items["pasteToolStripButton"].Enabled = true;
+            standardToolStrip.Items["pasteOverToolStripButton"].Enabled = true;
+            editToolStripMenuItem.DropDownItems["pasteOverToolStripMenuItem"].Enabled = true;
+        }
+
+        private void initializeProjectTree(string fileName)
+        {
+            TreeNode rootNode;
+            Data rootData;
+
+            rootNode = new TreeNode(idIndex.ToString());
+            ++idIndex;
+            rootNode.Text = fileName;
+            rootData = new Data(fileBytes);
+            rootData.display = displayHexBox;
+            rootNode.Tag = rootData;
+            if (projectTreeView.Nodes.Count > 0)
+                projectTreeView.Nodes.Clear();
+            projectTreeView.Nodes.Add(rootNode);
+            activeData = rootData;
+            currentTreeNode = rootNode;
+        }
+
         private void openFile()
         {
 
@@ -95,36 +155,6 @@ namespace PIE
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
             }
-        }
-
-        private void initializeProjectTree(string fileName)
-        {
-            TreeNode rootNode;
-            Data rootData;
-
-            rootNode = new TreeNode(idIndex.ToString());
-            ++idIndex;
-            rootNode.Text = fileName;
-            rootData = new Data(fileBytes);
-            rootData.display = displayHexBox;
-            rootNode.Tag = rootData;
-            if (projectTreeView.Nodes.Count > 0)
-                projectTreeView.Nodes.Clear();
-            projectTreeView.Nodes.Add(rootNode);
-            activeData = rootData;
-            currentTreeNode = rootNode;
-        }
-
-        private void enableItems()
-        {
-            editToolStripMenuItem.DropDownItems["findToolStripMenuItem"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["selectAllToolStripMenuItem"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["findNextToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = true;
-            standardToolStrip.Items["saveToolStripButton"].Enabled = true;
-            hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = true;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -179,36 +209,6 @@ namespace PIE
         private void displayHexBox_CurrentLineChanged(object sender, EventArgs e)
         {
             updatePosition();
-        }
-
-        private void displayData()
-        {
-            if (activeData != null && currentTreeNode.Tag != activeData)
-                activeData.Hide();
-            currentTreeNode = projectTreeView.SelectedNode;
-            activeData = currentTreeNode.Tag as Data;
-            activeData.Display(displayPanel.Controls);
-        }
-
-        private void cut()
-        {
-            activeData.Cut();
-            //enablePaste();
-        }
-
-        private void copy()
-        {
-            activeData.Copy();
-            //enablePaste();
-        }
-
-        private void enablePaste()
-        {
-            editToolStripMenuItem.DropDownItems["pasteToolStripMenuItem"].Enabled = true;
-            hexContextMenuStrip.Items["pasteHexToolStripMenuItem"].Enabled = true;
-            standardToolStrip.Items["pasteToolStripButton"].Enabled = true;
-            standardToolStrip.Items["pasteOverToolStripButton"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["pasteOverToolStripMenuItem"].Enabled = true;
         }
 
         private void paste()
@@ -291,11 +291,9 @@ namespace PIE
         {
             foreach (TreeNode n in current.Nodes)
             {
-                Data toSave;
                 if (n.Nodes.Count > 0)
                     saveChanges(n);
-                toSave = n.Tag as Data;
-                toSave.save();
+                (n.Tag as Data).save();
             }
         }
 
@@ -321,10 +319,8 @@ namespace PIE
                     return;
                 if (projectTreeView.SelectedNode == currentTreeNode)
                 {
-                    Data toShow;
-                    toShow = projectTreeView.SelectedNode.Parent.Tag as Data;
                     activeData.Hide();
-                    toShow.Display(displayPanel.Controls);
+                    (projectTreeView.SelectedNode.Parent.Tag as Data).Display(displayPanel.Controls);
                     currentTreeNode = projectTreeView.SelectedNode.Parent;
                 }
                 projectTreeView.SelectedNode.Remove();
@@ -397,6 +393,68 @@ namespace PIE
             {
                 fileBytes.DeleteBytes(start, size);
                 paste();
+            }
+        }
+
+        private void sliceToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
+            sliceForm.Show();
+        }
+
+        //the following code was taken from:
+        //http://social.msdn.microsoft.com/Forums/windows/en-US/2654f7ac-b58f-477a-9b42-3d2afe43c6e8/moving-a-treenode-in-a-treeview
+
+        private void projectTreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            projectTreeView.DoDragDrop(e.Item, DragDropEffects.Move);
+        }
+
+        private void projectTreeView_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.None;
+            TreeNode source = (TreeNode)e.Data.GetData(typeof(TreeNode));
+            Point location = projectTreeView.PointToClient(new Point(e.X, e.Y));
+            TreeNode destination = projectTreeView.GetNodeAt(location);
+            if (destination == null)
+                return;
+            for (TreeNode parent = destination.Parent; parent != null; parent = parent.Parent)
+                if (parent == source)
+                    return;
+            destination.Expand();
+            e.Effect = DragDropEffects.Move;    
+        }
+
+        private void projectTreeView_DragDrop(object sender, DragEventArgs e)
+        {
+            Point location = projectTreeView.PointToClient(new Point(e.X, e.Y));
+            TreeNode destination = projectTreeView.GetNodeAt(location);
+            TreeNode source = (TreeNode)e.Data.GetData(typeof(TreeNode));
+            int prevIndex = source.Index;
+
+            if (destination == source)
+                return;
+            //only reorganization within the same level will be allowed at present
+            //might modify to so only root-level drops disallowed
+            if (destination.Parent != source.Parent)
+                return;
+            if (source.Parent == null)
+                source.TreeView.Nodes.Remove(source);
+            else
+                source.Parent.Nodes.Remove(source);
+            if (destination.Parent == null)
+            {
+                if (prevIndex == 0 && destination.Index == 0)
+                    destination.TreeView.Nodes.Insert(1, source);
+                else
+                    destination.TreeView.Nodes.Insert(destination.Index, source);
+            }
+            else
+            {
+                if (prevIndex == 0 && destination.Index == 0)
+                    destination.Parent.Nodes.Insert(1, source);
+                else
+                    destination.Parent.Nodes.Insert(destination.Index, source);
             }
         }
 

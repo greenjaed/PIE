@@ -88,11 +88,11 @@
             this.cutHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteOverHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hexFontDialog = new System.Windows.Forms.FontDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.pasteOverHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -318,7 +318,6 @@
             // 
             // optionsToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.Enabled = false;
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(142, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
@@ -521,15 +520,20 @@
             // 
             // projectTreeView
             // 
+            this.projectTreeView.AllowDrop = true;
             this.projectTreeView.ContextMenuStrip = this.projectContextMenuStrip;
             this.projectTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.projectTreeView.HideSelection = false;
             this.projectTreeView.LabelEdit = true;
             this.projectTreeView.Location = new System.Drawing.Point(0, 0);
             this.projectTreeView.Name = "projectTreeView";
             this.projectTreeView.Size = new System.Drawing.Size(140, 491);
             this.projectTreeView.TabIndex = 0;
+            this.projectTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.projectTreeView_ItemDrag);
             this.projectTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.projectTreeView_NodeMouseClick);
             this.projectTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.projectTreeView_NodeMouseDoubleClick);
+            this.projectTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.projectTreeView_DragDrop);
+            this.projectTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.projectTreeView_DragOver);
             // 
             // projectContextMenuStrip
             // 
@@ -561,8 +565,9 @@
             // 
             this.sliceToolStripMenuItem.Enabled = false;
             this.sliceToolStripMenuItem.Name = "sliceToolStripMenuItem";
-            this.sliceToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.sliceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sliceToolStripMenuItem.Text = "Slice...";
+            this.sliceToolStripMenuItem.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click_1);
             // 
             // displayPanel
             // 
@@ -651,6 +656,17 @@
             this.pasteHexToolStripMenuItem.Text = "Paste";
             this.pasteHexToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
+            // pasteOverHexToolStripMenuItem
+            // 
+            this.pasteOverHexToolStripMenuItem.Enabled = false;
+            this.pasteOverHexToolStripMenuItem.Image = global::PIE.Properties.Resources.PasteOver;
+            this.pasteOverHexToolStripMenuItem.Name = "pasteOverHexToolStripMenuItem";
+            this.pasteOverHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.V)));
+            this.pasteOverHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.pasteOverHexToolStripMenuItem.Text = "Paste Over";
+            this.pasteOverHexToolStripMenuItem.Click += new System.EventHandler(this.pasteOverToolStripMenuItem_Click);
+            // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
@@ -672,17 +688,6 @@
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // pasteOverHexToolStripMenuItem
-            // 
-            this.pasteOverHexToolStripMenuItem.Enabled = false;
-            this.pasteOverHexToolStripMenuItem.Image = global::PIE.Properties.Resources.PasteOver;
-            this.pasteOverHexToolStripMenuItem.Name = "pasteOverHexToolStripMenuItem";
-            this.pasteOverHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.V)));
-            this.pasteOverHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.pasteOverHexToolStripMenuItem.Text = "Paste Over";
-            this.pasteOverHexToolStripMenuItem.Click += new System.EventHandler(this.pasteOverToolStripMenuItem_Click);
             // 
             // PIEForm
             // 

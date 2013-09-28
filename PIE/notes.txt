@@ -67,11 +67,11 @@ program features
  ability to change font
 
 todo:
-work on context menu for treeview
- functionality: slice, rename (unnecessary), delete (done), show (done)
+allow the user to change to starting address
+allow dragging and dropping of tree nodes (done)
+implement a sort on the treeview
 create a way of updating other slices when editing a slice
 get a project file format up and running
-implement an overwrite paste (done)
 expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc)
 create an insert mode where, starting at a certain point, bytes get overwritten when inserting:
   01 02 03 | 04 05 + 00 = 00 01 02 | 04 05

@@ -52,12 +52,14 @@ namespace PIE
                 MessageBox.Show("No match found", "PIE", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else if (result == -2)
                 return;
+            /*
             else
             {
                 this.Hide();
                 if (!searchMedium.Focused)
                     searchMedium.Focus();
             }
+            */
         }
 
         private void validateFindOptions()
