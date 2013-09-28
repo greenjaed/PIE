@@ -20,7 +20,7 @@ namespace PIE
         TreeNode currentTreeNode;
         bool isSelecting;
         long currentPosition;
-        int idIndex;
+        public int idIndex { get; set; }
         FindForm search;
         string currentFileName;
 
@@ -108,9 +108,9 @@ namespace PIE
             TreeNode rootNode;
             Data rootData;
 
-            rootNode = new TreeNode(idIndex.ToString());
+            rootNode = new TreeNode(fileName);
+            rootNode.Name = idIndex.ToString();
             ++idIndex;
-            rootNode.Text = fileName;
             rootData = new Data(fileBytes);
             rootData.display = displayHexBox;
             rootNode.Tag = rootData;
@@ -182,9 +182,10 @@ namespace PIE
             TreeNode slice;
             previous = (currentTreeNode.Parent != null ? currentTreeNode.Parent.Tag : currentTreeNode.Tag) as Data;
             view = new Data(previous, start, size);
-            slice = new TreeNode(idIndex.ToString());
-            slice.Text = start.ToString("X") + "-" + (start + size).ToString("X");
+            slice = new TreeNode();
+            slice.Name = idIndex.ToString();
             ++idIndex;
+            slice.Text = start.ToString("X") + "-" + (start + size).ToString("X");
             slice.Tag = view;
             currentTreeNode.Nodes.Add(slice);
 
@@ -310,6 +311,11 @@ namespace PIE
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            deleteNode();
+        }
+
+        private void deleteNode()
+        {
             if (projectTreeView.SelectedNode != projectTreeView.Nodes[0])
             {
                 //if the node has sub-nodes and the user doesn't want to remove them all, cancel
@@ -399,6 +405,7 @@ namespace PIE
         private void sliceToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
+            sliceForm.Owner = this;
             sliceForm.Show();
         }
 
@@ -458,5 +465,15 @@ namespace PIE
             }
         }
 
+        private void projectTreeView_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (projectTreeView.SelectedNode != null)
+            {
+                if (e.KeyCode == Keys.Enter)
+                    displayData();
+                else if (e.KeyCode == Keys.Delete)
+                    deleteNode();
+            }
+        }
     }
 }
