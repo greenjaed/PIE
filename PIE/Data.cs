@@ -11,22 +11,26 @@ namespace PIE
     class Data
     {
         protected Data parentData;
-        public Byte[] dataBytes { get; set; }
+        //public Byte[] dataBytes { get; set; }
         public long customStart { get; set; }
-        public long start { get; set; }
-        protected long size;
-        public IByteProvider dataByteProvider { get; set; }
-        public HexBox display { get; set; }
+        public long start { get { return _start; } }
+        protected long _start;
+        public long size { get { return _size; } }
+        protected long _size;
+        public IByteProvider dataByteProvider { get { return _dataByteProvider; } }
+        protected IByteProvider _dataByteProvider;
+        protected HexBox display;
 
         public Data(DynamicFileByteProvider fileByteProvider)
         {
-            this.dataByteProvider = fileByteProvider;
+            this._dataByteProvider = fileByteProvider;
+            _size = fileByteProvider.Length;
         }
 
         public Data(Data parentData, long start, long size)
         {
-            this.start = start;
-            this.size = size;
+            this._start = start;
+            this._size = size;
             this.parentData = parentData;
         }
 
@@ -34,16 +38,16 @@ namespace PIE
         {
             List<Byte> bytes = new List<byte>();
 
-            for (int i = 0; i < size; ++i)
-                bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
-            dataByteProvider = new DynamicByteProvider(bytes);
+            for (int i = 0; i < _size; ++i)
+                bytes.Add(parentData._dataByteProvider.ReadByte(_start + i));
+            _dataByteProvider = new DynamicByteProvider(bytes);
 
         }
 
         public void fillAddresses(ToolStripComboBox addrSelector)
         {
             addrSelector.Items.Clear();
-            addrSelector.Items.AddRange(new string[] { "0", start.ToString("X") });
+            addrSelector.Items.AddRange(new string[] { "0", _start.ToString("X") });
             if (customStart != 0)
                 addrSelector.Items.Add(customStart.ToString("X"));
         }
@@ -53,9 +57,9 @@ namespace PIE
         {
             if (display == null)
                 display = displays["displayHexBox"] as HexBox;
-            if (dataByteProvider == null)
+            if (_dataByteProvider == null)
                 setByteProvider();
-            display.ByteProvider = dataByteProvider;
+            display.ByteProvider = _dataByteProvider;
             display.Visible = true;
         }
 
@@ -83,12 +87,12 @@ namespace PIE
 
         public virtual void save()
         {
-            DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
-            IByteProvider tempParent = parentData.dataByteProvider;
+            DynamicByteProvider temp = _dataByteProvider as DynamicByteProvider;
+            IByteProvider tempParent = parentData._dataByteProvider;
             if (temp != null && temp.HasChanges())
             {
-                tempParent.DeleteBytes(start, size);
-                tempParent.InsertBytes(start, temp.Bytes.ToArray());
+                tempParent.DeleteBytes(_start, _size);
+                tempParent.InsertBytes(_start, temp.Bytes.ToArray());
             }
         }
 

@@ -20,7 +20,6 @@ namespace PIE
         private long size;
         private int baseSize;
 
-
         public SliceForm()
         {
             InitializeComponent();
@@ -35,84 +34,21 @@ namespace PIE
             start = -1;
         }
 
-        private void AdvancedCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void calculateSize()
         {
-            endLabel.Visible = endTextBox.Visible = !AdvancedCheckBox.Checked;
-            sizeLabel.Visible = sizeComboBox.Visible = AdvancedCheckBox.Checked;
-            bytesLabel.Visible = bytesComboBox.Visible = AdvancedCheckBox.Checked;
-            repeatCheckBox.Visible = AdvancedCheckBox.Checked;
-            if (AdvancedCheckBox.Checked && end == 0)
-                invalidLabel2.Visible = true;
-            else if (size == 0)
-                invalidLabel2.Visible = true;
+            if (bytesComboBox.SelectedIndex == -1)
+                bytesComboBox.SelectedIndex = 0;
+            size = baseSize << (10 * bytesComboBox.SelectedIndex);
         }
 
-        private void sliceButton_Click(object sender, EventArgs e)
+        private void createNode(long position, int name)
         {
-            try
-            {
-                if (invalidLabel1.Visible)
-                    throw new Exception(toolTip1.GetToolTip(invalidLabel1));
-                if (invalidLabel2.Visible)
-                    throw new Exception(toolTip1.GetToolTip(invalidLabel2));
-                if (!AdvancedCheckBox.Checked)
-                    size = 1 + end - start;
-                this.Cursor = Cursors.WaitCursor;
-                slice();
-                this.Cursor = Cursors.Arrow;
-                this.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error: " + ex.Message, "Slice", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void startTextBox_Leave(object sender, EventArgs e)
-        {
-            try
-            {
-                start = validateString(startTextBox.Text);
-                invalidLabel1.Visible = false;
-                toolTip1.SetToolTip(invalidLabel1, "");
-            }
-            catch (Exception ex)
-            {
-                invalidLabel1.Visible = true;
-                toolTip1.SetToolTip(invalidLabel1, ex.Message);
-                start = -1;
-            }
-        }
-
-        private long validateString(string toCheck)
-        {
-            long assign = long.Parse(toCheck, NumberStyles.HexNumber);
-            if (assign < 0 || assign > dataSource.dataByteProvider.Length - 1)
-                throw new Exception("Address out of range");
-            if (!AdvancedCheckBox.Checked)
-            {
-                if (end > 0 && start >= 0 && start >= end)
-                    throw new Exception("End address must be greater than start address");
-            }
-            return assign;
-        }
-
-        private void endTextBox_Leave(object sender, EventArgs e)
-        {
-            try
-            {
-                if ((end = validateString(endTextBox.Text)) == 0)
-                    throw new Exception("End address must be greater than zero");
-                invalidLabel2.Visible = false;
-                toolTip1.SetToolTip(invalidLabel2, "");
-            }
-            catch (Exception ex)
-            {
-                invalidLabel2.Visible = true;
-                toolTip1.SetToolTip(invalidLabel2, ex.Message);
-                end = 0;
-            }
-
+            TreeNode subnode = new TreeNode();
+            subnode.Name = (Owner as PIEForm).uniqueID.ToString();
+            subnode.Text = "block " + name.ToString("X");
+            Data subslice = new Data(dataSource, position, size);
+            subnode.Tag = subslice;
+            dataNode.Nodes.Add(subnode);
         }
 
         private void slice()
@@ -136,30 +72,20 @@ namespace PIE
             }
         }
 
-        private void createNode(long position, int name)
+        private long validateString(string toCheck)
         {
-            TreeNode subnode = new TreeNode();
-            subnode.Name = (Owner as PIEForm).uniqueID.ToString();
-            subnode.Text = "block " + name.ToString("X");
-            Data subslice = new Data(dataSource, position, size);
-            subnode.Tag = subslice;
-            dataNode.Nodes.Add(subnode);
+            long assign = long.Parse(toCheck, NumberStyles.HexNumber);
+            if (assign < 0 || assign > dataSource.dataByteProvider.Length - 1)
+                throw new Exception("Address out of range");
+            return assign;
         }
 
-        private void sizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void AdvancedCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            try
-            {
-                baseSize = int.Parse(sizeComboBox.Text);
-                calculateSize();
-                invalidLabel2.Visible = false;
-                toolTip1.SetToolTip(invalidLabel2, "");
-            }
-            catch (Exception ex)
-            {
-                invalidLabel2.Visible = true;
-                toolTip1.SetToolTip(invalidLabel2, ex.Message);
-            }
+            endLabel.Visible = endTextBox.Visible = !AdvancedCheckBox.Checked;
+            sizeLabel.Visible = sizeComboBox.Visible = AdvancedCheckBox.Checked;
+            bytesLabel.Visible = bytesComboBox.Visible = AdvancedCheckBox.Checked;
+            repeatCheckBox.Visible = AdvancedCheckBox.Checked;
         }
 
         private void bytesComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -167,16 +93,81 @@ namespace PIE
             calculateSize();
         }
 
-        private void calculateSize()
-        {
-            if (bytesComboBox.SelectedIndex == -1)
-                bytesComboBox.SelectedIndex = 0;
-            size = baseSize << (10 * bytesComboBox.SelectedIndex);
-        }
-
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void endTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                if ((end = validateString(endTextBox.Text)) == 0)
+                    throw new Exception("End address must be greater than zero");
+                if (start >= end)
+                    throw new Exception("End address must be greater than start address");
+                errorProvider1.SetError(endTextBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(endTextBox, ex.Message);
+            }
+        }
+
+        private void sizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            errorProvider1.SetError(sizeComboBox, "");
+        }
+
+        private void sizeComboBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                baseSize = int.Parse(sizeComboBox.Text);
+                calculateSize();
+                errorProvider1.SetError(sizeComboBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(sizeComboBox, ex.Message);
+            }
+        }
+
+        private void sliceButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (errorProvider1.GetError(startTextBox) != "")
+                    throw new Exception(errorProvider1.GetError(startTextBox));
+                if (errorProvider1.GetError(endTextBox) != "")
+                    throw new Exception(errorProvider1.GetError(endTextBox));
+                if (errorProvider1.GetError(sizeComboBox) != "")
+                    throw new Exception(errorProvider1.GetError(sizeComboBox));
+                if (!AdvancedCheckBox.Checked)
+                    size = 1 + end - start;
+                this.Cursor = Cursors.WaitCursor;
+                size = Math.Min(dataSource.dataByteProvider.Length, size);
+                slice();
+                this.Cursor = Cursors.Arrow;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: " + ex.Message, "Slice", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void startTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                start = validateString(startTextBox.Text);
+                errorProvider1.SetError(startTextBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(startTextBox, ex.Message);
+            }
         }
     }
 }

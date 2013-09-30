@@ -73,6 +73,8 @@
             this.pasteToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.pasteOverToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.startAddrToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.helpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.projectTreeView = new System.Windows.Forms.TreeView();
@@ -93,8 +95,9 @@
             this.selectAllHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hexFontDialog = new System.Windows.Forms.FontDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.startAddrToolStripComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.gotoToolStripTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -105,6 +108,7 @@
             this.projectContextMenuStrip.SuspendLayout();
             this.displayPanel.SuspendLayout();
             this.hexContextMenuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -403,6 +407,8 @@
             this.pasteOverToolStripButton,
             this.toolStripSeparator7,
             this.startAddrToolStripComboBox,
+            this.toolStripSeparator11,
+            this.gotoToolStripTextBox,
             this.toolStripSeparator10,
             this.helpToolStripButton});
             this.standardToolStrip.Location = new System.Drawing.Point(0, 24);
@@ -495,6 +501,20 @@
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(6, 25);
+            // 
+            // startAddrToolStripComboBox
+            // 
+            this.startAddrToolStripComboBox.Enabled = false;
+            this.startAddrToolStripComboBox.Name = "startAddrToolStripComboBox";
+            this.startAddrToolStripComboBox.Size = new System.Drawing.Size(121, 25);
+            this.startAddrToolStripComboBox.ToolTipText = "Start Address";
+            this.startAddrToolStripComboBox.SelectedIndexChanged += new System.EventHandler(this.startAddrToolStripComboBox_SelectedIndexChanged);
+            this.startAddrToolStripComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.startAddrToolStripComboBox_KeyUp);
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
             // 
             // helpToolStripButton
             // 
@@ -696,19 +716,22 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // toolStripSeparator10
+            // gotoToolStripTextBox
             // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            this.gotoToolStripTextBox.Enabled = false;
+            this.gotoToolStripTextBox.Name = "gotoToolStripTextBox";
+            this.gotoToolStripTextBox.Size = new System.Drawing.Size(100, 25);
+            this.gotoToolStripTextBox.ToolTipText = "Goto Address";
+            this.gotoToolStripTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.gotoToolStripTextBox_KeyUp);
             // 
-            // startAddrToolStripComboBox
+            // toolStripSeparator11
             // 
-            this.startAddrToolStripComboBox.Enabled = false;
-            this.startAddrToolStripComboBox.Name = "startAddrToolStripComboBox";
-            this.startAddrToolStripComboBox.Size = new System.Drawing.Size(121, 25);
-            this.startAddrToolStripComboBox.ToolTipText = "Start Address";
-            this.startAddrToolStripComboBox.SelectedIndexChanged += new System.EventHandler(this.startAddrToolStripComboBox_SelectedIndexChanged);
-            this.startAddrToolStripComboBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.startAddrToolStripComboBox_KeyUp);
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+            // 
+            // errorProvider1
+            // 
+            this.errorProvider1.ContainerControl = this;
             // 
             // PIEForm
             // 
@@ -737,6 +760,7 @@
             this.projectContextMenuStrip.ResumeLayout(false);
             this.displayPanel.ResumeLayout(false);
             this.hexContextMenuStrip.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -809,6 +833,9 @@
         private System.Windows.Forms.ToolStripMenuItem pasteOverHexToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox startAddrToolStripComboBox;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStripTextBox gotoToolStripTextBox;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
     }
 }
 

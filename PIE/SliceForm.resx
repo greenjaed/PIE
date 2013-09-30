@@ -117,16 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="errorProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAIAEBAQAAAABAAoAQAAJgAAACAgEAAAAAQA6AIAAE4BAAAoAAAAEAAAACAAAAABAAQAAAAAAIAA
+        AAAAAAAAAAAAABAAAAAQAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAICAgADAwMAAAAD/AAD/
+        AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAcIgP/wcAAAAIiA//8AAAcIiID//wBwAIiIgP/w
+        iAAIiIiA/wiIgAiIiIDwiIiACIiIgAiIiIAIiIiAiIiIgAiIiIiIiIiACIiIiIiIiIAAiIiIiIiIAAcI
+        iIiIiIBwAACIiIiIAAAABwiIiIBwAAAAAAAAAAAA+B8AAOAHAADAAwAAgAEAAIABAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAACAAQAAgAEAAMADAADgBwAA+B8AACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAA
+        AAAAAAAAEAAAABAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD/
+        /wD/AAAA/wD/AP//AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACADwAAAAAAAAAAAAAAAIiIgA//
+        /wAAAAAAAAAAAIiIiIAP////AAAAAAAAAAiIiIiAD/////AAAAAAAAiIiIiIgA////8AgAAAAAAIiIiI
+        iIAP///wCIAAAAAAiIiIiIiAD///AIiIAAAACIiIiIiIgA//8AiIiIAAAAiIiIiIiIAP/wCIiIiAAACI
+        iIiIiIiAD/AIiIiIiAAAiIiIiIiIgA8AiIiIiIgAAIiIiIiIiIAACIiIiIiIAAiIiIiIiIiAAIiIiIiI
+        iIAIiIiIiIiIgAiIiIiIiIiACIiIiIiIiIiIiIiIiIiIgAiIiIiIiIiIiIiIiIiIiIAIiIiIiIiIiIiI
+        iIiIiIiACIiIiIiIiIiIiIiIiIiIgACIiIiIiIiIiIiIiIiIiAAAiIiIiIiIiIiIiIiIiIgAAIiIiIiI
+        iIiIiIiIiIiIAAAIiIiIiIiIiIiIiIiIgAAACIiIiIiIiIiIiIiIiIAAAACIiIiIiIiIiIiIiIgAAAAA
+        CIiIiIiIiIiIiIiAAAAAAAiIiIiIiIiIiIiIgAAAAAAACIiIiIiIiIiIgAAAAAAAAACIiIiIiIiIiAAA
+        AAAAAAAAAIiIiIiIiAAAAAAAAAAAAAAAAIiIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//D///8AD//8A
+        AP/+AAB/+AAAH/AAAA/wAAAP4AAAB8AAAAPAAAADgAAAAYAAAAGAAAABAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAgAAAAYAAAAGAAAABwAAAA8AAAAPgAAAH8AAAD/AAAA/4AAAf/gAAf/8AAP//wAP///w//w==
+</value>
+  </data>
 </root>

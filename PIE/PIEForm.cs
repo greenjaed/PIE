@@ -106,6 +106,7 @@ namespace PIE
             standardToolStrip.Items["saveToolStripButton"].Enabled = true;
             hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = true;
             startAddrToolStripComboBox.Enabled = true;
+            gotoToolStripTextBox.Enabled = true;
         }
 
         private void enablePaste()
@@ -125,7 +126,6 @@ namespace PIE
             rootNode = new TreeNode(fileName);
             rootNode.Name = uniqueID.ToString();
             rootData = new Data(fileBytes);
-            rootData.display = displayHexBox;
             rootNode.Tag = rootData;
             if (projectTreeView.Nodes.Count > 0)
                 projectTreeView.Nodes.Clear();
@@ -166,6 +166,7 @@ namespace PIE
                 initializeProjectTree(fileName);
                 activeData.fillAddresses(startAddrToolStripComboBox);
                 hexContextMenuStrip.Enabled = true;
+                activeData.Display(displayPanel.Controls);
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
             }
@@ -279,7 +280,7 @@ namespace PIE
         private void performSearch()
         {
             search = new FindForm(displayHexBox);
-            search.Location = this.Location;
+            search.Location = this.DesktopLocation;
             search.Show(this);
         }
 
@@ -419,11 +420,13 @@ namespace PIE
         {
             SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
             sliceForm.Owner = this;
+            sliceForm.Location = this.DesktopLocation;
             sliceForm.Show();
         }
 
-        //the following code was taken from:
+        //the following drag and drop code was taken from:
         //http://social.msdn.microsoft.com/Forums/windows/en-US/2654f7ac-b58f-477a-9b42-3d2afe43c6e8/moving-a-treenode-in-a-treeview
+        //start
 
         private void projectTreeView_ItemDrag(object sender, ItemDragEventArgs e)
         {
@@ -477,6 +480,7 @@ namespace PIE
                     destination.Parent.Nodes.Insert(destination.Index, source);
             }
         }
+        //end
 
         private void projectTreeView_KeyUp(object sender, KeyEventArgs e)
         {
@@ -511,6 +515,25 @@ namespace PIE
                 {
                     System.Console.WriteLine(ex.Message);
                     startAddrToolStripComboBox.Text = "";
+                }
+            }
+        }
+
+        private void gotoToolStripTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                long gotoAddress;
+                try
+                {
+                    gotoAddress = long.Parse(gotoToolStripTextBox.Text, NumberStyles.HexNumber);
+                    if (gotoAddress > displayHexBox.LineInfoOffset + activeData.size)
+                        gotoAddress = activeData.size - 1;
+                    displayHexBox.ScrollByteIntoView(gotoAddress);
+                }
+                catch (Exception ex)
+                {
+                    gotoToolStripTextBox.Text = ex.Message;
                 }
             }
         }
