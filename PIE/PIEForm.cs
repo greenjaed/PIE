@@ -527,6 +527,8 @@ namespace PIE
                 try
                 {
                     gotoAddress = long.Parse(gotoToolStripTextBox.Text, NumberStyles.HexNumber);
+                    if (gotoAddress < displayHexBox.LineInfoOffset)
+                        gotoAddress = displayHexBox.LineInfoOffset;
                     if (gotoAddress > displayHexBox.LineInfoOffset + activeData.size)
                         gotoAddress = activeData.size - 1;
                     displayHexBox.ScrollByteIntoView(gotoAddress);

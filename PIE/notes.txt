@@ -68,6 +68,7 @@ program features
 
 todo:
 ensure that no overlap occurs when slicing
+ensure that slice data is properly populated
 allow the user to change to starting address (done)
 allow dragging and dropping of tree nodes (done)
 implement a sort on the treeview (maybe?)

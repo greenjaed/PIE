@@ -162,9 +162,8 @@
     <None Include="Resources\Paste.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="blankIcon.ico" />
     <Content Include="notes.txt" />
-    <Content Include="sliceIcon.ico" />
+    <Content Include="pie_chart.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
