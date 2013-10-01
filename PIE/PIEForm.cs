@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -197,9 +198,14 @@ namespace PIE
             TreeNode slice;
             previous = (currentTreeNode.Parent != null ? currentTreeNode.Parent.Tag : currentTreeNode.Tag) as Data;
             view = new Data(previous, start, size);
+            if (dataIsTaken(currentTreeNode, view))
+            {
+                MessageBox.Show("Unable to create slice: Selection overlaps with another slice");
+                return;
+            }
             slice = new TreeNode();
             slice.Name = uniqueID.ToString();
-            slice.Text = start.ToString("X") + "-" + (start + size).ToString("X");
+            slice.Text = start.ToString("X") + "-" + (start + size - 1).ToString("X");
             slice.Tag = view;
             currentTreeNode.Nodes.Add(slice);
 
@@ -424,7 +430,7 @@ namespace PIE
             sliceForm.Show();
         }
 
-        //the following drag and drop code was taken from:
+        //the following drag and drop code was adapted from:
         //http://social.msdn.microsoft.com/Forums/windows/en-US/2654f7ac-b58f-477a-9b42-3d2afe43c6e8/moving-a-treenode-in-a-treeview
         //start
 
@@ -444,7 +450,6 @@ namespace PIE
             for (TreeNode parent = destination.Parent; parent != null; parent = parent.Parent)
                 if (parent == source)
                     return;
-            destination.Expand();
             e.Effect = DragDropEffects.Move;    
         }
 
@@ -457,28 +462,16 @@ namespace PIE
 
             if (destination == source)
                 return;
-            //only reorganization within the same level will be allowed at present
-            //might modify to so only root-level drops disallowed
+            //only reorganization within the same level will be allowed
             if (destination.Parent != source.Parent)
                 return;
-            if (source.Parent == null)
-                source.TreeView.Nodes.Remove(source);
+
+            source.Parent.Nodes.Remove(source);
+
+            if (prevIndex <= destination.Index)
+                destination.Parent.Nodes.Insert(destination.Index + 1, source);
             else
-                source.Parent.Nodes.Remove(source);
-            if (destination.Parent == null)
-            {
-                if (prevIndex == 0 && destination.Index == 0)
-                    destination.TreeView.Nodes.Insert(1, source);
-                else
-                    destination.TreeView.Nodes.Insert(destination.Index, source);
-            }
-            else
-            {
-                if (prevIndex == 0 && destination.Index == 0)
-                    destination.Parent.Nodes.Insert(1, source);
-                else
-                    destination.Parent.Nodes.Insert(destination.Index, source);
-            }
+                destination.Parent.Nodes.Insert(destination.Index, source);
         }
         //end
 
@@ -538,6 +531,58 @@ namespace PIE
                     gotoToolStripTextBox.Text = ex.Message;
                 }
             }
+        }
+
+        private void sortToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (sortToolStripMenuItem.CheckState == CheckState.Unchecked)
+            {
+                projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
+                sortToolStripMenuItem.CheckState = CheckState.Checked;
+            }
+            else
+            {
+                projectTreeView.TreeViewNodeSorter = null;
+                projectTreeView.Sorted = false;
+                sortToolStripMenuItem.CheckState = CheckState.Unchecked;
+            }
+        }
+
+        /*checks the Data object passed in against all nodes of the same tier
+         *if the new Data object's data range is found overlapping with any existing objects,
+         *it returns false.  Otherwise the method returns true.
+         */
+        public bool dataIsTaken(TreeNode toSlice, Data toCheck)
+        {
+            TreeNodeCollection currentTier = toSlice.Nodes;
+            Data currentData;
+
+            foreach (TreeNode d in currentTier)
+            {
+                currentData = d.Tag as Data;
+
+                //if they don't overlap, continue
+                if (toCheck.end < currentData.start || toCheck.start > currentData.end)
+                    continue;
+                else
+                    return true;
+            }
+            return false;
+        }
+    }
+
+    public class ProjectTreeSort : IComparer
+    {
+        int IComparer.Compare(object x, object y)
+        {
+            Data a = (x as TreeNode).Tag as Data;
+            Data b = (y as TreeNode).Tag as Data;
+            if (a.start < b.start)
+                return -1;
+            else if (a.start > b.start)
+                return 1;
+            else
+                return 0;
         }
     }
 }

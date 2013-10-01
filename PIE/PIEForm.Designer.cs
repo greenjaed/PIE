@@ -98,6 +98,9 @@
             this.hexFontDialog = new System.Windows.Forms.FontDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.sortToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -580,16 +583,19 @@
             this.projectContextMenuStrip.Enabled = false;
             this.projectContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showToolStripMenuItem,
+            this.sortToolStripMenuItem,
+            this.toolStripSeparator12,
             this.deleteToolStripMenuItem,
+            this.toolStripSeparator13,
             this.sliceToolStripMenuItem});
             this.projectContextMenuStrip.Name = "projectContextMenuStrip";
-            this.projectContextMenuStrip.Size = new System.Drawing.Size(108, 70);
+            this.projectContextMenuStrip.Size = new System.Drawing.Size(153, 126);
             // 
             // showToolStripMenuItem
             // 
             this.showToolStripMenuItem.Enabled = false;
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
@@ -597,7 +603,7 @@
             // 
             this.deleteToolStripMenuItem.Enabled = false;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
             // 
@@ -605,7 +611,7 @@
             // 
             this.sliceToolStripMenuItem.Enabled = false;
             this.sliceToolStripMenuItem.Name = "sliceToolStripMenuItem";
-            this.sliceToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.sliceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.sliceToolStripMenuItem.Text = "Slice...";
             this.sliceToolStripMenuItem.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click_1);
             // 
@@ -733,6 +739,24 @@
             // 
             this.errorProvider1.ContainerControl = this;
             // 
+            // sortToolStripMenuItem
+            // 
+            this.sortToolStripMenuItem.Enabled = false;
+            this.sortToolStripMenuItem.Name = "sortToolStripMenuItem";
+            this.sortToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sortToolStripMenuItem.Text = "Sort";
+            this.sortToolStripMenuItem.Click += new System.EventHandler(this.sortToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(149, 6);
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(149, 6);
+            // 
             // PIEForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -836,6 +860,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripTextBox gotoToolStripTextBox;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.ToolStripMenuItem sortToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
     }
 }
 

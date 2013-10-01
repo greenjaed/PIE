@@ -68,10 +68,10 @@ program features
 
 todo:
 ensure that no overlap occurs when slicing
-ensure that slice data is properly populated
+ensure that slice data is properly populated (done)
 allow the user to change to starting address (done)
 allow dragging and dropping of tree nodes (done)
-implement a sort on the treeview (maybe?)
+implement a sort on the treeview (done)
 create a way of updating other slices when editing a slice
 get a project file format up and running
 expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc)

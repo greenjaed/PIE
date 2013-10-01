@@ -8,13 +8,14 @@ using Be.Windows.Forms;
 
 namespace PIE
 {
-    class Data
+    public class Data
     {
         protected Data parentData;
         //public Byte[] dataBytes { get; set; }
         public long customStart { get; set; }
         public long start { get; protected set; }
         public long size { get; protected set; }
+        public long end { get; protected set; }
         public IByteProvider dataByteProvider { get; protected set; }
         protected HexBox display;
 
@@ -22,18 +23,24 @@ namespace PIE
         {
             this.dataByteProvider = fileByteProvider;
             size = fileByteProvider.Length;
+            end = size - 1;
         }
 
         public Data(Data parentData, long start, long size)
         {
             this.start = start;
             this.size = size;
+            end = (start + size) - 1;
             this.parentData = parentData;
         }
 
-        private void setByteProvider()
+        public void setByteProvider()
         {
             List<Byte> bytes = new List<byte>();
+
+            //can happen if a project file has just been opened
+            if (parentData.dataByteProvider == null)
+                parentData.setByteProvider();
 
             for (int i = 0; i < size; ++i)
                 bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
