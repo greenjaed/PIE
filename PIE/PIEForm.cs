@@ -40,6 +40,7 @@ namespace PIE
         public PIEForm()
         {
             InitializeComponent();
+            projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
         }
 
         void changeEnable(bool enableValue)
@@ -432,51 +433,6 @@ namespace PIE
             sliceForm.Show();
         }
 
-        //the following drag and drop code was adapted from:
-        //http://social.msdn.microsoft.com/Forums/windows/en-US/2654f7ac-b58f-477a-9b42-3d2afe43c6e8/moving-a-treenode-in-a-treeview
-        //start
-
-        private void projectTreeView_ItemDrag(object sender, ItemDragEventArgs e)
-        {
-            projectTreeView.DoDragDrop(e.Item, DragDropEffects.Move);
-        }
-
-        private void projectTreeView_DragOver(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.None;
-            TreeNode source = (TreeNode)e.Data.GetData(typeof(TreeNode));
-            Point location = projectTreeView.PointToClient(new Point(e.X, e.Y));
-            TreeNode destination = projectTreeView.GetNodeAt(location);
-            if (destination == null)
-                return;
-            for (TreeNode parent = destination.Parent; parent != null; parent = parent.Parent)
-                if (parent == source)
-                    return;
-            e.Effect = DragDropEffects.Move;    
-        }
-
-        private void projectTreeView_DragDrop(object sender, DragEventArgs e)
-        {
-            Point location = projectTreeView.PointToClient(new Point(e.X, e.Y));
-            TreeNode destination = projectTreeView.GetNodeAt(location);
-            TreeNode source = (TreeNode)e.Data.GetData(typeof(TreeNode));
-            int prevIndex = source.Index;
-
-            if (destination == source)
-                return;
-            //only reorganization within the same level will be allowed
-            if (destination.Parent != source.Parent)
-                return;
-
-            source.Parent.Nodes.Remove(source);
-
-            if (prevIndex <= destination.Index)
-                destination.Parent.Nodes.Insert(destination.Index + 1, source);
-            else
-                destination.Parent.Nodes.Insert(destination.Index, source);
-        }
-        //end
-
         private void projectTreeView_KeyUp(object sender, KeyEventArgs e)
         {
             if (projectTreeView.SelectedNode != null)
@@ -490,7 +446,8 @@ namespace PIE
 
         private void startAddrToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            displayHexBox.LineInfoOffset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
+            long offset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
+            activeData.ChangeOffset(offset);
         }
 
         private void startAddrToolStripComboBox_KeyUp(object sender, KeyEventArgs e)
@@ -501,10 +458,9 @@ namespace PIE
                 try
                 {
                     potentialAddress = long.Parse(startAddrToolStripComboBox.Text, NumberStyles.HexNumber);
-                    if (activeData.customStart == 0)
+                    activeData.ChangeOffset(potentialAddress);
+                    if (!startAddrToolStripComboBox.Items.Contains(startAddrToolStripComboBox.Text))
                         startAddrToolStripComboBox.Items.Add(startAddrToolStripComboBox.Text);
-                    activeData.customStart = potentialAddress;
-                    displayHexBox.LineInfoOffset = potentialAddress;
                 }
                 catch (Exception ex)
                 {
@@ -532,21 +488,6 @@ namespace PIE
                 {
                     gotoToolStripTextBox.Text = ex.Message;
                 }
-            }
-        }
-
-        private void sortToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (sortToolStripMenuItem.CheckState == CheckState.Unchecked)
-            {
-                projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
-                sortToolStripMenuItem.CheckState = CheckState.Checked;
-            }
-            else
-            {
-                projectTreeView.TreeViewNodeSorter = null;
-                projectTreeView.Sorted = false;
-                sortToolStripMenuItem.CheckState = CheckState.Unchecked;
             }
         }
 

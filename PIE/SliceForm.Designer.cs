@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SliceForm));
             this.sliceButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.AdvancedCheckBox = new System.Windows.Forms.CheckBox();
@@ -90,7 +89,7 @@
             // sizeLabel
             // 
             this.sizeLabel.AutoSize = true;
-            this.sizeLabel.Location = new System.Drawing.Point(152, 15);
+            this.sizeLabel.Location = new System.Drawing.Point(167, 15);
             this.sizeLabel.Name = "sizeLabel";
             this.sizeLabel.Size = new System.Drawing.Size(27, 13);
             this.sizeLabel.TabIndex = 4;
@@ -111,7 +110,7 @@
             "128",
             "256",
             "512"});
-            this.sizeComboBox.Location = new System.Drawing.Point(185, 12);
+            this.sizeComboBox.Location = new System.Drawing.Point(200, 12);
             this.sizeComboBox.Name = "sizeComboBox";
             this.sizeComboBox.Size = new System.Drawing.Size(48, 21);
             this.sizeComboBox.TabIndex = 1;
@@ -127,7 +126,7 @@
             "",
             "kilo",
             "mega"});
-            this.bytesComboBox.Location = new System.Drawing.Point(251, 12);
+            this.bytesComboBox.Location = new System.Drawing.Point(266, 12);
             this.bytesComboBox.Name = "bytesComboBox";
             this.bytesComboBox.Size = new System.Drawing.Size(60, 21);
             this.bytesComboBox.TabIndex = 2;
@@ -155,7 +154,7 @@
             // bytesLabel
             // 
             this.bytesLabel.AutoSize = true;
-            this.bytesLabel.Location = new System.Drawing.Point(317, 15);
+            this.bytesLabel.Location = new System.Drawing.Point(332, 15);
             this.bytesLabel.Name = "bytesLabel";
             this.bytesLabel.Size = new System.Drawing.Size(38, 13);
             this.bytesLabel.TabIndex = 5;
@@ -192,8 +191,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(365, 115);
-            this.Controls.Add(this.endTextBox);
+            this.ClientSize = new System.Drawing.Size(377, 115);
             this.Controls.Add(this.AdvancedCheckBox);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.repeatCheckBox);
@@ -201,12 +199,12 @@
             this.Controls.Add(this.startLabel);
             this.Controls.Add(this.bytesLabel);
             this.Controls.Add(this.startTextBox);
-            this.Controls.Add(this.endLabel);
             this.Controls.Add(this.sizeLabel);
             this.Controls.Add(this.bytesComboBox);
             this.Controls.Add(this.sizeComboBox);
+            this.Controls.Add(this.endTextBox);
+            this.Controls.Add(this.endLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SliceForm";
             this.Text = "Slice";
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();

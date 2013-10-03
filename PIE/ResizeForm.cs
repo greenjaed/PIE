@@ -25,6 +25,11 @@ namespace PIE
         {
             InitializeComponent();
             this.toResize = toResize;
+            Data nodeData = toResize.Tag as Data;
+            startTextBox.Text = nodeData.start.ToString("X");
+            endTextBox.Text = nodeData.end.ToString("X");
+            start = nodeData.start;
+            end = nodeData.end;
         }
 
 

@@ -140,7 +140,6 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.searchTextBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FindForm";
             this.Text = "Find";
             this.groupBox1.ResumeLayout(false);

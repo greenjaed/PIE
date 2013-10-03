@@ -12,7 +12,8 @@ namespace PIE
     {
         protected Data parentData;
         //public Byte[] dataBytes { get; set; }
-        public long customStart { get; set; }
+        public long customStart { get; protected set; }
+        public long lastStart { get; protected set; }
         public long start { get; protected set; }
         public long size { get; protected set; }
         public long end { get; protected set; }
@@ -30,8 +31,9 @@ namespace PIE
         {
             this.start = start;
             this.size = size;
-            end = (start + size) - 1;
+            end = start + size - 1;
             this.parentData = parentData;
+            lastStart = start;
         }
 
         public void setByteProvider()
@@ -51,7 +53,9 @@ namespace PIE
         public void fillAddresses(ToolStripComboBox addrSelector)
         {
             addrSelector.Items.Clear();
-            addrSelector.Items.AddRange(new string[] { "0", start.ToString("X") });
+            addrSelector.Items.Add("0");
+            if (start != 0)
+                addrSelector.Items.Add(start.ToString("X"));
             if (customStart != 0)
                 addrSelector.Items.Add(customStart.ToString("X"));
         }
@@ -65,6 +69,14 @@ namespace PIE
                 setByteProvider();
             display.ByteProvider = dataByteProvider;
             display.Visible = true;
+        }
+
+        public void ChangeOffset(long offset)
+        {
+            display.LineInfoOffset = offset;
+            lastStart = offset;
+            if (offset != 0 || offset != start)
+                customStart = offset;
         }
 
         //Hides the data
@@ -127,8 +139,10 @@ namespace PIE
                 currentData = d.Tag as Data;
 
                 //if they don't overlap, continue
-                if (end < currentData.start || start > currentData.end)
+                if (start > currentData.end)
                     continue;
+                else if (end < currentData.start)
+                    break;
                 else
                     return true;
             }

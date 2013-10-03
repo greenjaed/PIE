@@ -23,7 +23,6 @@ namespace PIE
         public SliceForm()
         {
             InitializeComponent();
-            start = -1;
         }
 
         public SliceForm(TreeNode dataNode)
@@ -31,7 +30,6 @@ namespace PIE
             InitializeComponent();
             this.dataNode = dataNode;
             dataSource = dataNode.Tag as Data;
-            start = -1;
         }
 
         private void calculateSize()
@@ -60,6 +58,7 @@ namespace PIE
             if (AdvancedCheckBox.Checked && repeatCheckBox.Checked)
             {
                 long insertPosition = start + size;
+                clearExistingSlices();
                 while (insertPosition + size < dataSource.dataByteProvider.Length - 1)
                 {
                     createNode(insertPosition, sliceCounter);
@@ -70,6 +69,23 @@ namespace PIE
                 if ((size = (dataSource.dataByteProvider.Length - 1) - insertPosition) > 0)
                     createNode(insertPosition, sliceCounter);
             }
+        }
+
+        private void clearExistingSlices()
+        {
+            Data current;
+            int delIndex = 0;
+            
+            foreach (TreeNode t in dataNode.Nodes)
+            {
+                current = t.Tag as Data;
+                if (current.end < start)
+                    continue;
+                delIndex = t.Index;
+                break;
+            }
+            while (dataNode.Nodes.Count > delIndex)
+                dataNode.Nodes[delIndex].Remove();
         }
 
         private long validateString(string toCheck)
@@ -137,6 +153,8 @@ namespace PIE
         {
             try
             {
+                if (startTextBox.Text == "")
+                    throw new Exception("No start address specified");
                 if (errorProvider1.GetError(startTextBox) != "")
                     throw new Exception(errorProvider1.GetError(startTextBox));
                 if (errorProvider1.GetError(endTextBox) != "")
@@ -145,8 +163,24 @@ namespace PIE
                     throw new Exception(errorProvider1.GetError(sizeComboBox));
                 if (!AdvancedCheckBox.Checked)
                 {
+                    if (endTextBox.Text == "")
+                        throw new Exception("No end address specified");
                     size = 1 + end - start;
                     if (Data.IsTaken(dataNode, start, end))
+                        throw new Exception(Properties.Resources.overlapString);
+                }
+                else
+                {
+                    if (sizeComboBox.SelectedIndex < 0)
+                        throw new Exception("No size selected");
+                    end = start + size - 1;
+                    if (repeatCheckBox.Checked)
+                    {
+                        if (MessageBox.Show("Warning: operation will overwrite any existing slices", "Slice", MessageBoxButtons.OKCancel) ==
+                            DialogResult.Cancel)
+                            return;
+                    }
+                    else if (Data.IsTaken(dataNode, start, end))
                         throw new Exception(Properties.Resources.overlapString);
                 }
                 this.Cursor = Cursors.WaitCursor;
