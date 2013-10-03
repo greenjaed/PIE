@@ -81,6 +81,15 @@ namespace PIE.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Specified range overlaps an existing slice.
+        /// </summary>
+        internal static string overlapString {
+            get {
+                return ResourceManager.GetString("overlapString", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap Paste {
             get {
                 object obj = ResourceManager.GetObject("Paste", resourceCulture);

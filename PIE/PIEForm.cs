@@ -198,9 +198,9 @@ namespace PIE
             TreeNode slice;
             previous = (currentTreeNode.Parent != null ? currentTreeNode.Parent.Tag : currentTreeNode.Tag) as Data;
             view = new Data(previous, start, size);
-            if (dataIsTaken(currentTreeNode, view))
+            if (Data.IsTaken(currentTreeNode, view))
             {
-                MessageBox.Show("Unable to create slice: Selection overlaps with another slice");
+                MessageBox.Show("Unable to create slice: " + Properties.Resources.overlapString);
                 return;
             }
             slice = new TreeNode();
@@ -368,6 +368,8 @@ namespace PIE
                 projectContextMenuStrip.Enabled = true;
                 foreach (ToolStripItem t in projectContextMenuStrip.Items)
                     t.Enabled = true;
+                if (e.Node == projectTreeView.Nodes[0])
+                    projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
             }
         }
 
@@ -552,9 +554,14 @@ namespace PIE
          *if the new Data object's data range is found overlapping with any existing objects,
          *it returns false.  Otherwise the method returns true.
          */
-        public bool dataIsTaken(TreeNode toSlice, Data toCheck)
+        public static bool dataIsTaken(TreeNode toSlice, Data toCheck)
         {
-            TreeNodeCollection currentTier = toSlice.Nodes;
+            return dataIsTaken(toSlice, toCheck.start, toCheck.end);
+        }
+
+        public static bool dataIsTaken(TreeNode beingSliced, long start, long end)
+        {
+            TreeNodeCollection currentTier = beingSliced.Nodes;
             Data currentData;
 
             foreach (TreeNode d in currentTier)
@@ -562,12 +569,21 @@ namespace PIE
                 currentData = d.Tag as Data;
 
                 //if they don't overlap, continue
-                if (toCheck.end < currentData.start || toCheck.start > currentData.end)
+                if (end < currentData.start || start > currentData.end)
                     continue;
                 else
                     return true;
             }
             return false;
+        }
+
+        private void resizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResizeForm resizeForm = new ResizeForm(projectTreeView.SelectedNode);
+            resizeForm.Location = this.DesktopLocation;
+            resizeForm.Show();
+            if (projectTreeView.SelectedNode == currentTreeNode)
+                (currentTreeNode.Tag as Data).Display(displayPanel.Controls);
         }
     }
 

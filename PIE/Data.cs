@@ -89,6 +89,14 @@ namespace PIE
             display.Copy();
         }
 
+        public void resize(long start, long end)
+        {
+            this.start = start;
+            this.end = end;
+            size = (end - start) + 1;
+            dataByteProvider = null;
+        }
+
         public virtual void save()
         {
             DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
@@ -100,5 +108,31 @@ namespace PIE
             }
         }
 
+        /*checks the Data object passed in against all nodes of the same tier
+         *if the new Data object's data range is found overlapping with any existing objects,
+         *it returns false.  Otherwise the method returns true.
+         */
+        public static bool IsTaken(TreeNode toSlice, Data toCheck)
+        {
+            return IsTaken(toSlice, toCheck.start, toCheck.end);
+        }
+
+        public static bool IsTaken(TreeNode beingSliced, long start, long end)
+        {
+            TreeNodeCollection currentTier = beingSliced.Nodes;
+            Data currentData;
+
+            foreach (TreeNode d in currentTier)
+            {
+                currentData = d.Tag as Data;
+
+                //if they don't overlap, continue
+                if (end < currentData.start || start > currentData.end)
+                    continue;
+                else
+                    return true;
+            }
+            return false;
+        }
     }
 }

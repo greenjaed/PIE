@@ -144,7 +144,11 @@ namespace PIE
                 if (errorProvider1.GetError(sizeComboBox) != "")
                     throw new Exception(errorProvider1.GetError(sizeComboBox));
                 if (!AdvancedCheckBox.Checked)
+                {
                     size = 1 + end - start;
+                    if (Data.IsTaken(dataNode, start, end))
+                        throw new Exception(Properties.Resources.overlapString);
+                }
                 this.Cursor = Cursors.WaitCursor;
                 size = Math.Min(dataSource.dataByteProvider.Length, size);
                 slice();
