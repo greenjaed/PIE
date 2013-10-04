@@ -81,7 +81,10 @@ namespace PIE
                 toResize.Remove();
                 if (Data.IsTaken(parent, start, end))
                     throw new Exception(Properties.Resources.overlapString);
-                wrongSize.resize(start, end);
+                if (toResize.Nodes.Count > 0 &&
+                    MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    return;
+                wrongSize.Resize(toResize, start, end);
                 valid = true;
             }
             catch (Exception ex)

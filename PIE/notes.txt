@@ -67,28 +67,31 @@ program features
  ability to change font
 
 todo:
+when editing, ensure slice size remains static (done)
 ensure that no overlap occurs when slicing (done)
-ensure that slice data is properly populated (done)
-allow the user to change to starting address (done)
-allow dragging and dropping of tree nodes (done)
-implement a sort on the treeview (done)
-when resizing, resize all subnodes
+allow the user to change the starting address (done)
+when resizing, resize all subnodes (done)
 create a way of updating other slices when editing a slice
 get a project file format up and running
-expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc)
+expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc) (done)
  hexbox properties to expose:
-  Backcolor
-  ForeColor
-  Bytes per line
-  Byte Location (enable/disable)
   Font
+  ForeColor/Font Color
+  Backcolor
+  Address Color?
+  Character Mapping (enable/disable)
+  Column Address (enable/disable)
+  Line Address (enable/disable)
+  Hex casing (upper/lower)
+  Bytes per line
   Group Separator (enable/disable)
   Group Size
-  Hex casing (upper/lower)
-  Address Color?
-  Line Address (enable/disable)
-  String Value (enable/disable)
 
 stretch:
 create an insert mode where, starting at a certain point, bytes get overwritten when inserting:
   01 02 03 | 04 05 + 00 = 00 01 02 | 04 05
+
+what to save?
+ project
+ slice
+ file

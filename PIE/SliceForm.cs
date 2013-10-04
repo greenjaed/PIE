@@ -153,16 +153,14 @@ namespace PIE
         {
             try
             {
-                if (startTextBox.Text == "")
-                    throw new Exception("No start address specified");
                 if (errorProvider1.GetError(startTextBox) != "")
                     throw new Exception(errorProvider1.GetError(startTextBox));
-                if (errorProvider1.GetError(endTextBox) != "")
-                    throw new Exception(errorProvider1.GetError(endTextBox));
-                if (errorProvider1.GetError(sizeComboBox) != "")
-                    throw new Exception(errorProvider1.GetError(sizeComboBox));
+                if (startTextBox.Text == "")
+                    throw new Exception("No start address specified");
                 if (!AdvancedCheckBox.Checked)
                 {
+                    if (errorProvider1.GetError(endTextBox) != "")
+                        throw new Exception(errorProvider1.GetError(endTextBox));
                     if (endTextBox.Text == "")
                         throw new Exception("No end address specified");
                     size = 1 + end - start;
@@ -171,12 +169,14 @@ namespace PIE
                 }
                 else
                 {
+                    if (errorProvider1.GetError(sizeComboBox) != "")
+                        throw new Exception(errorProvider1.GetError(sizeComboBox));
                     if (sizeComboBox.SelectedIndex < 0)
                         throw new Exception("No size selected");
                     end = start + size - 1;
                     if (repeatCheckBox.Checked)
                     {
-                        if (MessageBox.Show("Warning: operation will overwrite any existing slices", "Slice", MessageBoxButtons.OKCancel) ==
+                        if (MessageBox.Show("Warning: operation will overwrite existing slices", "Slice", MessageBoxButtons.OKCancel) ==
                             DialogResult.Cancel)
                             return;
                     }

@@ -12,12 +12,13 @@ namespace PIE
     {
         protected Data parentData;
         //public Byte[] dataBytes { get; set; }
-        public long customStart { get; protected set; }
+        public long customStart { get; set; }
         public long lastStart { get; protected set; }
         public long start { get; protected set; }
         public long size { get; protected set; }
         public long end { get; protected set; }
         public IByteProvider dataByteProvider { get; protected set; }
+        public bool isChanged { get; protected set; }
         protected HexBox display;
 
         public Data(DynamicFileByteProvider fileByteProvider)
@@ -36,21 +37,29 @@ namespace PIE
             lastStart = start;
         }
 
-        public void setByteProvider()
+        private void SetByteProvider()
         {
             List<Byte> bytes = new List<byte>();
 
             //can happen if a project file has just been opened
             if (parentData.dataByteProvider == null)
-                parentData.setByteProvider();
+                parentData.SetByteProvider();
 
             for (int i = 0; i < size; ++i)
                 bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
             dataByteProvider = new DynamicByteProvider(bytes);
-
+            dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
         }
 
-        public void fillAddresses(ToolStripComboBox addrSelector)
+        void dataByteProvider_LengthChanged(object sender, EventArgs e)
+        {
+            if (dataByteProvider.Length > size)
+                dataByteProvider.DeleteBytes(size, dataByteProvider.Length - size);
+            else if (dataByteProvider.Length < size)
+                dataByteProvider.InsertBytes(dataByteProvider.Length, new byte[size - dataByteProvider.Length]);
+        }
+
+        public void FillAddresses(ToolStripComboBox addrSelector)
         {
             addrSelector.Items.Clear();
             addrSelector.Items.Add("0");
@@ -58,6 +67,8 @@ namespace PIE
                 addrSelector.Items.Add(start.ToString("X"));
             if (customStart != 0)
                 addrSelector.Items.Add(customStart.ToString("X"));
+            if (addrSelector.Text != "")
+                addrSelector.Text = lastStart.ToString("X");
         }
 
         //Displays the data
@@ -66,8 +77,9 @@ namespace PIE
             if (display == null)
                 display = displays["displayHexBox"] as HexBox;
             if (dataByteProvider == null)
-                setByteProvider();
+                SetByteProvider();
             display.ByteProvider = dataByteProvider;
+            display.LineInfoOffset = lastStart;
             display.Visible = true;
         }
 
@@ -82,6 +94,7 @@ namespace PIE
         //Hides the data
         public virtual void Hide()
         {
+            isChanged = dataByteProvider.HasChanges();
             display.ByteProvider = null;
             display.Visible = false;
         }
@@ -101,15 +114,54 @@ namespace PIE
             display.Copy();
         }
 
-        public void resize(long start, long end)
+        public virtual void Delete()
+        {
+            dataByteProvider.DeleteBytes(display.SelectionStart, display.SelectionLength);
+        }
+
+        public void Resize(TreeNode node, long start, long end)
         {
             this.start = start;
             this.end = end;
             size = (end - start) + 1;
             dataByteProvider = null;
+            
+            foreach (TreeNode t in node.Nodes)
+                resize(t, start, end);
+            for (int i = 0; i < node.Nodes.Count; ++i)
+            {
+                while (i < node.Nodes.Count && node.Nodes[i].Tag == null)
+                    node.Nodes[i].Remove();
+            }
         }
 
-        public virtual void save()
+        private void resize(TreeNode node, long start, long end)
+        {
+            Data current = node.Tag as Data;
+            long nStart = current.start;
+            long nEnd = current.end;
+            bool needsResizing = false;
+
+            if (current.end < start || current.start > end)
+                node.Tag = null;
+            else
+            {
+                if (current.start < start)
+                {
+                    nStart = start;
+                    needsResizing = true;
+                }
+                if (current.end > end)
+                {
+                    nEnd = end;
+                    needsResizing = true;
+                }
+                if (needsResizing)
+                    current.Resize(node, nStart, nEnd);
+            }
+        }
+
+        public virtual void Save()
         {
             DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
             IByteProvider tempParent = parentData.dataByteProvider;
@@ -138,7 +190,6 @@ namespace PIE
             {
                 currentData = d.Tag as Data;
 
-                //if they don't overlap, continue
                 if (start > currentData.end)
                     continue;
                 else if (end < currentData.start)

@@ -50,10 +50,12 @@ namespace PIE
             //change enable of copy and cut
             hexContextMenuStrip.Items["cutHexToolStripMenuItem"].Enabled = enableValue;
             hexContextMenuStrip.Items["copyHexToolStripMenuItem"].Enabled = enableValue;
+            hexContextMenuStrip.Items["deleteHexToolStripMenuItem"].Enabled = enableValue;
             standardToolStrip.Items["cutToolStripButton"].Enabled = enableValue;
             standardToolStrip.Items["copyToolStripButton"].Enabled = enableValue;
             editToolStripMenuItem.DropDownItems["cutToolStripMenuItem"].Enabled = enableValue;
             editToolStripMenuItem.DropDownItems["copyToolStripMenuItem"].Enabled = enableValue;
+            editToolStripMenuItem.DropDownItems["deleteToolStripMenuItem"].Enabled = enableValue;
             if (displayHexBox.CanPaste())
                 enablePaste();
         }
@@ -94,7 +96,7 @@ namespace PIE
             currentTreeNode = projectTreeView.SelectedNode;
             activeData = currentTreeNode.Tag as Data;
             activeData.Display(displayPanel.Controls);
-            activeData.fillAddresses(startAddrToolStripComboBox);
+            activeData.FillAddresses(startAddrToolStripComboBox);
         }
 
         private void enableItems()
@@ -114,10 +116,11 @@ namespace PIE
         private void enablePaste()
         {
             editToolStripMenuItem.DropDownItems["pasteToolStripMenuItem"].Enabled = true;
+            editToolStripMenuItem.DropDownItems["pasteOverToolStripMenuItem"].Enabled = true;
             hexContextMenuStrip.Items["pasteHexToolStripMenuItem"].Enabled = true;
+            hexContextMenuStrip.Items["pasteOverHexToolStripMenuItem"].Enabled = true;
             standardToolStrip.Items["pasteToolStripButton"].Enabled = true;
             standardToolStrip.Items["pasteOverToolStripButton"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["pasteOverToolStripMenuItem"].Enabled = true;
         }
 
         private void initializeProjectTree(string fileName)
@@ -166,7 +169,7 @@ namespace PIE
                 fileName = Path.GetFileNameWithoutExtension(filePath);
                 this.Text = "PIE - " + fileName;
                 initializeProjectTree(fileName);
-                activeData.fillAddresses(startAddrToolStripComboBox);
+                activeData.FillAddresses(startAddrToolStripComboBox);
                 hexContextMenuStrip.Enabled = true;
                 activeData.Display(displayPanel.Controls);
                 displayHexBox.ByteProvider = fileBytes;
@@ -315,14 +318,8 @@ namespace PIE
             {
                 if (n.Nodes.Count > 0)
                     saveChanges(n);
-                (n.Tag as Data).save();
+                (n.Tag as Data).Save();
             }
-        }
-
-        private void changeFontToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (hexFontDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                displayHexBox.Font = hexFontDialog.Font;
         }
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
@@ -330,7 +327,7 @@ namespace PIE
             displayData();
         }
 
-        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void deleteSliceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             deleteNode();
         }
@@ -369,7 +366,7 @@ namespace PIE
                 projectContextMenuStrip.Enabled = true;
                 foreach (ToolStripItem t in projectContextMenuStrip.Items)
                     t.Enabled = true;
-                if (e.Node == projectTreeView.Nodes[0])
+                if (e.Node.Parent == null)
                     projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
             }
         }
@@ -524,7 +521,21 @@ namespace PIE
             resizeForm.Location = this.DesktopLocation;
             resizeForm.Show();
             if (projectTreeView.SelectedNode == currentTreeNode)
+            {
                 (currentTreeNode.Tag as Data).Display(displayPanel.Controls);
+                activeData.FillAddresses(startAddrToolStripComboBox);
+            }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            activeData.Delete();
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OptionForm optionForm = new OptionForm(displayHexBox);
+            optionForm.Show();
         }
     }
 
