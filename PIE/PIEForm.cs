@@ -298,7 +298,6 @@ namespace PIE
                 if (lengthChanged)
                     (projectTreeView.Nodes[0].Tag as Data).Resize(projectTreeView.Nodes[0], 0, fileBytes.Length - 1);
                 saveChanges();
-                fileBytes.ApplyChanges();
                 this.Cursor = Cursors.Arrow;
                 this.Text = this.Text.TrimEnd(changed);
             }
@@ -338,7 +337,6 @@ namespace PIE
         {
             activeData.Save();
             propagateDown(currentTreeNode);
-            propagateUp(currentTreeNode);
         }
 
         private void propagateDown(TreeNode current)
@@ -349,15 +347,6 @@ namespace PIE
                     propagateDown(n);
                 (n.Tag as Data).invalidate();
                 n.Text = n.Text.TrimEnd(changed);
-            }
-        }
-
-        private void propagateUp(TreeNode current)
-        {
-            while (current != null)
-            {
-                current.Text = current.Text.TrimEnd(changed);
-                current = current.Parent;
             }
         }
 

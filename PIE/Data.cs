@@ -157,24 +157,37 @@ namespace PIE
             }
         }
 
+        //saves the data and propagates the data to the parent
         public virtual void Save()
         {
-            DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
-            IByteProvider tempParent = parentData.dataByteProvider;
-            Byte[] changes = temp.Bytes.ToArray();
-            if (temp != null && temp.HasChanges())
+            if (dataByteProvider.HasChanges())
             {
-                tempParent.DeleteBytes(start, size);
-                tempParent.InsertBytes(start, changes);
-                temp.ApplyChanges();
+                DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
+                
+                //if Data is the root, save the changes
+                if (temp == null)
+                    dataByteProvider.ApplyChanges();
+                //otherwise, propagate the changes up to the parent(s)
+                else
+                {
+                    Byte[] changes = temp.Bytes.ToArray(); //the changes
+                    Data parent = this.parentData; //the parent
+                    IByteProvider tempParent; //temporary parent data
+                    long currentStart = start; //the start address to insert at
+
+                    do
+                    {
+                        tempParent = parent.dataByteProvider;
+                        tempParent.DeleteBytes(currentStart, size);
+                        tempParent.InsertBytes(currentStart, changes);
+                        currentStart += parent.start;
+                        parent = parent.parentData;
+                    } while (parent != null);
+
+                    temp.ApplyChanges();
+                }
                 isChanged = false;
-                parentData.Save(start, changes);
             }
-        }
-
-        private virtual void Save(long start, Byte[] changes)
-        {
-
         }
 
         /*checks the Data object passed in against all nodes of the same tier
