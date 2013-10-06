@@ -49,6 +49,7 @@ namespace PIE
                 bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
             dataByteProvider = new DynamicByteProvider(bytes);
             dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
+            isChanged = false;
         }
 
         void dataByteProvider_LengthChanged(object sender, EventArgs e)
@@ -67,6 +68,7 @@ namespace PIE
                 addrSelector.Items.Add(start.ToString("X"));
             if (customStart != 0)
                 addrSelector.Items.Add(customStart.ToString("X"));
+            addrSelector.Items.Add(size.ToString("X"));
             if (addrSelector.Text != "")
                 addrSelector.Text = lastStart.ToString("X");
         }
@@ -124,7 +126,8 @@ namespace PIE
             this.start = start;
             this.end = end;
             size = (end - start) + 1;
-            dataByteProvider = null;
+            if (parentData != null)
+                dataByteProvider = null;
             
             foreach (TreeNode t in node.Nodes)
                 resize(t, start, end);
@@ -140,23 +143,16 @@ namespace PIE
             Data current = node.Tag as Data;
             long nStart = current.start;
             long nEnd = current.end;
-            bool needsResizing = false;
 
             if (current.end < start || current.start > end)
                 node.Tag = null;
             else
             {
                 if (current.start < start)
-                {
                     nStart = start;
-                    needsResizing = true;
-                }
                 if (current.end > end)
-                {
                     nEnd = end;
-                    needsResizing = true;
-                }
-                if (needsResizing)
+                if (nStart != current.start || nEnd != current.end)
                     current.Resize(node, nStart, nEnd);
             }
         }
@@ -165,11 +161,20 @@ namespace PIE
         {
             DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
             IByteProvider tempParent = parentData.dataByteProvider;
+            Byte[] changes = temp.Bytes.ToArray();
             if (temp != null && temp.HasChanges())
             {
                 tempParent.DeleteBytes(start, size);
-                tempParent.InsertBytes(start, temp.Bytes.ToArray());
+                tempParent.InsertBytes(start, changes);
+                temp.ApplyChanges();
+                isChanged = false;
+                parentData.Save(start, changes);
             }
+        }
+
+        private virtual void Save(long start, Byte[] changes)
+        {
+
         }
 
         /*checks the Data object passed in against all nodes of the same tier
@@ -198,6 +203,11 @@ namespace PIE
                     return true;
             }
             return false;
+        }
+
+        public void invalidate()
+        {
+            dataByteProvider = null;
         }
     }
 }

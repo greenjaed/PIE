@@ -36,11 +36,16 @@ namespace PIE
         FindForm search;
         //the name of the opened file
         string currentFileName;
+        //the character indicating the file/slice has changes
+        char[] changed;
+        //indicates if the size of the file has changed
+        bool lengthChanged;
 
         public PIEForm()
         {
             InitializeComponent();
             projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
+            changed = new char[] { '*' };
         }
 
         void changeEnable(bool enableValue)
@@ -92,11 +97,23 @@ namespace PIE
         private void displayData()
         {
             if (activeData != null && currentTreeNode.Tag != activeData)
+            {
+                activeData.dataByteProvider.Changed -= dataByteProvider_Changed;
                 activeData.Hide();
+            }
             currentTreeNode = projectTreeView.SelectedNode;
             activeData = currentTreeNode.Tag as Data;
             activeData.Display(displayPanel.Controls);
             activeData.FillAddresses(startAddrToolStripComboBox);
+            activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
+        }
+
+        void dataByteProvider_Changed(object sender, EventArgs e)
+        {
+            if (!currentTreeNode.Text.EndsWith("*"))
+                currentTreeNode.Text += "*";
+            if (!this.Text.EndsWith("*"))
+                this.Text += "*";
         }
 
         private void enableItems()
@@ -166,15 +183,22 @@ namespace PIE
                     MessageBox.Show("Error: could not open file: " + ex.Message);
                 }
 
+                fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
                 fileName = Path.GetFileNameWithoutExtension(filePath);
                 this.Text = "PIE - " + fileName;
                 initializeProjectTree(fileName);
                 activeData.FillAddresses(startAddrToolStripComboBox);
+                activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
                 hexContextMenuStrip.Enabled = true;
                 activeData.Display(displayPanel.Controls);
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
             }
+        }
+
+        void fileBytes_LengthChanged(object sender, EventArgs e)
+        {
+            lengthChanged = true;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -225,7 +249,7 @@ namespace PIE
 
         private void updatePosition()
         {
-            currentPosition = displayHexBox.CurrentLine * 0x10 + displayHexBox.CurrentPositionInLine;
+            currentPosition = displayHexBox.CurrentLine * displayHexBox.BytesPerLine + displayHexBox.CurrentPositionInLine;
             statusStrip.Items["positionToolStripStatusLabel"].Text = currentPosition.ToString("X");
             if (isSelecting)
                 statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (currentPosition + displayHexBox.SelectionLength).ToString("X");
@@ -271,9 +295,12 @@ namespace PIE
             try
             {
                 this.Cursor = Cursors.WaitCursor;
+                if (lengthChanged)
+                    (projectTreeView.Nodes[0].Tag as Data).Resize(projectTreeView.Nodes[0], 0, fileBytes.Length - 1);
                 saveChanges();
                 fileBytes.ApplyChanges();
                 this.Cursor = Cursors.Arrow;
+                this.Text = this.Text.TrimEnd(changed);
             }
             catch (Exception ex)
             {
@@ -290,7 +317,7 @@ namespace PIE
         private void performSearch()
         {
             search = new FindForm(displayHexBox);
-            search.Location = this.DesktopLocation;
+            search.Owner = this;
             search.Show(this);
         }
 
@@ -309,16 +336,28 @@ namespace PIE
 
         private void saveChanges()
         {
-            saveChanges(projectTreeView.Nodes[0]);
+            activeData.Save();
+            propagateDown(currentTreeNode);
+            propagateUp(currentTreeNode);
         }
 
-        private void saveChanges(TreeNode current)
+        private void propagateDown(TreeNode current)
         {
             foreach (TreeNode n in current.Nodes)
             {
                 if (n.Nodes.Count > 0)
-                    saveChanges(n);
-                (n.Tag as Data).Save();
+                    propagateDown(n);
+                (n.Tag as Data).invalidate();
+                n.Text = n.Text.TrimEnd(changed);
+            }
+        }
+
+        private void propagateUp(TreeNode current)
+        {
+            while (current != null)
+            {
+                current.Text = current.Text.TrimEnd(changed);
+                current = current.Parent;
             }
         }
 
@@ -366,9 +405,11 @@ namespace PIE
                 projectContextMenuStrip.Enabled = true;
                 foreach (ToolStripItem t in projectContextMenuStrip.Items)
                     t.Enabled = true;
-                if (e.Node.Parent == null)
-                    projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
             }
+            if (e.Node.Parent == null)
+                projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
+            else
+                projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = true;
         }
 
         private void projectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -426,7 +467,6 @@ namespace PIE
         {
             SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
             sliceForm.Owner = this;
-            sliceForm.Location = this.DesktopLocation;
             sliceForm.Show();
         }
 
@@ -518,7 +558,7 @@ namespace PIE
         private void resizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ResizeForm resizeForm = new ResizeForm(projectTreeView.SelectedNode);
-            resizeForm.Location = this.DesktopLocation;
+            resizeForm.Owner = this;
             resizeForm.Show();
             if (projectTreeView.SelectedNode == currentTreeNode)
             {
@@ -535,6 +575,7 @@ namespace PIE
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OptionForm optionForm = new OptionForm(displayHexBox);
+            optionForm.Owner = this;
             optionForm.Show();
         }
     }

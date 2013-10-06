@@ -29,19 +29,15 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupSizeMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.separatorCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.bytesMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.hexCaseComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.lineCheckBox = new System.Windows.Forms.CheckBox();
-            this.columnCheckBox = new System.Windows.Forms.CheckBox();
             this.charCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.invertButton = new System.Windows.Forms.Button();
             this.changeButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.backColorButton = new System.Windows.Forms.Button();
@@ -55,7 +51,6 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -71,7 +66,6 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox3);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
             // 
@@ -79,50 +73,9 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.cancelButton);
             this.splitContainer1.Panel2.Controls.Add(this.okButton);
-            this.splitContainer1.Size = new System.Drawing.Size(349, 318);
-            this.splitContainer1.SplitterDistance = 280;
-            this.splitContainer1.SplitterWidth = 1;
+            this.splitContainer1.Size = new System.Drawing.Size(349, 253);
+            this.splitContainer1.SplitterDistance = 202;
             this.splitContainer1.TabIndex = 0;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.groupSizeMaskedTextBox);
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Controls.Add(this.separatorCheckBox);
-            this.groupBox3.Location = new System.Drawing.Point(13, 216);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(325, 51);
-            this.groupBox3.TabIndex = 8;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Grouping";
-            // 
-            // groupSizeMaskedTextBox
-            // 
-            this.groupSizeMaskedTextBox.Location = new System.Drawing.Point(246, 18);
-            this.groupSizeMaskedTextBox.Mask = "999";
-            this.groupSizeMaskedTextBox.Name = "groupSizeMaskedTextBox";
-            this.groupSizeMaskedTextBox.PromptChar = ' ';
-            this.groupSizeMaskedTextBox.Size = new System.Drawing.Size(66, 20);
-            this.groupSizeMaskedTextBox.TabIndex = 6;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(172, 21);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(59, 13);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Group Size";
-            // 
-            // separatorCheckBox
-            // 
-            this.separatorCheckBox.AutoSize = true;
-            this.separatorCheckBox.Location = new System.Drawing.Point(7, 20);
-            this.separatorCheckBox.Name = "separatorCheckBox";
-            this.separatorCheckBox.Size = new System.Drawing.Size(102, 17);
-            this.separatorCheckBox.TabIndex = 0;
-            this.separatorCheckBox.Text = "Show Separator";
-            this.separatorCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -131,11 +84,10 @@
             this.groupBox2.Controls.Add(this.hexCaseComboBox);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.lineCheckBox);
-            this.groupBox2.Controls.Add(this.columnCheckBox);
             this.groupBox2.Controls.Add(this.charCheckBox);
             this.groupBox2.Location = new System.Drawing.Point(12, 113);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(326, 97);
+            this.groupBox2.Size = new System.Drawing.Size(326, 80);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Display";
@@ -182,22 +134,12 @@
             // lineCheckBox
             // 
             this.lineCheckBox.AutoSize = true;
-            this.lineCheckBox.Location = new System.Drawing.Point(7, 67);
+            this.lineCheckBox.Location = new System.Drawing.Point(7, 48);
             this.lineCheckBox.Name = "lineCheckBox";
             this.lineCheckBox.Size = new System.Drawing.Size(87, 17);
             this.lineCheckBox.TabIndex = 2;
             this.lineCheckBox.Text = "Line Address";
             this.lineCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // columnCheckBox
-            // 
-            this.columnCheckBox.AutoSize = true;
-            this.columnCheckBox.Location = new System.Drawing.Point(7, 43);
-            this.columnCheckBox.Name = "columnCheckBox";
-            this.columnCheckBox.Size = new System.Drawing.Size(102, 17);
-            this.columnCheckBox.TabIndex = 1;
-            this.columnCheckBox.Text = "Column Address";
-            this.columnCheckBox.UseVisualStyleBackColor = true;
             // 
             // charCheckBox
             // 
@@ -211,6 +153,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.invertButton);
             this.groupBox1.Controls.Add(this.changeButton);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.backColorButton);
@@ -223,13 +166,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Font and Color";
             // 
+            // invertButton
+            // 
+            this.invertButton.Location = new System.Drawing.Point(238, 51);
+            this.invertButton.Name = "invertButton";
+            this.invertButton.Size = new System.Drawing.Size(75, 23);
+            this.invertButton.TabIndex = 7;
+            this.invertButton.Text = "Invert";
+            this.invertButton.UseVisualStyleBackColor = true;
+            this.invertButton.Click += new System.EventHandler(this.invertButton_Click);
+            // 
             // changeButton
             // 
             this.changeButton.Location = new System.Drawing.Point(238, 22);
             this.changeButton.Name = "changeButton";
             this.changeButton.Size = new System.Drawing.Size(75, 23);
             this.changeButton.TabIndex = 6;
-            this.changeButton.Text = "Change";
+            this.changeButton.Text = "Change...";
             this.changeButton.UseVisualStyleBackColor = true;
             this.changeButton.Click += new System.EventHandler(this.changeButton_Click);
             // 
@@ -272,7 +225,8 @@
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(263, 3);
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(262, 7);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 1;
@@ -282,7 +236,7 @@
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(182, 3);
+            this.okButton.Location = new System.Drawing.Point(181, 7);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 0;
@@ -305,17 +259,16 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(349, 318);
+            this.ClientSize = new System.Drawing.Size(349, 253);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "OptionForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Options";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -338,17 +291,13 @@
         private System.Windows.Forms.FontDialog fontDialog1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox columnCheckBox;
         private System.Windows.Forms.CheckBox charCheckBox;
         private System.Windows.Forms.CheckBox lineCheckBox;
         private System.Windows.Forms.Button changeButton;
         private System.Windows.Forms.ComboBox hexCaseComboBox;
         private System.Windows.Forms.MaskedTextBox bytesMaskedTextBox;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.MaskedTextBox groupSizeMaskedTextBox;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.CheckBox separatorCheckBox;
+        private System.Windows.Forms.Button invertButton;
 
 
     }

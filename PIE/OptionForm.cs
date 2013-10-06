@@ -32,18 +32,16 @@ namespace PIE
             fontTextBox.Text = hexBox.Font.Name + ", " + hexBox.Font.Size.ToString() + " pt";
             backColorButton.BackColor = hexBox.BackColor;
             charCheckBox.Checked = hexBox.StringViewVisible;
-            columnCheckBox.Checked = hexBox.ColumnInfoVisible;
             lineCheckBox.Checked = hexBox.LineInfoVisible;
             hexCaseComboBox.SelectedIndex = hexBox.HexCasing == HexCasing.Lower ? 0 : 1;
             bytesMaskedTextBox.Text = hexBox.BytesPerLine.ToString();
-            separatorCheckBox.Checked = hexBox.GroupSeparatorVisible;
-            groupSizeMaskedTextBox.Text = hexBox.GroupSize.ToString();
-            fontDialog1.Font = hexBox.Font;
-            fontDialog1.Color = hexBox.ForeColor;
         }
 
         private void changeButton_Click(object sender, EventArgs e)
         {
+            fontDialog1.Font = fontTextBox.Font;
+            fontDialog1.Color = fontTextBox.ForeColor;
+
             if (fontDialog1.ShowDialog() == DialogResult.OK)
             {
                 fontTextBox.ForeColor = fontDialog1.Color;
@@ -73,17 +71,21 @@ namespace PIE
             hexBox.Font = fontTextBox.Font;
             hexBox.BackColor = backColorButton.BackColor;
             hexBox.StringViewVisible = charCheckBox.Checked;
-            hexBox.ColumnInfoVisible = columnCheckBox.Checked;
             hexBox.LineInfoVisible = lineCheckBox.Checked;
             hexBox.HexCasing = hexCaseComboBox.SelectedIndex == 0 ? HexCasing.Lower : HexCasing.Upper;
             hexBox.BytesPerLine = int.Parse(bytesMaskedTextBox.Text);
-            hexBox.GroupSeparatorVisible = separatorCheckBox.Checked;
-            hexBox.GroupSize = int.Parse(groupSizeMaskedTextBox.Text);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void invertButton_Click(object sender, EventArgs e)
+        {
+            Color temp = fontTextBox.ForeColor;
+            fontTextBox.ForeColor = fontTextBox.BackColor;
+            fontTextBox.BackColor = temp;
         }
     }
 }
