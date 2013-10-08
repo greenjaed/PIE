@@ -74,7 +74,8 @@ when resizing, resize all subnodes (done)
 implement a way to indicate when a slice has been altered
  implement a way to save and resize subslices from main file(done)
  implement a way to propagate changes downward (done)
- implement a way to propagate changes upward
+ implement a way to propagate changes upward (done)
+sort out how to handle saving with the slice hierarchy
 create a way of updating other slices when editing a slice
 get a project file format up and running
 expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc) (done)

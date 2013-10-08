@@ -67,12 +67,13 @@ namespace PIE
 
         private bool closeProject()
         {
-            if (fileBytes.HasChanges())
+            if (anyChanges(projectTreeView.Nodes[0]))
             {
                 DialogResult result = MessageBox.Show("Apply changes before closing?", "PIE", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (result == System.Windows.Forms.DialogResult.Yes)
                 {
-                    saveFile();
+                    saveAllChanges();
+                    saveFile(true);
                     displayHexBox.ByteProvider = null;
                     fileBytes.Dispose();
                 }
@@ -80,6 +81,18 @@ namespace PIE
                     return false;
             }
             return true;
+        }
+
+        private bool anyChanges(TreeNode current)
+        {
+            foreach (TreeNode t in current.Nodes)
+            {
+                if (!anyChanges(t))
+                    continue;
+                else
+                    return true;
+            }
+            return (current.Tag as Data).isChanged;
         }
 
         private void copy()
@@ -282,7 +295,10 @@ namespace PIE
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFile();
+            if (currentTreeNode.Parent == null)
+                saveFile(false);
+            else
+                saveChanges(false);
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -290,14 +306,14 @@ namespace PIE
             openFile();
         }
 
-        private void saveFile()
+        private void saveFile(bool isClosing)
         {
             try
             {
                 this.Cursor = Cursors.WaitCursor;
                 if (lengthChanged)
                     (projectTreeView.Nodes[0].Tag as Data).Resize(projectTreeView.Nodes[0], 0, fileBytes.Length - 1);
-                saveChanges();
+                saveChanges(isClosing);
                 this.Cursor = Cursors.Arrow;
                 this.Text = this.Text.TrimEnd(changed);
             }
@@ -333,10 +349,36 @@ namespace PIE
                 search.search();
         }
 
-        private void saveChanges()
+        private void saveChanges(bool isClosing)
         {
             activeData.Save();
-            propagateDown(currentTreeNode);
+            if (!isClosing)
+            {
+                propagateDown(currentTreeNode);
+                currentTreeNode.Text.TrimEnd(changed);
+            }
+        }
+
+        private void saveAllChanges()
+        {
+            saveAllChanges(projectTreeView.Nodes[0]);
+        }
+
+        private void saveAllChanges(TreeNode current)
+        {
+            foreach (TreeNode t in current.Nodes)
+            {
+                if (t.Nodes.Count > 0)
+                {
+                    Data currentData = t.Tag as Data;
+                    bool needsSaving = currentData.isChanged;
+                    saveAllChanges(t);
+                    if (needsSaving)
+                        currentData.Save();
+                }
+                else
+                    (t.Tag as Data).Save();
+            }
         }
 
         private void propagateDown(TreeNode current)
@@ -419,6 +461,22 @@ namespace PIE
 
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (activeData.dataByteProvider.HasChanges() &&
+                MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                if (currentTreeNode.Parent == null)
+                {
+                    fileBytes.Dispose();
+                    fileBytes = new DynamicFileByteProvider(filePath);
+                    displayHexBox.ByteProvider = fileBytes;
+                }
+                else
+                {
+                    activeData.invalidate();
+                    activeData.Display(displayPanel.Controls);
+                }
+            }
+
             if (fileBytes.HasChanges() && MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 fileBytes.Dispose();

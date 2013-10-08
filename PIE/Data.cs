@@ -18,7 +18,16 @@ namespace PIE
         public long size { get; protected set; }
         public long end { get; protected set; }
         public IByteProvider dataByteProvider { get; protected set; }
-        public bool isChanged { get; protected set; }
+        public bool isChanged
+        {
+            get
+            {
+                if (dataByteProvider != null)
+                    return dataByteProvider.HasChanges();
+                else
+                    return false;
+            }
+        }
         protected HexBox display;
 
         public Data(DynamicFileByteProvider fileByteProvider)
@@ -49,7 +58,6 @@ namespace PIE
                 bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
             dataByteProvider = new DynamicByteProvider(bytes);
             dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
-            isChanged = false;
         }
 
         void dataByteProvider_LengthChanged(object sender, EventArgs e)
@@ -96,7 +104,6 @@ namespace PIE
         //Hides the data
         public virtual void Hide()
         {
-            isChanged = dataByteProvider.HasChanges();
             display.ByteProvider = null;
             display.Visible = false;
         }
@@ -157,8 +164,13 @@ namespace PIE
             }
         }
 
-        //saves the data and propagates the data to the parent
         public virtual void Save()
+        {
+            Save(true);
+        }
+
+        //saves the data and propagates the data to the parent
+        public virtual void Save(bool propagateUp)
         {
             if (dataByteProvider.HasChanges())
             {
@@ -170,24 +182,34 @@ namespace PIE
                 //otherwise, propagate the changes up to the parent(s)
                 else
                 {
-                    Byte[] changes = temp.Bytes.ToArray(); //the changes
-                    Data parent = this.parentData; //the parent
-                    IByteProvider tempParent; //temporary parent data
-                    long currentStart = start; //the start address to insert at
-
-                    do
+                    if (propagateUp)
+                        SaveUp(temp);
+                    else
                     {
-                        tempParent = parent.dataByteProvider;
-                        tempParent.DeleteBytes(currentStart, size);
-                        tempParent.InsertBytes(currentStart, changes);
-                        currentStart += parent.start;
-                        parent = parent.parentData;
-                    } while (parent != null);
-
-                    temp.ApplyChanges();
+                        parentData.dataByteProvider.DeleteBytes(start, size);
+                        parentData.dataByteProvider.InsertBytes(start, temp.Bytes.ToArray());
+                    }
                 }
-                isChanged = false;
             }
+        }
+
+        private void SaveUp(DynamicByteProvider temp)
+        {
+            Byte[] changes = temp.Bytes.ToArray(); //the changes
+            Data parent = this.parentData; //the parent
+            IByteProvider tempParent; //temporary parent data
+            long currentStart = start; //the start address to insert at
+
+            do
+            {
+                tempParent = parent.dataByteProvider;
+                tempParent.DeleteBytes(currentStart, size);
+                tempParent.InsertBytes(currentStart, changes);
+                currentStart += parent.start;
+                parent = parent.parentData;
+            } while (parent != null);
+
+            temp.ApplyChanges();
         }
 
         /*checks the Data object passed in against all nodes of the same tier
