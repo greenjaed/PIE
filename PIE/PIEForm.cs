@@ -125,8 +125,6 @@ namespace PIE
         {
             if (!currentTreeNode.Text.EndsWith("*"))
                 currentTreeNode.Text += "*";
-            if (!this.Text.EndsWith("*"))
-                this.Text += "*";
         }
 
         private void enableItems()
@@ -137,6 +135,7 @@ namespace PIE
             fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = true;
             fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = true;
             fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = true;
+            fileToolStripMenuItem.DropDownItems["saveAllToolStripMenuItem"].Enabled = true;
             standardToolStrip.Items["saveToolStripButton"].Enabled = true;
             hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = true;
             startAddrToolStripComboBox.Enabled = true;
@@ -197,6 +196,7 @@ namespace PIE
                 }
 
                 fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
+                fileBytes.Changed += new EventHandler(fileBytes_Changed);
                 fileName = Path.GetFileNameWithoutExtension(filePath);
                 this.Text = "PIE - " + fileName;
                 initializeProjectTree(fileName);
@@ -207,6 +207,12 @@ namespace PIE
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
             }
+        }
+
+        void fileBytes_Changed(object sender, EventArgs e)
+        {
+            if (!this.Text.EndsWith("*"))
+                this.Text += "*";
         }
 
         void fileBytes_LengthChanged(object sender, EventArgs e)
@@ -354,8 +360,11 @@ namespace PIE
             activeData.Save();
             if (!isClosing)
             {
+                bool hadChanges = fileBytes.HasChanges();
                 propagateDown(currentTreeNode);
-                currentTreeNode.Text.TrimEnd(changed);
+                currentTreeNode.Text = currentTreeNode.Text.TrimEnd(changed);
+                if (!hadChanges)
+                    this.Text = this.Text.TrimEnd(changed);
             }
         }
 
@@ -369,16 +378,11 @@ namespace PIE
             foreach (TreeNode t in current.Nodes)
             {
                 if (t.Nodes.Count > 0)
-                {
-                    Data currentData = t.Tag as Data;
-                    bool needsSaving = currentData.isChanged;
                     saveAllChanges(t);
-                    if (needsSaving)
-                        currentData.Save();
-                }
-                else
-                    (t.Tag as Data).Save();
+                (t.Tag as Data).Save(false);
+                t.Text.TrimEnd(changed);
             }
+            this.Text = this.Text.TrimEnd(changed);
         }
 
         private void propagateDown(TreeNode current)
@@ -624,6 +628,11 @@ namespace PIE
             OptionForm optionForm = new OptionForm(displayHexBox);
             optionForm.Owner = this;
             optionForm.Show();
+        }
+
+        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            saveAllChanges();
         }
     }
 

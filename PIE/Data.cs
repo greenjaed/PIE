@@ -199,12 +199,17 @@ namespace PIE
             Data parent = this.parentData; //the parent
             IByteProvider tempParent; //temporary parent data
             long currentStart = start; //the start address to insert at
+            bool hadChanges;
 
             do
             {
+                hadChanges = parent.isChanged;
                 tempParent = parent.dataByteProvider;
                 tempParent.DeleteBytes(currentStart, size);
                 tempParent.InsertBytes(currentStart, changes);
+                //if the only changes were those that occurred when inserting the new data, apply them
+                if (!hadChanges)
+                    parent.dataByteProvider.ApplyChanges();
                 currentStart += parent.start;
                 parent = parent.parentData;
             } while (parent != null);
