@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
+using System.Xml;
 using Be.Windows.Forms;
 
 namespace PIE
@@ -37,7 +38,7 @@ namespace PIE
         //the name of the opened file
         string currentFileName;
         //the character indicating the file/slice has changes
-        char[] changed;
+        static char[] changed = new char[] { '*' };
         //indicates if the size of the file has changed
         bool lengthChanged;
 
@@ -45,7 +46,6 @@ namespace PIE
         {
             InitializeComponent();
             projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
-            changed = new char[] { '*' };
         }
 
         void changeEnable(bool enableValue)
@@ -116,7 +116,7 @@ namespace PIE
             }
             currentTreeNode = projectTreeView.SelectedNode;
             activeData = currentTreeNode.Tag as Data;
-            activeData.Display(displayPanel.Controls);
+            activeData.Display();
             activeData.FillAddresses(startAddrToolStripComboBox);
             activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
         }
@@ -203,7 +203,8 @@ namespace PIE
                 activeData.FillAddresses(startAddrToolStripComboBox);
                 activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
                 hexContextMenuStrip.Enabled = true;
-                activeData.Display(displayPanel.Controls);
+                activeData.display = displayHexBox;
+                activeData.Display();
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
             }
@@ -418,7 +419,7 @@ namespace PIE
                 if (projectTreeView.SelectedNode == currentTreeNode)
                 {
                     activeData.Hide();
-                    (projectTreeView.SelectedNode.Parent.Tag as Data).Display(displayPanel.Controls);
+                    (projectTreeView.SelectedNode.Parent.Tag as Data).Display();
                     currentTreeNode = projectTreeView.SelectedNode.Parent;
                 }
                 projectTreeView.SelectedNode.Remove();
@@ -477,7 +478,7 @@ namespace PIE
                 else
                 {
                     activeData.invalidate();
-                    activeData.Display(displayPanel.Controls);
+                    activeData.Display();
                 }
             }
 
@@ -613,7 +614,7 @@ namespace PIE
             resizeForm.Show();
             if (projectTreeView.SelectedNode == currentTreeNode)
             {
-                (currentTreeNode.Tag as Data).Display(displayPanel.Controls);
+                (currentTreeNode.Tag as Data).Display();
                 activeData.FillAddresses(startAddrToolStripComboBox);
             }
         }
@@ -633,6 +634,17 @@ namespace PIE
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             saveAllChanges();
+        }
+
+        private void saveProject()
+        {
+            //open a new xmltextwriter "[file name].pie"
+            //start an attribute ("PIEForm")
+            //save filePath, idIndex, currentFileName and end attribute
+            //start attribute (projectTreeView.Nodes[0].Name)
+            //for each node, save the name and text (recursive call in a different function)
+            //serialize the Tag as Data
+            //end attribute
         }
     }
 

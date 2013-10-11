@@ -62,6 +62,7 @@ namespace PIE
         private void okButton_Click(object sender, EventArgs e)
         {
             recordChanges();
+            //save the changes to a configuration file
             this.Close();
         }
 

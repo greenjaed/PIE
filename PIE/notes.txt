@@ -76,25 +76,21 @@ implement a way to indicate when a slice has been altered
  implement a way to propagate changes downward (done)
  implement a way to propagate changes upward (done)
 sort out how to handle saving with the slice hierarchy (done)
-create a way of updating other slices when editing a slice
+create a way of updating other slices when editing a slice (done)
 get a project file format up and running
 expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc) (done)
  hexbox properties to expose:
   Font
   ForeColor/Font Color
   Backcolor
-  Address Color?
+  Address Color? - doesn't work
   Character Mapping (enable/disable)
-  Column Address (enable/disable)
+  Column Address (enable/disable) - doesn't work
   Line Address (enable/disable)
   Hex casing (upper/lower)
   Bytes per line
-  Group Separator (enable/disable)
-  Group Size
-
-stretch:
-create an insert mode where, starting at a certain point, bytes get overwritten when inserting:
-  01 02 03 | 04 05 + 00 = 00 01 02 | 04 05
+  Group Separator (enable/disable) - doesn't work
+  Group Size - doesn't work
 
 what to save?
  project

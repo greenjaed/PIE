@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 using Be.Windows.Forms;
 
 namespace PIE
@@ -17,18 +18,15 @@ namespace PIE
         public long start { get; protected set; }
         public long size { get; protected set; }
         public long end { get; protected set; }
+        [XmlIgnore]
         public IByteProvider dataByteProvider { get; protected set; }
+        [XmlIgnore]
         public bool isChanged
         {
-            get
-            {
-                if (dataByteProvider != null)
-                    return dataByteProvider.HasChanges();
-                else
-                    return false;
-            }
+            get { return dataByteProvider != null ? dataByteProvider.HasChanges() : false; }
         }
-        protected HexBox display;
+        [XmlIgnore]
+        public HexBox display { protected get; set; }
 
         public Data(DynamicFileByteProvider fileByteProvider)
         {
@@ -82,10 +80,8 @@ namespace PIE
         }
 
         //Displays the data
-        public virtual void Display(Control.ControlCollection displays)
+        public virtual void Display()
         {
-            if (display == null)
-                display = displays["displayHexBox"] as HexBox;
             if (dataByteProvider == null)
                 SetByteProvider();
             display.ByteProvider = dataByteProvider;
