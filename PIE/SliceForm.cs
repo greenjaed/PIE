@@ -11,12 +11,9 @@ using Be.Windows.Forms;
 
 namespace PIE
 {
-    public partial class SliceForm : Form
+    public partial class SliceForm : ResizeForm
     {
         private Data dataSource;
-        public TreeNode dataNode { get; set; }
-        private long start;
-        private long end;
         private long size;
         private int baseSize;
 
@@ -25,11 +22,14 @@ namespace PIE
             InitializeComponent();
         }
 
-        public SliceForm(TreeNode dataNode)
+        public SliceForm(TreeNode node) : base()
         {
             InitializeComponent();
-            this.dataNode = dataNode;
-            dataSource = dataNode.Tag as Data;
+            this.node = node;
+            dataSource = node.Tag as Data;
+            okButton.Click -= okButton_Click;
+            okButton.Click += new EventHandler(sliceButton_Click);
+            okButton.Text = "Slice";
         }
 
         private void calculateSize()
@@ -46,7 +46,7 @@ namespace PIE
             subnode.Text = "block " + name.ToString("X");
             Data subslice = new Data(dataSource, position, size);
             subnode.Tag = subslice;
-            dataNode.Nodes.Add(subnode);
+            node.Nodes.Add(subnode);
         }
 
         private void slice()
@@ -76,7 +76,7 @@ namespace PIE
             Data current;
             int delIndex = 0;
             
-            foreach (TreeNode t in dataNode.Nodes)
+            foreach (TreeNode t in node.Nodes)
             {
                 current = t.Tag as Data;
                 if (current.end < start)
@@ -84,8 +84,8 @@ namespace PIE
                 delIndex = t.Index;
                 break;
             }
-            while (dataNode.Nodes.Count > delIndex)
-                dataNode.Nodes[delIndex].Remove();
+            while (node.Nodes.Count > delIndex)
+                node.Nodes[delIndex].Remove();
         }
 
         private long validateString(string toCheck)
@@ -107,27 +107,6 @@ namespace PIE
         private void bytesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             calculateSize();
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void endTextBox_Validating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                if ((end = validateString(endTextBox.Text)) == 0)
-                    throw new Exception("End address must be greater than zero");
-                if (start >= end)
-                    throw new Exception("End address must be greater than start address");
-                errorProvider1.SetError(endTextBox, "");
-            }
-            catch (Exception ex)
-            {
-                errorProvider1.SetError(endTextBox, ex.Message);
-            }
         }
 
         private void sizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -153,18 +132,12 @@ namespace PIE
         {
             try
             {
-                if (errorProvider1.GetError(startTextBox) != "")
-                    throw new Exception(errorProvider1.GetError(startTextBox));
-                if (startTextBox.Text == "")
-                    throw new Exception("No start address specified");
+                checkStart();
                 if (!AdvancedCheckBox.Checked)
                 {
-                    if (errorProvider1.GetError(endTextBox) != "")
-                        throw new Exception(errorProvider1.GetError(endTextBox));
-                    if (endTextBox.Text == "")
-                        throw new Exception("No end address specified");
+                    checkEnd();
                     size = 1 + end - start;
-                    if (Data.IsTaken(dataNode, start, end))
+                    if (Data.IsTaken(node, start, end))
                         throw new Exception(Properties.Resources.overlapString);
                 }
                 else
@@ -180,7 +153,7 @@ namespace PIE
                             DialogResult.Cancel)
                             return;
                     }
-                    else if (Data.IsTaken(dataNode, start, end))
+                    else if (Data.IsTaken(node, start, end))
                         throw new Exception(Properties.Resources.overlapString);
                 }
                 this.Cursor = Cursors.WaitCursor;
@@ -192,19 +165,6 @@ namespace PIE
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message, "Slice", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void startTextBox_Validating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                start = validateString(startTextBox.Text);
-                errorProvider1.SetError(startTextBox, "");
-            }
-            catch (Exception ex)
-            {
-                errorProvider1.SetError(startTextBox, ex.Message);
             }
         }
     }

@@ -12,20 +12,20 @@ namespace PIE
 {
     public partial class ResizeForm : Form
     {
-        long start;
-        long end;
-        TreeNode toResize;
+        protected long start;
+        protected long end;
+        protected TreeNode node;
 
         public ResizeForm()
         {
             InitializeComponent();
         }
 
-        public ResizeForm(TreeNode toResize)
+        public ResizeForm(TreeNode node)
         {
             InitializeComponent();
-            this.toResize = toResize;
-            Data nodeData = toResize.Tag as Data;
+            this.node = node;
+            Data nodeData = node.Tag as Data;
             startTextBox.Text = nodeData.start.ToString("X");
             endTextBox.Text = nodeData.end.ToString("X");
             start = nodeData.start;
@@ -65,26 +65,24 @@ namespace PIE
 
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        protected virtual void okButton_Click(object sender, EventArgs e)
         {
-            Data wrongSize = toResize.Tag as Data;
-            TreeNode parent = toResize.Parent;
-            int nodeIndex = toResize.Index;
+            Data wrongSize = node.Tag as Data;
+            TreeNode parent = node.Parent;
+            int nodeIndex = node.Index;
             bool valid;
 
             try
             {
-                if (errorProvider1.GetError(startTextBox) != "")
-                    throw new Exception(errorProvider1.GetError(startTextBox));
-                if (errorProvider1.GetError(endTextBox) != "")
-                    throw new Exception(errorProvider1.GetError(endTextBox));
-                toResize.Remove();
+                checkStart();
+                checkEnd();
+                node.Remove();
                 if (Data.IsTaken(parent, start, end))
                     throw new Exception(Properties.Resources.overlapString);
-                if (toResize.Nodes.Count > 0 &&
+                if (node.Nodes.Count > 0 &&
                     MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                     return;
-                wrongSize.Resize(toResize, start, end);
+                wrongSize.Resize(node, start, end);
                 valid = true;
             }
             catch (Exception ex)
@@ -94,11 +92,27 @@ namespace PIE
             }
             finally
             {
-                parent.Nodes.Insert(nodeIndex, toResize);
+                parent.Nodes.Insert(nodeIndex, node);
             }
 
             if (valid)
                 this.Close();
+        }
+
+        protected void checkEnd()
+        {
+            if (errorProvider1.GetError(endTextBox) != "")
+                throw new Exception(errorProvider1.GetError(endTextBox));
+            if (endTextBox.Text == "")
+                throw new Exception("No end address specified");
+        }
+
+        protected void checkStart()
+        {
+            if (errorProvider1.GetError(startTextBox) != "")
+                throw new Exception(errorProvider1.GetError(startTextBox));
+            if (startTextBox.Text == "")
+                throw new Exception("No start address specified");
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
