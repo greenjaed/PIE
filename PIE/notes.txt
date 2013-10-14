@@ -67,6 +67,8 @@ program features
  ability to change font
 
 todo:
+add slice cloning
+improve memory usage (done)
 when editing, ensure slice size remains static (done)
 ensure that no overlap occurs when slicing (done)
 allow the user to change the starting address (done)

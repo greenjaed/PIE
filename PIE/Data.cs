@@ -26,7 +26,7 @@ namespace PIE
             get { return dataByteProvider != null ? dataByteProvider.HasChanges() : false; }
         }
         [XmlIgnore]
-        public HexBox display { protected get; set; }
+        public HexBox display { get; set; }
 
         public Data(DynamicFileByteProvider fileByteProvider)
         {
@@ -44,21 +44,45 @@ namespace PIE
             lastStart = start;
         }
 
+        //updates the main slice ONLY
+        public void updateMainSlice(DynamicFileByteProvider fileByteProvider)
+        {
+            if (parentData == null)
+                dataByteProvider = fileByteProvider;
+        }
+
+        private byte[] getBytes(long start, long size)
+        {
+            if (dataByteProvider != null)
+            {
+                byte[] bytes = new byte[size];
+
+                for (int i = 0; i < size; ++i)
+                    bytes[i] = dataByteProvider.ReadByte(start + i);
+                return bytes;
+            }
+            else
+                return parentData.getBytes(start + this.start, size);
+        }
+
+        private void setBytes(long start, byte[] toInsert)
+        {
+            if (dataByteProvider != null)
+            {
+                dataByteProvider.DeleteBytes(start, toInsert.Length);
+                dataByteProvider.InsertBytes(start, toInsert);
+            }
+            else
+                parentData.setBytes(start + this.start, toInsert);
+        }
+
         private void SetByteProvider()
         {
-            List<Byte> bytes = new List<byte>();
-
-            //can happen if a project file has just been opened
-            if (parentData.dataByteProvider == null)
-                parentData.SetByteProvider();
-
-            for (int i = 0; i < size; ++i)
-                bytes.Add(parentData.dataByteProvider.ReadByte(start + i));
-            dataByteProvider = new DynamicByteProvider(bytes);
+            dataByteProvider = new DynamicByteProvider(parentData.getBytes(start, size));
             dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
         }
 
-        void dataByteProvider_LengthChanged(object sender, EventArgs e)
+        protected void dataByteProvider_LengthChanged(object sender, EventArgs e)
         {
             if (dataByteProvider.Length > size)
                 dataByteProvider.DeleteBytes(size, dataByteProvider.Length - size);
@@ -181,10 +205,7 @@ namespace PIE
                     if (propagateUp)
                         SaveUp(temp);
                     else
-                    {
-                        parentData.dataByteProvider.DeleteBytes(start, size);
-                        parentData.dataByteProvider.InsertBytes(start, temp.Bytes.ToArray());
-                    }
+                        parentData.setBytes(start, temp.Bytes.ToArray());
                 }
             }
         }
@@ -199,13 +220,16 @@ namespace PIE
 
             do
             {
-                hadChanges = parent.isChanged;
                 tempParent = parent.dataByteProvider;
-                tempParent.DeleteBytes(currentStart, size);
-                tempParent.InsertBytes(currentStart, changes);
-                //if the only changes were those that occurred when inserting the new data, apply them
-                if (!hadChanges)
-                    parent.dataByteProvider.ApplyChanges();
+                if (tempParent != null)
+                {
+                    hadChanges = parent.isChanged;
+                    tempParent.DeleteBytes(currentStart, size);
+                    tempParent.InsertBytes(currentStart, changes);
+                    //if the only changes were those that occurred when inserting the new data, apply them
+                    if (!hadChanges)
+                        parent.dataByteProvider.ApplyChanges();
+                }
                 currentStart += parent.start;
                 parent = parent.parentData;
             } while (parent != null);

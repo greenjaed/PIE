@@ -109,13 +109,15 @@ namespace PIE
 
         private void displayData()
         {
-            if (activeData != null && currentTreeNode.Tag != activeData)
+            if (activeData != null)
             {
                 activeData.dataByteProvider.Changed -= dataByteProvider_Changed;
                 activeData.Hide();
             }
             currentTreeNode = projectTreeView.SelectedNode;
             activeData = currentTreeNode.Tag as Data;
+            if (activeData.display == null)
+                activeData.display = displayHexBox;
             activeData.Display();
             activeData.FillAddresses(startAddrToolStripComboBox);
             activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
@@ -244,7 +246,7 @@ namespace PIE
             Data previous;
             Data view;
             TreeNode slice;
-            previous = (currentTreeNode.Parent != null ? currentTreeNode.Parent.Tag : currentTreeNode.Tag) as Data;
+            previous = currentTreeNode.Tag as Data;
             view = new Data(previous, start, size);
             if (Data.IsTaken(currentTreeNode, view))
             {
@@ -269,10 +271,10 @@ namespace PIE
 
         private void updatePosition()
         {
-            currentPosition = displayHexBox.CurrentLine * displayHexBox.BytesPerLine + displayHexBox.CurrentPositionInLine;
+            currentPosition = (displayHexBox.CurrentLine - 1) * displayHexBox.BytesPerLine + (displayHexBox.CurrentPositionInLine - 1);
             statusStrip.Items["positionToolStripStatusLabel"].Text = currentPosition.ToString("X");
             if (isSelecting)
-                statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (currentPosition + displayHexBox.SelectionLength).ToString("X");
+                statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (currentPosition + displayHexBox.SelectionLength - 1).ToString("X");
         }
 
         private void displayHexBox_CurrentLineChanged(object sender, EventArgs e)
@@ -473,21 +475,16 @@ namespace PIE
                 {
                     fileBytes.Dispose();
                     fileBytes = new DynamicFileByteProvider(filePath);
+                    activeData.updateMainSlice(fileBytes);
                     displayHexBox.ByteProvider = fileBytes;
+                    this.Text = this.Text.TrimEnd(changed);
                 }
                 else
                 {
                     activeData.invalidate();
                     activeData.Display();
                 }
-            }
-
-            if (fileBytes.HasChanges() && MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                fileBytes.Dispose();
-                fileBytes = new DynamicFileByteProvider(filePath);
-                initializeProjectTree(Path.GetFileNameWithoutExtension(filePath));
-                displayHexBox.ByteProvider = fileBytes;
+                currentTreeNode.Text = currentTreeNode.Text.TrimEnd(changed);
             }
         }
 
@@ -645,6 +642,28 @@ namespace PIE
             //for each node, save the name and text (recursive call in a different function)
             //serialize the Tag as Data
             //end attribute
+        }
+
+        private void reloadToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            TreeNode selectedTreeNode = projectTreeView.SelectedNode;
+            Data selectedData = selectedTreeNode.Tag as Data;
+            if (selectedData.dataByteProvider.HasChanges() &&
+                MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                return;
+            if (selectedTreeNode.Parent == null)
+            {
+                fileBytes.Dispose();
+                fileBytes = new DynamicFileByteProvider(filePath);
+                selectedData.updateMainSlice(fileBytes);
+                displayHexBox.ByteProvider = fileBytes;
+                this.Text = this.Text.TrimEnd(changed);
+            }
+            else
+                selectedData.invalidate();
+            if (selectedTreeNode == currentTreeNode)
+                selectedData.Display();
+            selectedTreeNode.Text = selectedTreeNode.Text.TrimEnd(changed);
         }
     }
 
