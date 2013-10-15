@@ -109,18 +109,22 @@ namespace PIE
 
         private void displayData()
         {
-            if (activeData != null)
+            if (projectTreeView.SelectedNode != null)
             {
-                activeData.dataByteProvider.Changed -= dataByteProvider_Changed;
-                activeData.Hide();
+                if (activeData != null)
+                {
+                    activeData.dataByteProvider.Changed -= dataByteProvider_Changed;
+                    activeData.Hide();
+                }
+                currentTreeNode = projectTreeView.SelectedNode;
+                activeData = currentTreeNode.Tag as Data;
             }
-            currentTreeNode = projectTreeView.SelectedNode;
-            activeData = currentTreeNode.Tag as Data;
             if (activeData.display == null)
                 activeData.display = displayHexBox;
             activeData.Display();
             activeData.FillAddresses(startAddrToolStripComboBox);
             activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
+            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeData.start.ToString("X") + " - " + activeData.end.ToString("X");
         }
 
         void dataByteProvider_Changed(object sender, EventArgs e)
@@ -202,13 +206,10 @@ namespace PIE
                 fileName = Path.GetFileNameWithoutExtension(filePath);
                 this.Text = "PIE - " + fileName;
                 initializeProjectTree(fileName);
-                activeData.FillAddresses(startAddrToolStripComboBox);
-                activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
                 hexContextMenuStrip.Enabled = true;
-                activeData.display = displayHexBox;
-                activeData.Display();
                 displayHexBox.ByteProvider = fileBytes;
                 enableItems();
+                displayData();
             }
         }
 
@@ -444,6 +445,7 @@ namespace PIE
                 foreach (ToolStripItem t in projectContextMenuStrip.Items)
                     t.Enabled = true;
             }
+            sliceToolStripMenuItem.Enabled = true;
             if (e.Node.Parent == null)
                 projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
             else
@@ -515,8 +517,7 @@ namespace PIE
         private void sliceToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
-            sliceForm.Owner = this;
-            sliceForm.Show();
+            sliceForm.Show(this);
         }
 
         private void projectTreeView_KeyUp(object sender, KeyEventArgs e)
@@ -569,6 +570,11 @@ namespace PIE
                     if (gotoAddress > displayHexBox.LineInfoOffset + activeData.size)
                         gotoAddress = activeData.size - 1;
                     displayHexBox.ScrollByteIntoView(gotoAddress);
+                    //if (currentPosition + displayHexBox.VerticalByteCount * displayHexBox.BytesPerLine < displayHexBox.ByteProvider.Length - 1)
+                    //    displayHexBox.ScrollByteIntoView(gotoAddress + displayHexBox.VerticalByteCount * displayHexBox.BytesPerLine);
+                    //else
+                    //    displayHexBox.ScrollByteIntoView(displayHexBox.ByteProvider.Length - 1);
+                    //displayHexBox.Select(gotoAddress, 1);
                 }
                 catch (Exception ex)
                 {
@@ -607,8 +613,7 @@ namespace PIE
         private void resizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ResizeForm resizeForm = new ResizeForm(projectTreeView.SelectedNode);
-            resizeForm.Owner = this;
-            resizeForm.Show();
+            resizeForm.Show(this);
             if (projectTreeView.SelectedNode == currentTreeNode)
             {
                 (currentTreeNode.Tag as Data).Display();
@@ -624,8 +629,7 @@ namespace PIE
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OptionForm optionForm = new OptionForm(displayHexBox);
-            optionForm.Owner = this;
-            optionForm.Show();
+            optionForm.Show(this);
         }
 
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -664,6 +668,17 @@ namespace PIE
             if (selectedTreeNode == currentTreeNode)
                 selectedData.Display();
             selectedTreeNode.Text = selectedTreeNode.Text.TrimEnd(changed);
+        }
+
+        private void projectTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeData.start.ToString("X") + " - " + activeData.end.ToString("X");
+        }
+
+        private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CloneForm cloneForm = new CloneForm(projectTreeView.SelectedNode);
+            cloneForm.Show(this);
         }
     }
 

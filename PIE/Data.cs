@@ -28,6 +28,14 @@ namespace PIE
         [XmlIgnore]
         public HexBox display { get; set; }
 
+        public Data(Data source, Data parent)
+        {
+            start = source.start;
+            size = source.size;
+            end = source.end;
+            parentData = parent;
+        }
+
         public Data(DynamicFileByteProvider fileByteProvider)
         {
             this.dataByteProvider = fileByteProvider;
