@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Serialization;
 using Be.Windows.Forms;
 
 namespace PIE
@@ -389,6 +390,7 @@ namespace PIE
             this.Text = this.Text.TrimEnd(changed);
         }
 
+        //when reloading or saving, clears all sub slices of data
         private void propagateDown(TreeNode current)
         {
             foreach (TreeNode n in current.Nodes)
@@ -447,9 +449,19 @@ namespace PIE
             }
             sliceToolStripMenuItem.Enabled = true;
             if (e.Node.Parent == null)
+            {
+                sliceToolStripMenuItem.DropDownItems["resizeToolStripMenuItem1"].Enabled = false;
+                sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = false;
                 projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
+                projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = false;
+            }
             else
+            {
+                sliceToolStripMenuItem.DropDownItems["resizeToolStripMenuItem1"].Enabled = true;
+                sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = true;
                 projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = true;
+                projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = true;
+            }
         }
 
         private void projectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -468,25 +480,19 @@ namespace PIE
                 enablePaste();
         }
 
+        //reloads the file only
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (activeData.dataByteProvider.HasChanges() &&
+            if (fileBytes.HasChanges() &&
                 MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                if (currentTreeNode.Parent == null)
-                {
-                    fileBytes.Dispose();
-                    fileBytes = new DynamicFileByteProvider(filePath);
-                    activeData.updateMainSlice(fileBytes);
-                    displayHexBox.ByteProvider = fileBytes;
-                    this.Text = this.Text.TrimEnd(changed);
-                }
-                else
-                {
-                    activeData.invalidate();
-                    activeData.Display();
-                }
-                currentTreeNode.Text = currentTreeNode.Text.TrimEnd(changed);
+                fileBytes.Dispose();
+                fileBytes = new DynamicFileByteProvider(filePath);
+                (projectTreeView.Nodes[0].Tag as Data).updateMainSlice(fileBytes);
+                propagateDown(projectTreeView.Nodes[0]);
+                projectTreeView.Nodes[0].Text = projectTreeView.Nodes[0].Text.TrimEnd(changed);
+                this.Text = this.Text.TrimEnd(changed);
+                activeData.Display();
             }
         }
 
@@ -639,6 +645,24 @@ namespace PIE
 
         private void saveProject()
         {
+            try
+            {
+                using (XmlTextWriter projectFile = new XmlTextWriter(Path.GetFileNameWithoutExtension(filePath) + ".pie", null))
+                {
+                    projectFile.WriteStartDocument();
+                    projectFile.WriteStartElement("PIEForm");
+                        projectFile.WriteElementString("filePath", filePath);
+                        projectFile.WriteElementString("idIndex", idIndex.ToString());
+                        projectFile.WriteElementString("currentFileName", currentFileName);
+                    projectFile.WriteEndElement();
+                    saveNodes(projectTreeView.Nodes[0], projectFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             //open a new xmltextwriter "[file name].pie"
             //start an attribute ("PIEForm")
             //save filePath, idIndex, currentFileName and end attribute
@@ -646,6 +670,22 @@ namespace PIE
             //for each node, save the name and text (recursive call in a different function)
             //serialize the Tag as Data
             //end attribute
+        }
+
+        private void saveNodes(TreeNode current, XmlTextWriter writer)
+        {
+            XmlSerializer ds = new XmlSerializer(typeof(Data));
+            writer.WriteStartElement(current.Name);
+                writer.WriteElementString("Name", current.Name);
+                writer.WriteElementString("Text", current.Text);
+                writer.WriteStartElement("Slice");
+                    ds.Serialize(writer, current.Tag as Data);
+                writer.WriteEndElement();
+                foreach (TreeNode t in current.Nodes)
+                {
+                    saveNodes(t, writer);
+                }
+            writer.WriteEndElement();
         }
 
         private void reloadToolStripMenuItem1_Click(object sender, EventArgs e)

@@ -38,6 +38,8 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
+                if (start > (node.Tag as Data).end)
+                    throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
             catch (Exception ex)
@@ -51,8 +53,8 @@ namespace PIE
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end == 0)
-                    throw new Exception("End address must be greater than 0");
+                if (end == 0 || end > (node.Tag as Data).end)
+                    throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");
 
@@ -92,7 +94,8 @@ namespace PIE
             }
             finally
             {
-                parent.Nodes.Insert(nodeIndex, node);
+                if (!parent.Nodes.Contains(node))
+                    parent.Nodes.Insert(nodeIndex, node);
             }
 
             if (valid)

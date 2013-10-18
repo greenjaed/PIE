@@ -22,10 +22,9 @@ namespace PIE
             InitializeComponent();
         }
 
-        public SliceForm(TreeNode node) : base()
+        public SliceForm(TreeNode node) : base(node)
         {
             InitializeComponent();
-            this.node = node;
             dataSource = node.Tag as Data;
             okButton.Click -= okButton_Click;
             okButton.Click += new EventHandler(sliceButton_Click);
@@ -36,7 +35,8 @@ namespace PIE
         {
             if (bytesComboBox.SelectedIndex == -1)
                 bytesComboBox.SelectedIndex = 0;
-            size = baseSize << (10 * bytesComboBox.SelectedIndex);
+            else
+                size = baseSize << (10 * bytesComboBox.SelectedIndex);
         }
 
         private void createNode(long position, int name)
@@ -88,14 +88,6 @@ namespace PIE
                 node.Nodes[delIndex].Remove();
         }
 
-        private long validateString(string toCheck)
-        {
-            long assign = long.Parse(toCheck, NumberStyles.HexNumber);
-            if (assign < 0 || assign > dataSource.dataByteProvider.Length - 1)
-                throw new Exception("Address out of range");
-            return assign;
-        }
-
         private void AdvancedCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             endLabel.Visible = endTextBox.Visible = !AdvancedCheckBox.Checked;
@@ -120,6 +112,8 @@ namespace PIE
             {
                 baseSize = int.Parse(sizeComboBox.Text);
                 calculateSize();
+                if (size > dataSource.size)
+                    throw new ArgumentOutOfRangeException("Size");
                 errorProvider1.SetError(sizeComboBox, "");
             }
             catch (Exception ex)
@@ -144,7 +138,7 @@ namespace PIE
                 {
                     if (errorProvider1.GetError(sizeComboBox) != "")
                         throw new Exception(errorProvider1.GetError(sizeComboBox));
-                    if (sizeComboBox.SelectedIndex < 0)
+                    if (size == 0)
                         throw new Exception("No size selected");
                     end = start + size - 1;
                     if (repeatCheckBox.Checked)
@@ -157,7 +151,7 @@ namespace PIE
                         throw new Exception(Properties.Resources.overlapString);
                 }
                 this.Cursor = Cursors.WaitCursor;
-                size = Math.Min(dataSource.dataByteProvider.Length, size);
+                size = Math.Min(dataSource.size, size);
                 slice();
                 this.Cursor = Cursors.Arrow;
                 this.Close();
