@@ -25,7 +25,7 @@ namespace PIE
         {
             InitializeComponent();
             this.node = node;
-            Data nodeData = node.Tag as Data;
+            Slice nodeData = node.Tag as Slice;
             startTextBox.Text = nodeData.start.ToString("X");
             endTextBox.Text = nodeData.end.ToString("X");
             start = nodeData.start;
@@ -38,7 +38,7 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start > (node.Tag as Data).end)
+                if (start > (node.Tag as Slice).end)
                     throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -53,7 +53,7 @@ namespace PIE
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end == 0 || end > (node.Tag as Data).end)
+                if (end == 0 || end > (node.Tag as Slice).end)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");
@@ -69,7 +69,7 @@ namespace PIE
 
         protected virtual void okButton_Click(object sender, EventArgs e)
         {
-            Data wrongSize = node.Tag as Data;
+            Slice wrongSize = node.Tag as Slice;
             TreeNode parent = node.Parent;
             int nodeIndex = node.Index;
             bool valid;
@@ -79,7 +79,7 @@ namespace PIE
                 checkStart();
                 checkEnd();
                 node.Remove();
-                if (Data.IsTaken(parent, start, end))
+                if (Slice.IsTaken(parent, start, end))
                     throw new Exception(Properties.Resources.overlapString);
                 if (node.Nodes.Count > 0 &&
                     MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)

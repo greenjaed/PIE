@@ -13,7 +13,7 @@ namespace PIE
 {
     public partial class SliceForm : ResizeForm
     {
-        private Data dataSource;
+        private Slice dataSource;
         private long size;
         private int baseSize;
 
@@ -25,7 +25,7 @@ namespace PIE
         public SliceForm(TreeNode node) : base(node)
         {
             InitializeComponent();
-            dataSource = node.Tag as Data;
+            dataSource = node.Tag as Slice;
             okButton.Click -= okButton_Click;
             okButton.Click += new EventHandler(sliceButton_Click);
             okButton.Text = "Slice";
@@ -44,7 +44,7 @@ namespace PIE
             TreeNode subnode = new TreeNode();
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
             subnode.Text = "block " + name.ToString("X");
-            Data subslice = new Data(dataSource, position, size);
+            Slice subslice = new Slice(dataSource, position, size);
             subnode.Tag = subslice;
             node.Nodes.Add(subnode);
         }
@@ -73,12 +73,12 @@ namespace PIE
 
         private void clearExistingSlices()
         {
-            Data current;
+            Slice current;
             int delIndex = 0;
             
             foreach (TreeNode t in node.Nodes)
             {
-                current = t.Tag as Data;
+                current = t.Tag as Slice;
                 if (current.end < start)
                     continue;
                 delIndex = t.Index;
@@ -131,7 +131,7 @@ namespace PIE
                 {
                     checkEnd();
                     size = 1 + end - start;
-                    if (Data.IsTaken(node, start, end))
+                    if (Slice.IsTaken(node, start, end))
                         throw new Exception(Properties.Resources.overlapString);
                 }
                 else
@@ -147,7 +147,7 @@ namespace PIE
                             DialogResult.Cancel)
                             return;
                     }
-                    else if (Data.IsTaken(node, start, end))
+                    else if (Slice.IsTaken(node, start, end))
                         throw new Exception(Properties.Resources.overlapString);
                 }
                 this.Cursor = Cursors.WaitCursor;

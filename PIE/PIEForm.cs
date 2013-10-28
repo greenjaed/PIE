@@ -11,7 +11,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Xml;
-using System.Xml.Serialization;
 using Be.Windows.Forms;
 
 namespace PIE
@@ -23,7 +22,7 @@ namespace PIE
         //the filepath of the opened file
         String filePath;
         //the current data being worked on
-        Data activeData;
+        Slice activeData;
         //the treenode containing the active data
         TreeNode currentTreeNode;
         //indicates whether data is being selected
@@ -93,7 +92,7 @@ namespace PIE
                 else
                     return true;
             }
-            return (current.Tag as Data).isChanged;
+            return (current.Tag as Slice).isChanged;
         }
 
         private void copy()
@@ -118,7 +117,7 @@ namespace PIE
                     activeData.Hide();
                 }
                 currentTreeNode = projectTreeView.SelectedNode;
-                activeData = currentTreeNode.Tag as Data;
+                activeData = currentTreeNode.Tag as Slice;
             }
             if (activeData.display == null)
                 activeData.display = displayHexBox;
@@ -141,6 +140,7 @@ namespace PIE
             editToolStripMenuItem.DropDownItems["findNextToolStripMenuItem"].Enabled = true;
             fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = true;
             fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = true;
+            fileToolStripMenuItem.DropDownItems["saveProjectToolStripMenuItem"].Enabled = true;
             fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = true;
             fileToolStripMenuItem.DropDownItems["saveAllToolStripMenuItem"].Enabled = true;
             standardToolStrip.Items["saveToolStripButton"].Enabled = true;
@@ -162,11 +162,11 @@ namespace PIE
         private void initializeProjectTree(string fileName)
         {
             TreeNode rootNode;
-            Data rootData;
+            Slice rootData;
 
             rootNode = new TreeNode(fileName);
             rootNode.Name = uniqueID.ToString();
-            rootData = new Data(fileBytes);
+            rootData = new Slice(fileBytes);
             rootNode.Tag = rootData;
             if (projectTreeView.Nodes.Count > 0)
                 projectTreeView.Nodes.Clear();
@@ -245,12 +245,12 @@ namespace PIE
         {
             long start = displayHexBox.SelectionStart;
             long size = displayHexBox.SelectionLength;
-            Data previous;
-            Data view;
+            Slice previous;
+            Slice view;
             TreeNode slice;
-            previous = currentTreeNode.Tag as Data;
-            view = new Data(previous, start, size);
-            if (Data.IsTaken(currentTreeNode, view))
+            previous = currentTreeNode.Tag as Slice;
+            view = new Slice(previous, start, size);
+            if (Slice.IsTaken(currentTreeNode, view))
             {
                 MessageBox.Show("Unable to create slice: " + Properties.Resources.overlapString);
                 return;
@@ -323,7 +323,7 @@ namespace PIE
             {
                 this.Cursor = Cursors.WaitCursor;
                 if (lengthChanged)
-                    (projectTreeView.Nodes[0].Tag as Data).Resize(projectTreeView.Nodes[0], 0, fileBytes.Length - 1);
+                    (projectTreeView.Nodes[0].Tag as Slice).Resize(projectTreeView.Nodes[0], 0, fileBytes.Length - 1);
                 saveChanges(isClosing);
                 this.Cursor = Cursors.Arrow;
                 this.Text = this.Text.TrimEnd(changed);
@@ -384,7 +384,7 @@ namespace PIE
             {
                 if (t.Nodes.Count > 0)
                     saveAllChanges(t);
-                (t.Tag as Data).Save(false);
+                (t.Tag as Slice).Save(false);
                 t.Text.TrimEnd(changed);
             }
             this.Text = this.Text.TrimEnd(changed);
@@ -397,7 +397,7 @@ namespace PIE
             {
                 if (n.Nodes.Count > 0)
                     propagateDown(n);
-                (n.Tag as Data).invalidate();
+                (n.Tag as Slice).Invalidate();
                 n.Text = n.Text.TrimEnd(changed);
             }
         }
@@ -424,7 +424,7 @@ namespace PIE
                 if (projectTreeView.SelectedNode == currentTreeNode)
                 {
                     activeData.Hide();
-                    (projectTreeView.SelectedNode.Parent.Tag as Data).Display();
+                    (projectTreeView.SelectedNode.Parent.Tag as Slice).Display();
                     currentTreeNode = projectTreeView.SelectedNode.Parent;
                 }
                 projectTreeView.SelectedNode.Remove();
@@ -488,7 +488,7 @@ namespace PIE
             {
                 fileBytes.Dispose();
                 fileBytes = new DynamicFileByteProvider(filePath);
-                (projectTreeView.Nodes[0].Tag as Data).updateMainSlice(fileBytes);
+                (projectTreeView.Nodes[0].Tag as Slice).updateMainSlice(fileBytes);
                 propagateDown(projectTreeView.Nodes[0]);
                 projectTreeView.Nodes[0].Text = projectTreeView.Nodes[0].Text.TrimEnd(changed);
                 this.Text = this.Text.TrimEnd(changed);
@@ -593,7 +593,7 @@ namespace PIE
          *if the new Data object's data range is found overlapping with any existing objects,
          *it returns false.  Otherwise the method returns true.
          */
-        public static bool dataIsTaken(TreeNode toSlice, Data toCheck)
+        public static bool dataIsTaken(TreeNode toSlice, Slice toCheck)
         {
             return dataIsTaken(toSlice, toCheck.start, toCheck.end);
         }
@@ -601,11 +601,11 @@ namespace PIE
         public static bool dataIsTaken(TreeNode beingSliced, long start, long end)
         {
             TreeNodeCollection currentTier = beingSliced.Nodes;
-            Data currentData;
+            Slice currentData;
 
             foreach (TreeNode d in currentTier)
             {
-                currentData = d.Tag as Data;
+                currentData = d.Tag as Slice;
 
                 //if they don't overlap, continue
                 if (end < currentData.start || start > currentData.end)
@@ -622,7 +622,7 @@ namespace PIE
             resizeForm.Show(this);
             if (projectTreeView.SelectedNode == currentTreeNode)
             {
-                (currentTreeNode.Tag as Data).Display();
+                (currentTreeNode.Tag as Slice).Display();
                 activeData.FillAddresses(startAddrToolStripComboBox);
             }
         }
@@ -645,17 +645,25 @@ namespace PIE
 
         private void saveProject()
         {
+            XmlWriterSettings writerSettings = new XmlWriterSettings();
+            writerSettings.Indent = true;
+            writerSettings.NewLineOnAttributes = true;
+            writerSettings.CloseOutput = true;
+
             try
             {
-                using (XmlTextWriter projectFile = new XmlTextWriter(Path.GetFileNameWithoutExtension(filePath) + ".pie", null))
+                using (XmlWriter projectFile = XmlWriter.Create(Path.ChangeExtension(filePath, "pie"), writerSettings))
                 {
                     projectFile.WriteStartDocument();
-                    projectFile.WriteStartElement("PIEForm");
-                        projectFile.WriteElementString("filePath", filePath);
-                        projectFile.WriteElementString("idIndex", idIndex.ToString());
-                        projectFile.WriteElementString("currentFileName", currentFileName);
+                    projectFile.WriteStartElement("PIEProject");
+                        projectFile.WriteStartElement("PIEForm");
+                            projectFile.WriteElementString("filePath", filePath);
+                            projectFile.WriteElementString("idIndex", idIndex.ToString());
+                            projectFile.WriteElementString("currentFileName", currentFileName);
+                        projectFile.WriteEndElement();
+                        saveNodes(projectTreeView.Nodes[0], projectFile);
                     projectFile.WriteEndElement();
-                    saveNodes(projectTreeView.Nodes[0], projectFile);
+                    projectFile.WriteEndDocument();
                 }
             }
             catch (Exception ex)
@@ -672,26 +680,21 @@ namespace PIE
             //end attribute
         }
 
-        private void saveNodes(TreeNode current, XmlTextWriter writer)
+        private void saveNodes(TreeNode current, XmlWriter writer)
         {
-            XmlSerializer ds = new XmlSerializer(typeof(Data));
-            writer.WriteStartElement(current.Name);
+            writer.WriteStartElement("Node");
                 writer.WriteElementString("Name", current.Name);
                 writer.WriteElementString("Text", current.Text);
-                writer.WriteStartElement("Slice");
-                    ds.Serialize(writer, current.Tag as Data);
-                writer.WriteEndElement();
+                (current.Tag as Slice).Serialize(writer);
                 foreach (TreeNode t in current.Nodes)
-                {
                     saveNodes(t, writer);
-                }
             writer.WriteEndElement();
         }
 
         private void reloadToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             TreeNode selectedTreeNode = projectTreeView.SelectedNode;
-            Data selectedData = selectedTreeNode.Tag as Data;
+            Slice selectedData = selectedTreeNode.Tag as Slice;
             if (selectedData.dataByteProvider.HasChanges() &&
                 MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                 return;
@@ -704,7 +707,7 @@ namespace PIE
                 this.Text = this.Text.TrimEnd(changed);
             }
             else
-                selectedData.invalidate();
+                selectedData.Invalidate();
             if (selectedTreeNode == currentTreeNode)
                 selectedData.Display();
             selectedTreeNode.Text = selectedTreeNode.Text.TrimEnd(changed);
@@ -720,14 +723,21 @@ namespace PIE
             CloneForm cloneForm = new CloneForm(projectTreeView.SelectedNode);
             cloneForm.Show(this);
         }
+
+        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.WaitCursor;
+            saveProject();
+            this.Cursor = Cursors.Arrow;
+        }
     }
 
     public class ProjectTreeSort : IComparer
     {
         int IComparer.Compare(object x, object y)
         {
-            Data a = (x as TreeNode).Tag as Data;
-            Data b = (y as TreeNode).Tag as Data;
+            Slice a = (x as TreeNode).Tag as Slice;
+            Slice b = (y as TreeNode).Tag as Slice;
             if (a.start < b.start)
                 return -1;
             else if (a.start > b.start)

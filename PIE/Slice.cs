@@ -2,60 +2,68 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml.Serialization;
+using System.Xml;
 using Be.Windows.Forms;
 
 namespace PIE
 {
-    public class Data
+    [DataContract]
+    public class Slice
     {
-        protected Data parentData;
-        //public Byte[] dataBytes { get; set; }
+        protected Slice parentSlice;
+        [DataMember]
         public long customStart { get; set; }
+        [DataMember]
         public long lastStart { get; protected set; }
+        [DataMember]
         public long start { get; protected set; }
+        [DataMember]
         public long size { get; protected set; }
+        [DataMember]
         public long end { get; protected set; }
-        [XmlIgnore]
         public IByteProvider dataByteProvider { get; protected set; }
-        [XmlIgnore]
         public bool isChanged
         {
             get { return dataByteProvider != null ? dataByteProvider.HasChanges() : false; }
         }
-        [XmlIgnore]
         public HexBox display { get; set; }
 
-        public Data(Data source, Data parent)
+        public Slice()
+        {
+
+        }
+
+        public Slice(Slice source, Slice parent)
         {
             start = source.start;
             size = source.size;
             end = source.end;
-            parentData = parent;
+            parentSlice = parent;
         }
 
-        public Data(DynamicFileByteProvider fileByteProvider)
+        public Slice(DynamicFileByteProvider fileByteProvider)
         {
             this.dataByteProvider = fileByteProvider;
             size = fileByteProvider.Length;
             end = size - 1;
         }
 
-        public Data(Data parentData, long start, long size)
+        public Slice(Slice parentData, long start, long size)
         {
             this.start = start;
             this.size = size;
             end = start + size - 1;
-            this.parentData = parentData;
+            this.parentSlice = parentData;
             lastStart = start;
         }
 
         //updates the main slice ONLY
         public void updateMainSlice(DynamicFileByteProvider fileByteProvider)
         {
-            if (parentData == null)
+            if (parentSlice == null)
                 dataByteProvider = fileByteProvider;
         }
 
@@ -70,7 +78,7 @@ namespace PIE
                 return bytes;
             }
             else
-                return parentData.getBytes(start + this.start, size);
+                return parentSlice.getBytes(start + this.start, size);
         }
 
         private void setBytes(long start, byte[] toInsert)
@@ -81,12 +89,12 @@ namespace PIE
                 dataByteProvider.InsertBytes(start, toInsert);
             }
             else
-                parentData.setBytes(start + this.start, toInsert);
+                parentSlice.setBytes(start + this.start, toInsert);
         }
 
         private void SetByteProvider()
         {
-            dataByteProvider = new DynamicByteProvider(parentData.getBytes(start, size));
+            dataByteProvider = new DynamicByteProvider(parentSlice.getBytes(start, size));
             dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
         }
 
@@ -161,7 +169,7 @@ namespace PIE
             this.start = start;
             this.end = end;
             size = (end - start) + 1;
-            if (parentData != null)
+            if (parentSlice != null)
                 dataByteProvider = null;
             
             foreach (TreeNode t in node.Nodes)
@@ -175,7 +183,7 @@ namespace PIE
 
         private void resize(TreeNode node, long start, long end)
         {
-            Data current = node.Tag as Data;
+            Slice current = node.Tag as Slice;
             long nStart = current.start;
             long nEnd = current.end;
 
@@ -213,7 +221,7 @@ namespace PIE
                     if (propagateUp)
                         SaveUp(temp);
                     else
-                        parentData.setBytes(start, temp.Bytes.ToArray());
+                        parentSlice.setBytes(start, temp.Bytes.ToArray());
                 }
             }
         }
@@ -221,7 +229,7 @@ namespace PIE
         private void SaveUp(DynamicByteProvider temp)
         {
             Byte[] changes = temp.Bytes.ToArray(); //the changes
-            Data parent = this.parentData; //the parent
+            Slice parent = this.parentSlice; //the parent
             IByteProvider tempParent; //temporary parent data
             long currentStart = start; //the start address to insert at
             bool hadChanges;
@@ -239,7 +247,7 @@ namespace PIE
                         parent.dataByteProvider.ApplyChanges();
                 }
                 currentStart += parent.start;
-                parent = parent.parentData;
+                parent = parent.parentSlice;
             } while (parent != null);
 
             temp.ApplyChanges();
@@ -249,7 +257,7 @@ namespace PIE
          *if the new Data object's data range is found overlapping with any existing objects,
          *it returns false.  Otherwise the method returns true.
          */
-        public static bool IsTaken(TreeNode toSlice, Data toCheck)
+        public static bool IsTaken(TreeNode toSlice, Slice toCheck)
         {
             return IsTaken(toSlice, toCheck.start, toCheck.end);
         }
@@ -257,11 +265,11 @@ namespace PIE
         public static bool IsTaken(TreeNode beingSliced, long start, long end)
         {
             TreeNodeCollection currentTier = beingSliced.Nodes;
-            Data currentData;
+            Slice currentData;
 
             foreach (TreeNode d in currentTier)
             {
-                currentData = d.Tag as Data;
+                currentData = d.Tag as Slice;
 
                 if (start > currentData.end)
                     continue;
@@ -273,9 +281,15 @@ namespace PIE
             return false;
         }
 
-        public void invalidate()
+        public void Invalidate()
         {
             dataByteProvider = null;
+        }
+
+        public void Serialize(XmlWriter writer)
+        {
+            DataContractSerializer dcs = new DataContractSerializer(typeof(Slice));
+            dcs.WriteObject(writer, this);
         }
     }
 }

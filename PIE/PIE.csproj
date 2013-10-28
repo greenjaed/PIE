@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -71,7 +72,7 @@
     <Compile Include="CloneForm.Designer.cs">
       <DependentUpon>CloneForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Data.cs" />
+    <Compile Include="Slice.cs" />
     <Compile Include="FindForm.cs">
       <SubType>Form</SubType>
     </Compile>
