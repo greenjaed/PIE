@@ -60,6 +60,15 @@ namespace PIE.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to \\PIE.ini.
+        /// </summary>
+        internal static string configFileString {
+            get {
+                return ResourceManager.GetString("configFileString", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap Copy {
             get {
                 object obj = ResourceManager.GetObject("Copy", resourceCulture);

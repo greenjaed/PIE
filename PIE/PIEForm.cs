@@ -35,8 +35,6 @@ namespace PIE
         private int idIndex;
         //searches for data
         FindForm search;
-        //the name of the opened file
-        string currentFileName;
         //the character indicating the file/slice has changes
         static char[] changed = new char[] { '*' };
         //indicates if the size of the file has changed
@@ -46,6 +44,8 @@ namespace PIE
         {
             InitializeComponent();
             projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
+            if (File.Exists(Application.StartupPath + Properties.Resources.configFileString))
+                ;//initialize hexbox;
         }
 
         void changeEnable(bool enableValue)
@@ -65,7 +65,7 @@ namespace PIE
                 enablePaste();
         }
 
-        private bool closeProject()
+        private bool closeFile()
         {
             if (anyChanges(projectTreeView.Nodes[0]))
             {
@@ -179,7 +179,7 @@ namespace PIE
         {
 
             //if a project is already open and the user chooses not to close it, cancel the open
-            if (fileBytes != null && !closeProject())
+            if (fileBytes != null && !closeFile())
                 return;
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
@@ -191,9 +191,8 @@ namespace PIE
                 {
                     if (File.Exists(filePath))
                     {
-                        if (currentFileName != null && currentFileName == filePath)
+                        if (fileBytes != null)
                             fileBytes.Dispose();
-                        currentFileName = filePath;
                         fileBytes = new DynamicFileByteProvider(filePath);
                     }
                 }
@@ -314,7 +313,12 @@ namespace PIE
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFile();
+            openFileDialog1.Title = "Select a Project";
+            openFileDialog1.Filter = "PIE files (*.pie)|*.pie|All files (*.*)|*.*";
+            if (openFileDialog1.ShowDialog(this) == DialogResult.Cancel)
+                return;
+            //open the project file
+
         }
 
         private void saveFile(bool isClosing)
@@ -337,7 +341,7 @@ namespace PIE
         private void PIEForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (fileBytes != null)
-                e.Cancel = !closeProject();
+                e.Cancel = !closeFile();
         }
 
         private void performSearch()
@@ -652,14 +656,18 @@ namespace PIE
 
             try
             {
-                using (XmlWriter projectFile = XmlWriter.Create(Path.ChangeExtension(filePath, "pie"), writerSettings))
+                saveFileDialog1.InitialDirectory = Path.GetDirectoryName(filePath);
+                saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath) + ".pie";
+                if (saveFileDialog1.ShowDialog(this) == DialogResult.Cancel)
+                    return;
+
+                using (XmlWriter projectFile = XmlWriter.Create(saveFileDialog1.FileName, writerSettings))
                 {
                     projectFile.WriteStartDocument();
                     projectFile.WriteStartElement("PIEProject");
                         projectFile.WriteStartElement("PIEForm");
                             projectFile.WriteElementString("filePath", filePath);
                             projectFile.WriteElementString("idIndex", idIndex.ToString());
-                            projectFile.WriteElementString("currentFileName", currentFileName);
                         projectFile.WriteEndElement();
                         saveNodes(projectTreeView.Nodes[0], projectFile);
                     projectFile.WriteEndElement();
@@ -729,6 +737,13 @@ namespace PIE
             this.Cursor = Cursors.WaitCursor;
             saveProject();
             this.Cursor = Cursors.Arrow;
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.Title = "Select a Project File";
+            openFileDialog1.Filter = "";
+            openFile();
         }
     }
 
