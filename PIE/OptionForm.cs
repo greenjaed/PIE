@@ -32,6 +32,7 @@ namespace PIE
         private void initializeControls()
         {
             fontTextBox.ForeColor = hexBox.ForeColor;
+            fontTextBox.BackColor = hexBox.BackColor;
             fontTextBox.Font = hexBox.Font;
             fontTextBox.Text = fontConverter.ConvertToString(hexBox.Font);
             backColorButton.BackColor = hexBox.BackColor;
@@ -98,7 +99,7 @@ namespace PIE
         {
             hexBox.ForeColor = fontTextBox.ForeColor;
             hexBox.Font = fontTextBox.Font;
-            hexBox.BackColor = backColorButton.BackColor;
+            hexBox.BackColor = fontTextBox.BackColor;
             hexBox.StringViewVisible = charCheckBox.Checked;
             hexBox.LineInfoVisible = lineCheckBox.Checked;
             hexBox.HexCasing = hexCaseComboBox.SelectedIndex == 0 ? HexCasing.Lower : HexCasing.Upper;
@@ -115,6 +116,7 @@ namespace PIE
             Color temp = fontTextBox.ForeColor;
             fontTextBox.ForeColor = fontTextBox.BackColor;
             fontTextBox.BackColor = temp;
+            backColorButton.BackColor = temp;
         }
     }
 }

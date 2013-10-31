@@ -45,7 +45,7 @@ namespace PIE
             InitializeComponent();
             projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
             if (File.Exists(Application.StartupPath + Properties.Resources.configFileString))
-                ;//initialize hexbox;
+                loadSettings();
         }
 
         void changeEnable(bool enableValue)
@@ -175,6 +175,39 @@ namespace PIE
             currentTreeNode = rootNode;
         }
 
+        private void loadSettings()
+        {
+            FontConverter fc = new FontConverter();
+            ColorConverter cc = new ColorConverter();
+            string line;
+
+            try
+            {
+                using (StreamReader settingsFile = new StreamReader(Application.StartupPath + Properties.Resources.configFileString))
+                {
+                    settingsFile.ReadLine();
+                    line = settingsFile.ReadLine();
+                    displayHexBox.ForeColor = (Color) cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.Font = (Font)fc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.BackColor = (Color)cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.StringViewVisible = bool.Parse(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.LineInfoVisible = bool.Parse(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.HexCasing = (HexCasing)Enum.Parse(typeof(HexCasing), line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.BytesPerLine = int.Parse(line.Substring(line.IndexOf('=') + 1));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private void openFile()
         {
 
@@ -211,6 +244,49 @@ namespace PIE
                 enableItems();
                 displayData();
             }
+        }
+
+        private void openProject()
+        {
+            Slice whole;
+            TreeNode root;
+            XmlReaderSettings rs = new XmlReaderSettings();
+            rs.CloseInput = true;
+            rs.IgnoreComments = true;
+            rs.IgnoreWhitespace = true;
+
+            try
+            {
+                using (XmlReader pr = XmlReader.Create(openFileDialog1.FileName, rs))
+                {
+                    pr.ReadToFollowing("PIEForm");
+                    pr.Read();
+                    filePath = pr.ReadElementContentAsString();
+                    fileBytes = new DynamicFileByteProvider(filePath);
+                    //pr.Read();
+                    idIndex = int.Parse(pr.ReadElementContentAsString());
+                    pr.ReadToFollowing("Node");
+                    pr.Read();
+                    root = new TreeNode(pr.ReadElementContentAsString());
+                    root.Text = pr.ReadElementContentAsString();
+                    whole = Slice.Deserialize(pr);
+                    whole.display = displayHexBox;
+                    whole.updateMainSlice(fileBytes);
+                    root.Tag = whole;
+                    projectTreeView.Nodes.Add(root);
+                    if (pr.ReadToDescendant("Node"))
+                        loadNodes(root, pr);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void loadNodes(TreeNode current, XmlReader xr)
+        {
+
         }
 
         void fileBytes_Changed(object sender, EventArgs e)
@@ -317,7 +393,7 @@ namespace PIE
             openFileDialog1.Filter = "PIE files (*.pie)|*.pie|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog(this) == DialogResult.Cancel)
                 return;
-            //open the project file
+            openProject();
 
         }
 
@@ -678,14 +754,6 @@ namespace PIE
             {
                 MessageBox.Show(ex.Message);
             }
-
-            //open a new xmltextwriter "[file name].pie"
-            //start an attribute ("PIEForm")
-            //save filePath, idIndex, currentFileName and end attribute
-            //start attribute (projectTreeView.Nodes[0].Name)
-            //for each node, save the name and text (recursive call in a different function)
-            //serialize the Tag as Data
-            //end attribute
         }
 
         private void saveNodes(TreeNode current, XmlWriter writer)

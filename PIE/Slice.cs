@@ -291,5 +291,11 @@ namespace PIE
             DataContractSerializer dcs = new DataContractSerializer(typeof(Slice));
             dcs.WriteObject(writer, this);
         }
+
+        public static Slice Deserialize(XmlReader reader)
+        {
+            DataContractSerializer deserializer = new DataContractSerializer(typeof(Slice));
+            return (Slice) deserializer.ReadObject(reader);
+        }
     }
 }
