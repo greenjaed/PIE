@@ -21,8 +21,10 @@ namespace PIE
         DynamicFileByteProvider fileBytes;
         //the filepath of the opened file
         String filePath;
+        //the path of the project
+        String projectPath;
         //the current data being worked on
-        Slice activeData;
+        Slice activeSlice;
         //the treenode containing the active data
         TreeNode currentTreeNode;
         //indicates whether data is being selected
@@ -97,34 +99,34 @@ namespace PIE
 
         private void copy()
         {
-            activeData.Copy();
+            activeSlice.Copy();
             //enablePaste();
         }
 
         private void cut()
         {
-            activeData.Cut();
+            activeSlice.Cut();
             //enablePaste();
         }
 
-        private void displayData()
+        private void displaySlice()
         {
             if (projectTreeView.SelectedNode != null)
             {
-                if (activeData != null)
+                if (activeSlice != null)
                 {
-                    activeData.dataByteProvider.Changed -= dataByteProvider_Changed;
-                    activeData.Hide();
+                    activeSlice.dataByteProvider.Changed -= dataByteProvider_Changed;
+                    activeSlice.Hide();
                 }
                 currentTreeNode = projectTreeView.SelectedNode;
-                activeData = currentTreeNode.Tag as Slice;
+                activeSlice = currentTreeNode.Tag as Slice;
             }
-            if (activeData.display == null)
-                activeData.display = displayHexBox;
-            activeData.Display();
-            activeData.FillAddresses(startAddrToolStripComboBox);
-            activeData.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
-            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeData.start.ToString("X") + " - " + activeData.end.ToString("X");
+            if (activeSlice.display == null)
+                activeSlice.display = displayHexBox;
+            activeSlice.Display();
+            activeSlice.FillAddresses(startAddrToolStripComboBox);
+            activeSlice.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
+            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeSlice.start.ToString("X") + " - " + activeSlice.end.ToString("X");
         }
 
         void dataByteProvider_Changed(object sender, EventArgs e)
@@ -171,7 +173,7 @@ namespace PIE
             if (projectTreeView.Nodes.Count > 0)
                 projectTreeView.Nodes.Clear();
             projectTreeView.Nodes.Add(rootNode);
-            activeData = rootData;
+            activeSlice = rootData;
             currentTreeNode = rootNode;
         }
 
@@ -208,42 +210,47 @@ namespace PIE
             }
         }
 
-        private void openFile()
+        private void openFile(bool newProject)
         {
+            string fileName;
 
             //if a project is already open and the user chooses not to close it, cancel the open
             if (fileBytes != null && !closeFile())
                 return;
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (newProject)
             {
-                filePath = openFileDialog1.FileName;
-                String fileName;
-
-                try
-                {
-                    if (File.Exists(filePath))
-                    {
-                        if (fileBytes != null)
-                            fileBytes.Dispose();
-                        fileBytes = new DynamicFileByteProvider(filePath);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error: could not open file: " + ex.Message);
-                }
-
-                fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
-                fileBytes.Changed += new EventHandler(fileBytes_Changed);
-                fileName = Path.GetFileNameWithoutExtension(filePath);
-                this.Text = "PIE - " + fileName;
-                initializeProjectTree(fileName);
-                hexContextMenuStrip.Enabled = true;
-                displayHexBox.ByteProvider = fileBytes;
-                enableItems();
-                displayData();
+                if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
+                else
+                    filePath = openFileDialog1.FileName;
             }
+
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    if (fileBytes != null)
+                        fileBytes.Dispose();
+                    fileBytes = new DynamicFileByteProvider(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error: could not open file: " + ex.Message);
+            }
+
+            fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
+            fileBytes.Changed += new EventHandler(fileBytes_Changed);
+            fileName = Path.GetFileNameWithoutExtension(filePath);
+            this.Text = "PIE - " + fileName;
+            if (newProject)
+                initializeProjectTree(fileName);
+            else if (projectTreeView.Nodes.Count > 0)
+                projectTreeView.Nodes.Clear();
+            hexContextMenuStrip.Enabled = true;
+            displayHexBox.ByteProvider = fileBytes;
+            enableItems();
         }
 
         private void openProject()
@@ -257,13 +264,24 @@ namespace PIE
 
             try
             {
-                using (XmlReader pr = XmlReader.Create(openFileDialog1.FileName, rs))
+                using (XmlReader pr = XmlReader.Create(projectPath, rs))
                 {
                     pr.ReadToFollowing("PIEForm");
                     pr.Read();
                     filePath = pr.ReadElementContentAsString();
-                    fileBytes = new DynamicFileByteProvider(filePath);
-                    //pr.Read();
+
+                    //if the file is not where it should be, check the project file directory
+                    if (!File.Exists(filePath))
+                    {
+                        string tempPath = Path.GetDirectoryName(openFileDialog1.FileName) + "\\" + Path.GetFileName(filePath);
+                        if (!File.Exists(tempPath))
+                            throw new FileNotFoundException("Unable to locate " + filePath);
+                        else
+                            filePath = tempPath;
+                    }
+
+                    openFile(false);
+
                     idIndex = int.Parse(pr.ReadElementContentAsString());
                     pr.ReadToFollowing("Node");
                     pr.Read();
@@ -274,8 +292,12 @@ namespace PIE
                     whole.updateMainSlice(fileBytes);
                     root.Tag = whole;
                     projectTreeView.Nodes.Add(root);
-                    if (pr.ReadToDescendant("Node"))
+                    activeSlice = whole;
+                    currentTreeNode = root;
+
+                    if (pr.IsStartElement())
                         loadNodes(root, pr);
+                    displaySlice();
                 }
             }
             catch (Exception ex)
@@ -286,7 +308,19 @@ namespace PIE
 
         private void loadNodes(TreeNode current, XmlReader xr)
         {
-
+            Slice slice;
+            TreeNode node;
+            do
+            {
+                xr.Read();
+                node = new TreeNode(xr.ReadElementContentAsString());
+                node.Text = xr.ReadElementContentAsString();
+                slice = Slice.Deserialize(xr);
+                node.Tag = new Slice(slice, current.Tag as Slice);
+                current.Nodes.Add(node);
+                if (xr.IsStartElement())
+                    loadNodes(node, xr);
+            } while (xr.ReadToNextSibling("Node"));
         }
 
         void fileBytes_Changed(object sender, EventArgs e)
@@ -361,7 +395,7 @@ namespace PIE
 
         private void paste()
         {
-            activeData.Paste();
+            activeSlice.Paste();
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -393,8 +427,8 @@ namespace PIE
             openFileDialog1.Filter = "PIE files (*.pie)|*.pie|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog(this) == DialogResult.Cancel)
                 return;
+            projectPath = openFileDialog1.FileName;
             openProject();
-
         }
 
         private void saveFile(bool isClosing)
@@ -442,7 +476,7 @@ namespace PIE
 
         private void saveChanges(bool isClosing)
         {
-            activeData.Save();
+            activeSlice.Save();
             if (!isClosing)
             {
                 bool hadChanges = fileBytes.HasChanges();
@@ -484,7 +518,7 @@ namespace PIE
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            displayData();
+            displaySlice();
         }
 
         private void deleteSliceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -503,7 +537,7 @@ namespace PIE
                     return;
                 if (projectTreeView.SelectedNode == currentTreeNode)
                 {
-                    activeData.Hide();
+                    activeSlice.Hide();
                     (projectTreeView.SelectedNode.Parent.Tag as Slice).Display();
                     currentTreeNode = projectTreeView.SelectedNode.Parent;
                 }
@@ -546,7 +580,7 @@ namespace PIE
 
         private void projectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            displayData();
+            displaySlice();
         }
 
         private void displayHexBox_Copied(object sender, EventArgs e)
@@ -572,7 +606,7 @@ namespace PIE
                 propagateDown(projectTreeView.Nodes[0]);
                 projectTreeView.Nodes[0].Text = projectTreeView.Nodes[0].Text.TrimEnd(changed);
                 this.Text = this.Text.TrimEnd(changed);
-                activeData.Display();
+                activeSlice.Display();
             }
         }
 
@@ -611,7 +645,7 @@ namespace PIE
             if (projectTreeView.SelectedNode != null)
             {
                 if (e.KeyCode == Keys.Enter)
-                    displayData();
+                    displaySlice();
                 else if (e.KeyCode == Keys.Delete)
                     deleteNode();
             }
@@ -620,7 +654,7 @@ namespace PIE
         private void startAddrToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             long offset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
-            activeData.ChangeOffset(offset);
+            activeSlice.ChangeOffset(offset);
         }
 
         private void startAddrToolStripComboBox_KeyUp(object sender, KeyEventArgs e)
@@ -631,7 +665,7 @@ namespace PIE
                 try
                 {
                     potentialAddress = long.Parse(startAddrToolStripComboBox.Text, NumberStyles.HexNumber);
-                    activeData.ChangeOffset(potentialAddress);
+                    activeSlice.ChangeOffset(potentialAddress);
                     if (!startAddrToolStripComboBox.Items.Contains(startAddrToolStripComboBox.Text))
                         startAddrToolStripComboBox.Items.Add(startAddrToolStripComboBox.Text);
                 }
@@ -653,8 +687,8 @@ namespace PIE
                     gotoAddress = long.Parse(gotoToolStripTextBox.Text, NumberStyles.HexNumber);
                     if (gotoAddress < displayHexBox.LineInfoOffset)
                         gotoAddress = displayHexBox.LineInfoOffset;
-                    if (gotoAddress > displayHexBox.LineInfoOffset + activeData.size)
-                        gotoAddress = activeData.size - 1;
+                    if (gotoAddress > displayHexBox.LineInfoOffset + activeSlice.size)
+                        gotoAddress = activeSlice.size - 1;
                     displayHexBox.ScrollByteIntoView(gotoAddress);
                     //if (currentPosition + displayHexBox.VerticalByteCount * displayHexBox.BytesPerLine < displayHexBox.ByteProvider.Length - 1)
                     //    displayHexBox.ScrollByteIntoView(gotoAddress + displayHexBox.VerticalByteCount * displayHexBox.BytesPerLine);
@@ -703,13 +737,13 @@ namespace PIE
             if (projectTreeView.SelectedNode == currentTreeNode)
             {
                 (currentTreeNode.Tag as Slice).Display();
-                activeData.FillAddresses(startAddrToolStripComboBox);
+                activeSlice.FillAddresses(startAddrToolStripComboBox);
             }
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            activeData.Delete();
+            activeSlice.Delete();
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -734,10 +768,16 @@ namespace PIE
             {
                 saveFileDialog1.InitialDirectory = Path.GetDirectoryName(filePath);
                 saveFileDialog1.FileName = Path.GetFileNameWithoutExtension(filePath) + ".pie";
-                if (saveFileDialog1.ShowDialog(this) == DialogResult.Cancel)
-                    return;
 
-                using (XmlWriter projectFile = XmlWriter.Create(saveFileDialog1.FileName, writerSettings))
+                if (!File.Exists(projectPath))
+                {
+                    if (saveFileDialog1.ShowDialog(this) == DialogResult.Cancel)
+                        return;
+                    else
+                        projectPath = saveFileDialog1.FileName;
+                }
+
+                using (XmlWriter projectFile = XmlWriter.Create(projectPath, writerSettings))
                 {
                     projectFile.WriteStartDocument();
                     projectFile.WriteStartElement("PIEProject");
@@ -791,7 +831,7 @@ namespace PIE
 
         private void projectTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeData.start.ToString("X") + " - " + activeData.end.ToString("X");
+            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeSlice.start.ToString("X") + " - " + activeSlice.end.ToString("X");
         }
 
         private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -811,7 +851,8 @@ namespace PIE
         {
             openFileDialog1.Title = "Select a Project File";
             openFileDialog1.Filter = "";
-            openFile();
+            openFile(true);
+            displaySlice();
         }
     }
 
