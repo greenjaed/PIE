@@ -42,8 +42,10 @@ namespace PIE
         private void createNode(long position, int name)
         {
             TreeNode subnode = new TreeNode();
+            String nodeText = (nameTextBox.Text == "" ? "block " : nameTextBox.Text + " ") + 
+                (name == 0 ? "" : name.ToString("X"));
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
-            subnode.Text = "block " + name.ToString("X");
+            subnode.Text = nodeText;
             Slice subslice = new Slice(dataSource, position, size);
             subnode.Tag = subslice;
             node.Nodes.Add(subnode);
@@ -52,8 +54,6 @@ namespace PIE
         private void slice()
         {
             int sliceCounter = 0;
-            createNode(start, sliceCounter);
-            ++sliceCounter;
 
             if (AdvancedCheckBox.Checked && repeatCheckBox.Checked)
             {
@@ -69,6 +69,8 @@ namespace PIE
                 if ((size = (dataSource.dataByteProvider.Length - 1) - insertPosition) > 0)
                     createNode(insertPosition, sliceCounter);
             }
+            else
+                createNode(start, sliceCounter);
         }
 
         private void clearExistingSlices()
@@ -153,6 +155,7 @@ namespace PIE
                 this.Cursor = Cursors.WaitCursor;
                 size = Math.Min(dataSource.size, size);
                 slice();
+                changed = true;
                 this.Cursor = Cursors.Arrow;
                 this.Close();
             }

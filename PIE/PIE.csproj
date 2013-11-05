@@ -72,6 +72,12 @@
     <Compile Include="CloneForm.Designer.cs">
       <DependentUpon>CloneForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PIEAboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PIEAboutBox.Designer.cs">
+      <DependentUpon>PIEAboutBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Slice.cs" />
     <Compile Include="FindForm.cs">
       <SubType>Form</SubType>
@@ -113,6 +119,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="OptionForm.resx">
       <DependentUpon>OptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PIEAboutBox.resx">
+      <DependentUpon>PIEAboutBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PIEForm.resx">
       <DependentUpon>PIEForm.cs</DependentUpon>
@@ -184,6 +193,8 @@
   <ItemGroup>
     <Content Include="notes.txt" />
     <Content Include="pie_chart.ico" />
+    <None Include="Resources\aboutPIE.jpg" />
+    <None Include="Resources\Slice.png" />
     <None Include="Resources\Delete.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

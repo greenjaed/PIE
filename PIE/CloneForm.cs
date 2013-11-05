@@ -17,6 +17,7 @@ namespace PIE
         TreeNode node;
         TreeNode parent;
         Slice nodeData;
+        public bool changed { get; protected set; }
 
         public CloneForm()
         {
@@ -67,6 +68,7 @@ namespace PIE
 
                 this.Cursor = Cursors.WaitCursor;
                 clone();
+                changed = true;
                 this.Cursor = Cursors.Arrow;
                 this.Close();
             }

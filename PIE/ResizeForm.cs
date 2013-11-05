@@ -15,6 +15,7 @@ namespace PIE
         protected long start;
         protected long end;
         protected TreeNode node;
+        public bool changed { get; protected set; }
 
         public ResizeForm()
         {
@@ -86,6 +87,7 @@ namespace PIE
                     return;
                 wrongSize.Resize(node, start, end);
                 valid = true;
+                changed = true;
             }
             catch (Exception ex)
             {

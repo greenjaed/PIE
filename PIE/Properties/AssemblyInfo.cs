@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PIE")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A free, open source file editor that allows the user to isolate data and view and edit it the way it was meant to be viewed and edited.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PIE")]

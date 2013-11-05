@@ -29,6 +29,8 @@ namespace PIE
         TreeNode currentTreeNode;
         //indicates whether data is being selected
         bool isSelecting;
+        //indicates when the project has changed
+        bool projectChanged;
         //the current position in the data
         long currentPosition;
         //generates a unique ID
@@ -54,6 +56,7 @@ namespace PIE
         {
             isSelecting = enableValue;
             hexContextMenuStrip.Items["sliceHexToolStripMenuItem"].Enabled = enableValue;
+            sliceToolStripButton.Enabled = enableValue;
             //change enable of copy and cut
             hexContextMenuStrip.Items["cutHexToolStripMenuItem"].Enabled = enableValue;
             hexContextMenuStrip.Items["copyHexToolStripMenuItem"].Enabled = enableValue;
@@ -64,22 +67,35 @@ namespace PIE
             editToolStripMenuItem.DropDownItems["copyToolStripMenuItem"].Enabled = enableValue;
             editToolStripMenuItem.DropDownItems["deleteToolStripMenuItem"].Enabled = enableValue;
             if (displayHexBox.CanPaste())
-                enablePaste();
+                togglePaste(true);
         }
 
         private bool closeFile()
         {
             if (anyChanges(projectTreeView.Nodes[0]))
             {
-                DialogResult result = MessageBox.Show("Apply changes before closing?", "PIE", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                if (result == System.Windows.Forms.DialogResult.Yes)
+                DialogResult result = MessageBox.Show("Apply changes to file before closing?", "PIE", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
                 {
                     saveAllChanges();
                     saveFile(true);
                     displayHexBox.ByteProvider = null;
                     fileBytes.Dispose();
                 }
-                else if (result == System.Windows.Forms.DialogResult.Cancel)
+                else if (result == DialogResult.Cancel)
+                    return false;
+            }
+            return true;
+        }
+
+        private bool closeProject()
+        {
+            if (projectChanged)
+            {
+                DialogResult result = MessageBox.Show("Apply changes to project before closing?", "PIE", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                    return saveProject();
+                else if (result == DialogResult.Cancel)
                     return false;
             }
             return true;
@@ -100,13 +116,11 @@ namespace PIE
         private void copy()
         {
             activeSlice.Copy();
-            //enablePaste();
         }
 
         private void cut()
         {
             activeSlice.Cut();
-            //enablePaste();
         }
 
         private void displaySlice()
@@ -135,30 +149,31 @@ namespace PIE
                 currentTreeNode.Text += "*";
         }
 
-        private void enableItems()
+        private void toggleControls(bool toggle)
         {
-            editToolStripMenuItem.DropDownItems["findToolStripMenuItem"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["selectAllToolStripMenuItem"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["findNextToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["saveProjectToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = true;
-            fileToolStripMenuItem.DropDownItems["saveAllToolStripMenuItem"].Enabled = true;
-            standardToolStrip.Items["saveToolStripButton"].Enabled = true;
-            hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = true;
-            startAddrToolStripComboBox.Enabled = true;
-            gotoToolStripTextBox.Enabled = true;
+            editToolStripMenuItem.DropDownItems["findToolStripMenuItem"].Enabled = toggle;
+            editToolStripMenuItem.DropDownItems["selectAllToolStripMenuItem"].Enabled = toggle;
+            editToolStripMenuItem.DropDownItems["findNextToolStripMenuItem"].Enabled = toggle;
+            fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = toggle;
+            fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = toggle;
+            fileToolStripMenuItem.DropDownItems["saveProjectToolStripMenuItem"].Enabled = toggle;
+            fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = toggle;
+            fileToolStripMenuItem.DropDownItems["saveAllToolStripMenuItem"].Enabled = toggle;
+            fileToolStripMenuItem.DropDownItems["closeProjectToolStripMenuItem"].Enabled = toggle;
+            standardToolStrip.Items["saveToolStripButton"].Enabled = toggle;
+            hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = toggle;
+            startAddrToolStripComboBox.Enabled = toggle;
+            gotoToolStripTextBox.Enabled = toggle;
         }
 
-        private void enablePaste()
+        private void togglePaste(bool toggle)
         {
-            editToolStripMenuItem.DropDownItems["pasteToolStripMenuItem"].Enabled = true;
-            editToolStripMenuItem.DropDownItems["pasteOverToolStripMenuItem"].Enabled = true;
-            hexContextMenuStrip.Items["pasteHexToolStripMenuItem"].Enabled = true;
-            hexContextMenuStrip.Items["pasteOverHexToolStripMenuItem"].Enabled = true;
-            standardToolStrip.Items["pasteToolStripButton"].Enabled = true;
-            standardToolStrip.Items["pasteOverToolStripButton"].Enabled = true;
+            editToolStripMenuItem.DropDownItems["pasteToolStripMenuItem"].Enabled = toggle;
+            editToolStripMenuItem.DropDownItems["pasteOverToolStripMenuItem"].Enabled = toggle;
+            hexContextMenuStrip.Items["pasteHexToolStripMenuItem"].Enabled = toggle;
+            hexContextMenuStrip.Items["pasteOverHexToolStripMenuItem"].Enabled = toggle;
+            standardToolStrip.Items["pasteToolStripButton"].Enabled = toggle;
+            standardToolStrip.Items["pasteOverToolStripButton"].Enabled = toggle;
         }
 
         private void initializeProjectTree(string fileName)
@@ -241,16 +256,13 @@ namespace PIE
             }
 
             fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
-            fileBytes.Changed += new EventHandler(fileBytes_Changed);
             fileName = Path.GetFileNameWithoutExtension(filePath);
-            this.Text = "PIE - " + fileName;
             if (newProject)
                 initializeProjectTree(fileName);
             else if (projectTreeView.Nodes.Count > 0)
                 projectTreeView.Nodes.Clear();
             hexContextMenuStrip.Enabled = true;
             displayHexBox.ByteProvider = fileBytes;
-            enableItems();
         }
 
         private void openProject()
@@ -297,6 +309,7 @@ namespace PIE
 
                     if (pr.IsStartElement())
                         loadNodes(root, pr);
+                    this.Text = "PIE - " + Path.GetFileNameWithoutExtension(projectPath);
                     displaySlice();
                 }
             }
@@ -323,12 +336,6 @@ namespace PIE
             } while (xr.ReadToNextSibling("Node"));
         }
 
-        void fileBytes_Changed(object sender, EventArgs e)
-        {
-            if (!this.Text.EndsWith("*"))
-                this.Text += "*";
-        }
-
         void fileBytes_LengthChanged(object sender, EventArgs e)
         {
             lengthChanged = true;
@@ -348,6 +355,7 @@ namespace PIE
         private void sliceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             sliceData();
+            projectIsChanged();
         }
 
         private void sliceData()
@@ -373,6 +381,13 @@ namespace PIE
             if (!currentTreeNode.IsExpanded)
                 currentTreeNode.Expand();
 
+        }
+
+        private void projectIsChanged()
+        {
+            projectChanged = true;
+            if (!this.Text.EndsWith("*"))
+                this.Text += "*";
         }
 
         private void displayHexBox_CurrentPositionInLineChanged(object sender, EventArgs e)
@@ -423,12 +438,16 @@ namespace PIE
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (fileBytes != null && !(closeFile() && closeProject()))
+                return;
             openFileDialog1.Title = "Select a Project";
             openFileDialog1.Filter = "PIE files (*.pie)|*.pie|All files (*.*)|*.*";
             if (openFileDialog1.ShowDialog(this) == DialogResult.Cancel)
                 return;
             projectPath = openFileDialog1.FileName;
             openProject();
+            if (fileBytes != null)
+                this.Text = "PIE - " + Path.GetFileNameWithoutExtension(openFileDialog1.FileName);
         }
 
         private void saveFile(bool isClosing)
@@ -440,7 +459,6 @@ namespace PIE
                     (projectTreeView.Nodes[0].Tag as Slice).Resize(projectTreeView.Nodes[0], 0, fileBytes.Length - 1);
                 saveChanges(isClosing);
                 this.Cursor = Cursors.Arrow;
-                this.Text = this.Text.TrimEnd(changed);
             }
             catch (Exception ex)
             {
@@ -451,13 +469,15 @@ namespace PIE
         private void PIEForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (fileBytes != null)
-                e.Cancel = !closeFile();
+            {
+                if (!(closeFile() && closeProject()))
+                    e.Cancel = true;
+            }
         }
 
         private void performSearch()
         {
             search = new FindForm(displayHexBox);
-            search.Owner = this;
             search.Show(this);
         }
 
@@ -479,11 +499,8 @@ namespace PIE
             activeSlice.Save();
             if (!isClosing)
             {
-                bool hadChanges = fileBytes.HasChanges();
                 propagateDown(currentTreeNode);
                 currentTreeNode.Text = currentTreeNode.Text.TrimEnd(changed);
-                if (!hadChanges)
-                    this.Text = this.Text.TrimEnd(changed);
             }
         }
 
@@ -585,13 +602,13 @@ namespace PIE
 
         private void displayHexBox_Copied(object sender, EventArgs e)
         {
-            enablePaste();
+            togglePaste(true);
         }
 
         private void PIEForm_Activated(object sender, EventArgs e)
         {
             if (displayHexBox.CanPaste())
-                enablePaste();
+                togglePaste(true);
         }
 
         //reloads the file only
@@ -605,7 +622,6 @@ namespace PIE
                 (projectTreeView.Nodes[0].Tag as Slice).updateMainSlice(fileBytes);
                 propagateDown(projectTreeView.Nodes[0]);
                 projectTreeView.Nodes[0].Text = projectTreeView.Nodes[0].Text.TrimEnd(changed);
-                this.Text = this.Text.TrimEnd(changed);
                 activeSlice.Display();
             }
         }
@@ -638,6 +654,8 @@ namespace PIE
         {
             SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
             sliceForm.Show(this);
+            if (sliceForm.changed)
+                projectIsChanged();
         }
 
         private void projectTreeView_KeyUp(object sender, KeyEventArgs e)
@@ -734,6 +752,8 @@ namespace PIE
         {
             ResizeForm resizeForm = new ResizeForm(projectTreeView.SelectedNode);
             resizeForm.Show(this);
+            if (resizeForm.changed)
+                projectIsChanged();
             if (projectTreeView.SelectedNode == currentTreeNode)
             {
                 (currentTreeNode.Tag as Slice).Display();
@@ -757,7 +777,7 @@ namespace PIE
             saveAllChanges();
         }
 
-        private void saveProject()
+        private bool saveProject()
         {
             XmlWriterSettings writerSettings = new XmlWriterSettings();
             writerSettings.Indent = true;
@@ -772,7 +792,7 @@ namespace PIE
                 if (!File.Exists(projectPath))
                 {
                     if (saveFileDialog1.ShowDialog(this) == DialogResult.Cancel)
-                        return;
+                        return false;
                     else
                         projectPath = saveFileDialog1.FileName;
                 }
@@ -793,7 +813,10 @@ namespace PIE
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                return false;
             }
+            
+            return true;
         }
 
         private void saveNodes(TreeNode current, XmlWriter writer)
@@ -820,7 +843,6 @@ namespace PIE
                 fileBytes = new DynamicFileByteProvider(filePath);
                 selectedData.updateMainSlice(fileBytes);
                 displayHexBox.ByteProvider = fileBytes;
-                this.Text = this.Text.TrimEnd(changed);
             }
             else
                 selectedData.Invalidate();
@@ -832,18 +854,22 @@ namespace PIE
         private void projectTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
             sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeSlice.start.ToString("X") + " - " + activeSlice.end.ToString("X");
+            projectIsChanged();
         }
 
         private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloneForm cloneForm = new CloneForm(projectTreeView.SelectedNode);
             cloneForm.Show(this);
+            if (cloneForm.changed)
+                projectIsChanged();
         }
 
         private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Cursor = Cursors.WaitCursor;
-            saveProject();
+            if (saveProject())
+                this.Text.TrimEnd(changed);
             this.Cursor = Cursors.Arrow;
         }
 
@@ -852,7 +878,33 @@ namespace PIE
             openFileDialog1.Title = "Select a Project File";
             openFileDialog1.Filter = "";
             openFile(true);
-            displaySlice();
+            if (fileBytes != null)
+            {
+                this.Text = "PIE - new project";
+                displaySlice();
+                projectIsChanged();
+                toggleControls(true);
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PIEAboutBox about = new PIEAboutBox();
+            about.Show(this);
+        }
+
+        private void closeProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!(closeFile() && closeProject()))
+                return;
+            displayHexBox.ByteProvider = null;
+            fileBytes = null;
+            projectTreeView.Nodes.Clear();
+            this.Text = "PIE";
+            toggleControls(false);
+            togglePaste(false);
+            sliceToolStripStatusLabel.Text = "";
+            positionToolStripStatusLabel.Text = "";
         }
     }
 

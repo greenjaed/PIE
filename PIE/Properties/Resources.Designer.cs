@@ -60,6 +60,13 @@ namespace PIE.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap aboutPIE {
+            get {
+                object obj = ResourceManager.GetObject("aboutPIE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to \\PIE.ini.
         /// </summary>
@@ -116,6 +123,13 @@ namespace PIE.Properties {
         internal static System.Drawing.Bitmap PasteOver {
             get {
                 object obj = ResourceManager.GetObject("PasteOver", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap Slice {
+            get {
+                object obj = ResourceManager.GetObject("Slice", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

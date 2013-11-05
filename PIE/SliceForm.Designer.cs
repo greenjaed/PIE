@@ -34,12 +34,39 @@
             this.bytesComboBox = new System.Windows.Forms.ComboBox();
             this.bytesLabel = new System.Windows.Forms.Label();
             this.repeatCheckBox = new System.Windows.Forms.CheckBox();
+            this.nameLabel = new System.Windows.Forms.Label();
+            this.nameTextBox = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
+            // 
+            // startLabel
+            // 
+            this.startLabel.Location = new System.Drawing.Point(18, 46);
+            // 
+            // endLabel
+            // 
+            this.endLabel.Location = new System.Drawing.Point(179, 46);
+            // 
+            // okButton
+            // 
+            this.okButton.Location = new System.Drawing.Point(168, 89);
+            // 
+            // cancelButton
+            // 
+            this.cancelButton.Location = new System.Drawing.Point(249, 89);
+            // 
+            // endTextBox
+            // 
+            this.endTextBox.Location = new System.Drawing.Point(211, 43);
+            // 
+            // startTextBox
+            // 
+            this.startTextBox.Location = new System.Drawing.Point(53, 43);
             // 
             // AdvancedCheckBox
             // 
             this.AdvancedCheckBox.AutoSize = true;
-            this.AdvancedCheckBox.Location = new System.Drawing.Point(15, 75);
+            this.AdvancedCheckBox.Location = new System.Drawing.Point(11, 97);
             this.AdvancedCheckBox.Name = "AdvancedCheckBox";
             this.AdvancedCheckBox.Size = new System.Drawing.Size(75, 17);
             this.AdvancedCheckBox.TabIndex = 6;
@@ -50,7 +77,7 @@
             // sizeLabel
             // 
             this.sizeLabel.AutoSize = true;
-            this.sizeLabel.Location = new System.Drawing.Point(183, 24);
+            this.sizeLabel.Location = new System.Drawing.Point(179, 46);
             this.sizeLabel.Name = "sizeLabel";
             this.sizeLabel.Size = new System.Drawing.Size(27, 13);
             this.sizeLabel.TabIndex = 4;
@@ -71,7 +98,7 @@
             "128",
             "256",
             "512"});
-            this.sizeComboBox.Location = new System.Drawing.Point(216, 21);
+            this.sizeComboBox.Location = new System.Drawing.Point(212, 43);
             this.sizeComboBox.Name = "sizeComboBox";
             this.sizeComboBox.Size = new System.Drawing.Size(48, 21);
             this.sizeComboBox.TabIndex = 1;
@@ -87,7 +114,7 @@
             "",
             "kilo",
             "mega"});
-            this.bytesComboBox.Location = new System.Drawing.Point(282, 21);
+            this.bytesComboBox.Location = new System.Drawing.Point(278, 43);
             this.bytesComboBox.Name = "bytesComboBox";
             this.bytesComboBox.Size = new System.Drawing.Size(60, 21);
             this.bytesComboBox.TabIndex = 2;
@@ -97,7 +124,7 @@
             // bytesLabel
             // 
             this.bytesLabel.AutoSize = true;
-            this.bytesLabel.Location = new System.Drawing.Point(348, 24);
+            this.bytesLabel.Location = new System.Drawing.Point(344, 46);
             this.bytesLabel.Name = "bytesLabel";
             this.bytesLabel.Size = new System.Drawing.Size(38, 13);
             this.bytesLabel.TabIndex = 5;
@@ -107,7 +134,7 @@
             // repeatCheckBox
             // 
             this.repeatCheckBox.AutoSize = true;
-            this.repeatCheckBox.Location = new System.Drawing.Point(15, 52);
+            this.repeatCheckBox.Location = new System.Drawing.Point(11, 74);
             this.repeatCheckBox.Name = "repeatCheckBox";
             this.repeatCheckBox.Size = new System.Drawing.Size(127, 17);
             this.repeatCheckBox.TabIndex = 6;
@@ -115,11 +142,29 @@
             this.repeatCheckBox.UseVisualStyleBackColor = true;
             this.repeatCheckBox.Visible = false;
             // 
+            // nameLabel
+            // 
+            this.nameLabel.AutoSize = true;
+            this.nameLabel.Location = new System.Drawing.Point(12, 20);
+            this.nameLabel.Name = "nameLabel";
+            this.nameLabel.Size = new System.Drawing.Size(35, 13);
+            this.nameLabel.TabIndex = 7;
+            this.nameLabel.Text = "Name";
+            // 
+            // nameTextBox
+            // 
+            this.nameTextBox.Location = new System.Drawing.Point(53, 17);
+            this.nameTextBox.Name = "nameTextBox";
+            this.nameTextBox.Size = new System.Drawing.Size(258, 20);
+            this.nameTextBox.TabIndex = 8;
+            // 
             // SliceForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(403, 115);
+            this.ClientSize = new System.Drawing.Size(403, 140);
+            this.Controls.Add(this.nameTextBox);
+            this.Controls.Add(this.nameLabel);
             this.Controls.Add(this.AdvancedCheckBox);
             this.Controls.Add(this.sizeLabel);
             this.Controls.Add(this.sizeComboBox);
@@ -133,10 +178,16 @@
             this.Controls.SetChildIndex(this.bytesComboBox, 0);
             this.Controls.SetChildIndex(this.sizeComboBox, 0);
             this.Controls.SetChildIndex(this.sizeLabel, 0);
-            this.Controls.SetChildIndex(this.AdvancedCheckBox, 0);
+            this.Controls.SetChildIndex(this.cancelButton, 0);
             this.Controls.SetChildIndex(this.endLabel, 0);
             this.Controls.SetChildIndex(this.endTextBox, 0);
             this.Controls.SetChildIndex(this.okButton, 0);
+            this.Controls.SetChildIndex(this.startTextBox, 0);
+            this.Controls.SetChildIndex(this.startLabel, 0);
+            this.Controls.SetChildIndex(this.AdvancedCheckBox, 0);
+            this.Controls.SetChildIndex(this.nameLabel, 0);
+            this.Controls.SetChildIndex(this.nameTextBox, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -150,5 +201,7 @@
         private System.Windows.Forms.ComboBox bytesComboBox;
         private System.Windows.Forms.Label bytesLabel;
         private System.Windows.Forms.CheckBox repeatCheckBox;
+        private System.Windows.Forms.Label nameLabel;
+        private System.Windows.Forms.TextBox nameTextBox;
     }
 }

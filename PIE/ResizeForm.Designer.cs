@@ -123,12 +123,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Label startLabel;
+        protected System.Windows.Forms.Label startLabel;
         protected System.Windows.Forms.Label endLabel;
         protected System.Windows.Forms.ErrorProvider errorProvider1;
         protected System.Windows.Forms.Button okButton;
-        private System.Windows.Forms.Button cancelButton;
+        protected System.Windows.Forms.Button cancelButton;
         protected System.Windows.Forms.TextBox endTextBox;
-        private System.Windows.Forms.TextBox startTextBox;
+        protected System.Windows.Forms.TextBox startTextBox;
     }
 }

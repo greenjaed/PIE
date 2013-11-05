@@ -66,35 +66,12 @@ program features
  ability to change line info offset
  ability to change font
 
-todo:
-add slice cloning (done)
-improve memory usage (done)
-when editing, ensure slice size remains static (done)
-ensure that no overlap occurs when slicing (done)
-allow the user to change the starting address (done)
-when resizing, resize all subnodes (done)
-implement a way to indicate when a slice has been altered
- implement a way to save and resize subslices from main file(done)
- implement a way to propagate changes downward (done)
- implement a way to propagate changes upward (done)
-sort out how to handle saving with the slice hierarchy (done)
-create a way of updating other slices when editing a slice (done)
-get a project file format up and running
-expose more of the hexbox properties for modification (bytes per row, byte grouping, line/column info, etc) (done)
- hexbox properties to expose:
-  Font
-  ForeColor/Font Color
-  Backcolor
-  Address Color? - doesn't work
-  Character Mapping (enable/disable)
-  Column Address (enable/disable) - doesn't work
-  Line Address (enable/disable)
-  Hex casing (upper/lower)
-  Bytes per line
-  Group Separator (enable/disable) - doesn't work
-  Group Size - doesn't work
-
 what to save?
  project
  slice
  file
+
+todo:
+  implement import/export
+  find/create program icon
+  check for project changes before closing
