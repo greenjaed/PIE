@@ -292,6 +292,15 @@ namespace PIE
             dcs.WriteObject(writer, this);
         }
 
+        public virtual void Export(string fileName)
+        {
+            using (FileStream export = new FileStream(fileName, FileMode.Create))
+            {
+                byte[] sliceBytes = (dataByteProvider as DynamicByteProvider).Bytes.ToArray();
+                export.Write(sliceBytes, 0, sliceBytes.Length);
+            }
+        }
+
         public static Slice Deserialize(XmlReader reader)
         {
             DataContractSerializer deserializer = new DataContractSerializer(typeof(Slice));

@@ -38,12 +38,13 @@
             this.closeProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,8 +102,6 @@
             this.displayPanel = new System.Windows.Forms.Panel();
             this.displayHexBox = new Be.Windows.Forms.HexBox();
             this.hexContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.cutHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -110,6 +109,8 @@
             this.deleteHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
@@ -147,12 +148,13 @@
             this.closeProjectToolStripMenuItem,
             this.toolStripSeparator5,
             this.saveToolStripMenuItem,
-            this.saveAsToolStripMenuItem,
             this.saveProjectToolStripMenuItem,
             this.saveAllToolStripMenuItem,
             this.toolStripSeparator1,
             this.reloadToolStripMenuItem,
             this.toolStripSeparator2,
+            this.exportToolStripMenuItem,
+            this.toolStripSeparator16,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -207,13 +209,6 @@
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Enabled = false;
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
-            this.saveAsToolStripMenuItem.Text = "Save &As";
-            // 
             // saveProjectToolStripMenuItem
             // 
             this.saveProjectToolStripMenuItem.Enabled = false;
@@ -249,6 +244,19 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Enabled = false;
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.exportToolStripMenuItem.Text = "Export...";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator16
+            // 
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(184, 6);
             // 
             // exitToolStripMenuItem
             // 
@@ -778,30 +786,17 @@
             // 
             this.hexContextMenuStrip.Enabled = false;
             this.hexContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sliceHexToolStripMenuItem,
-            this.toolStripSeparator8,
             this.cutHexToolStripMenuItem,
             this.copyHexToolStripMenuItem,
             this.pasteHexToolStripMenuItem,
             this.pasteOverHexToolStripMenuItem,
             this.deleteHexToolStripMenuItem,
             this.toolStripSeparator9,
-            this.selectAllHexToolStripMenuItem});
+            this.selectAllHexToolStripMenuItem,
+            this.toolStripSeparator8,
+            this.sliceHexToolStripMenuItem});
             this.hexContextMenuStrip.Name = "hexContextMenuStrip";
             this.hexContextMenuStrip.Size = new System.Drawing.Size(204, 170);
-            // 
-            // sliceHexToolStripMenuItem
-            // 
-            this.sliceHexToolStripMenuItem.Enabled = false;
-            this.sliceHexToolStripMenuItem.Name = "sliceHexToolStripMenuItem";
-            this.sliceHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.sliceHexToolStripMenuItem.Text = "Slice";
-            this.sliceHexToolStripMenuItem.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator8
-            // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(200, 6);
             // 
             // cutHexToolStripMenuItem
             // 
@@ -868,6 +863,19 @@
             this.selectAllHexToolStripMenuItem.Text = "Select All";
             this.selectAllHexToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(200, 6);
+            // 
+            // sliceHexToolStripMenuItem
+            // 
+            this.sliceHexToolStripMenuItem.Enabled = false;
+            this.sliceHexToolStripMenuItem.Name = "sliceHexToolStripMenuItem";
+            this.sliceHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.sliceHexToolStripMenuItem.Text = "Slice";
+            this.sliceHexToolStripMenuItem.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
@@ -917,7 +925,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -993,6 +1000,8 @@
         private System.Windows.Forms.ToolStripButton sliceToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem closeProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
     }
 }
 

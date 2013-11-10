@@ -141,6 +141,9 @@ namespace PIE
             activeSlice.FillAddresses(startAddrToolStripComboBox);
             activeSlice.dataByteProvider.Changed += new EventHandler(dataByteProvider_Changed);
             sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeSlice.start.ToString("X") + " - " + activeSlice.end.ToString("X");
+            fileToolStripMenuItem.DropDownItems["exportToolStripMenuItem"].Enabled = !(currentTreeNode.Parent == null);
+            changeEnable(false);
+            updatePosition();
         }
 
         void dataByteProvider_Changed(object sender, EventArgs e)
@@ -905,6 +908,29 @@ namespace PIE
             togglePaste(false);
             sliceToolStripStatusLabel.Text = "";
             positionToolStripStatusLabel.Text = "";
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            exportSlice();
+        }
+
+        private void exportSlice()
+        {
+            saveFileDialog1.FileName = currentTreeNode.Text;
+            saveFileDialog1.InitialDirectory = filePath;
+            saveFileDialog1.Filter = "bin | *.bin | All files | *.*";
+
+            if (saveFileDialog1.ShowDialog(this) == DialogResult.Cancel)
+                return;
+            try
+            {
+                activeSlice.Export(saveFileDialog1.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 

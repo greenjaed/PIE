@@ -74,4 +74,3 @@ what to save?
 todo:
   implement import/export
   find/create program icon
-  check for project changes before closing
