@@ -43,6 +43,7 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -153,6 +154,7 @@
             this.toolStripSeparator1,
             this.reloadToolStripMenuItem,
             this.toolStripSeparator2,
+            this.importToolStripMenuItem,
             this.exportToolStripMenuItem,
             this.toolStripSeparator16,
             this.exitToolStripMenuItem});
@@ -244,6 +246,14 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Enabled = false;
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.importToolStripMenuItem.Text = "Import...";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // exportToolStripMenuItem
             // 
@@ -1002,6 +1012,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator16;
+        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
     }
 }
 

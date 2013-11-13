@@ -92,9 +92,11 @@ namespace PIE
                 parentSlice.setBytes(start + this.start, toInsert);
         }
 
-        private void SetByteProvider()
+        private void SetByteProvider(byte[] bytes)
         {
-            dataByteProvider = new DynamicByteProvider(parentSlice.getBytes(start, size));
+            if (dataByteProvider != null)
+                dataByteProvider.LengthChanged -= dataByteProvider_LengthChanged;
+            dataByteProvider = new DynamicByteProvider(bytes);
             dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
         }
 
@@ -123,7 +125,7 @@ namespace PIE
         public virtual void Display()
         {
             if (dataByteProvider == null)
-                SetByteProvider();
+                SetByteProvider(parentSlice.getBytes(start, size));
             display.ByteProvider = dataByteProvider;
             display.LineInfoOffset = lastStart;
             display.Visible = true;
@@ -298,6 +300,21 @@ namespace PIE
             {
                 byte[] sliceBytes = (dataByteProvider as DynamicByteProvider).Bytes.ToArray();
                 export.Write(sliceBytes, 0, sliceBytes.Length);
+            }
+        }
+
+        public virtual void Import(string fileName)
+        {
+            long readLength;
+            byte[] bytes;
+            using (FileStream import = new FileStream(fileName, FileMode.Open))
+            {
+                readLength = Math.Min(size, import.Length);
+                bytes = new byte[readLength];
+                import.Read(bytes, 0, (int) readLength);
+                SetByteProvider(bytes);
+                if (readLength < size)
+                    dataByteProvider.InsertBytes(readLength, new byte[size - readLength]);
             }
         }
 
