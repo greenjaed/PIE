@@ -8,3 +8,7 @@ This project was created by greenjaed for the .NET platform using Microsoft Visu
 In order to build the project, make sure HexBox is installed on your system.  It can be found here:
 
 http://sourceforge.net/projects/hexbox/
+
+Slice and Program Icons taken from findicons.com
+  Program Icon created by Kate England
+  Slice Icon created by Benjamin Humphrey
