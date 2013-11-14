@@ -72,5 +72,7 @@ what to save?
  file
 
 todo:
-  implement import/export
   find/create program icon
+  create program documentation
+  test on another system
+  clean up code?

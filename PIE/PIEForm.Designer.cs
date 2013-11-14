@@ -903,6 +903,7 @@
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.standardToolStrip);
             this.Controls.Add(this.menuStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "PIEForm";

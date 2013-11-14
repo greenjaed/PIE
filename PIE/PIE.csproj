@@ -48,6 +48,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>pumpkin_pie.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Be.Windows.Forms.HexBox">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\Be.Windows.Forms.HexBox.DLL</HintPath>
@@ -192,7 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="notes.txt" />
-    <Content Include="pie_chart.ico" />
+    <Content Include="pumpkin_pie.ico" />
     <None Include="Resources\aboutPIE.jpg" />
     <None Include="Resources\Slice.png" />
     <None Include="Resources\Delete.png" />
