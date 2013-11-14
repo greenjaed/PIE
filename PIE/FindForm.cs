@@ -12,7 +12,7 @@ namespace PIE
 {
     public partial class FindForm : Form
     {
-        private FindOptions findOptions;
+        private FindOptions findOptions;  //the find options
         public HexBox searchMedium { get; set; }
 
         public FindForm()
@@ -52,14 +52,6 @@ namespace PIE
                 MessageBox.Show("No match found", "PIE", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else if (result == -2)
                 return;
-            /*
-            else
-            {
-                this.Hide();
-                if (!searchMedium.Focused)
-                    searchMedium.Focus();
-            }
-            */
         }
 
         private void validateFindOptions()
@@ -81,6 +73,7 @@ namespace PIE
             }
         }
 
+        //converts hex string to byte array
         private byte[] hexToByteArray()
         {
             String hexString = searchTextBox.Text;

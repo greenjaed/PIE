@@ -31,6 +31,7 @@ namespace PIE
             okButton.Text = "Slice";
         }
 
+        //calculates the size of the slice
         private void calculateSize()
         {
             if (bytesComboBox.SelectedIndex == -1)

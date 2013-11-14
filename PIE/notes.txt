@@ -72,7 +72,6 @@ what to save?
  file
 
 todo:
-  find/create program icon
-  create program documentation
+  create program documentation (half done)
   test on another system
   clean up code?

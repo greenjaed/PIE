@@ -240,7 +240,7 @@
             this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
             this.reloadToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.reloadToolStripMenuItem.Text = "Reload";
-            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
+            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadFileToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -402,52 +402,52 @@
             // showToolStripMenuItem1
             // 
             this.showToolStripMenuItem1.Name = "showToolStripMenuItem1";
-            this.showToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.showToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.showToolStripMenuItem1.Text = "Show";
             this.showToolStripMenuItem1.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
             // reloadToolStripMenuItem2
             // 
             this.reloadToolStripMenuItem2.Name = "reloadToolStripMenuItem2";
-            this.reloadToolStripMenuItem2.Size = new System.Drawing.Size(115, 22);
+            this.reloadToolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
             this.reloadToolStripMenuItem2.Text = "Reload";
-            this.reloadToolStripMenuItem2.Click += new System.EventHandler(this.reloadToolStripMenuItem1_Click);
+            this.reloadToolStripMenuItem2.Click += new System.EventHandler(this.reloadSliceToolStripMenuItem_Click);
             // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(149, 6);
             // 
             // deleteToolStripMenuItem1
             // 
             this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
-            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem1.Text = "Delete";
             this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteSliceToolStripMenuItem_Click);
             // 
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator15.Size = new System.Drawing.Size(149, 6);
             // 
             // resizeToolStripMenuItem1
             // 
             this.resizeToolStripMenuItem1.Name = "resizeToolStripMenuItem1";
-            this.resizeToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.resizeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.resizeToolStripMenuItem1.Text = "Resize...";
             this.resizeToolStripMenuItem1.Click += new System.EventHandler(this.resizeToolStripMenuItem_Click);
             // 
             // sliceToolStripMenuItem1
             // 
             this.sliceToolStripMenuItem1.Name = "sliceToolStripMenuItem1";
-            this.sliceToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.sliceToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.sliceToolStripMenuItem1.Text = "Slice...";
             this.sliceToolStripMenuItem1.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click_1);
             // 
             // cloneToolStripMenuItem1
             // 
             this.cloneToolStripMenuItem1.Name = "cloneToolStripMenuItem1";
-            this.cloneToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.cloneToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.cloneToolStripMenuItem1.Text = "Clone...";
             this.cloneToolStripMenuItem1.Click += new System.EventHandler(this.cloneToolStripMenuItem_Click);
             // 
@@ -719,7 +719,7 @@
             this.reloadToolStripMenuItem1.Name = "reloadToolStripMenuItem1";
             this.reloadToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
             this.reloadToolStripMenuItem1.Text = "Reload";
-            this.reloadToolStripMenuItem1.Click += new System.EventHandler(this.reloadToolStripMenuItem1_Click);
+            this.reloadToolStripMenuItem1.Click += new System.EventHandler(this.reloadSliceToolStripMenuItem_Click);
             // 
             // toolStripSeparator12
             // 

@@ -13,10 +13,11 @@ namespace PIE
 {
     public partial class CloneForm : Form
     {
-        long start;
-        TreeNode node;
-        TreeNode parent;
-        Slice nodeData;
+        long start; //the starting address
+        TreeNode node; //the node to clone
+        TreeNode parent; //the parent node
+        Slice nodeData; //the slice to clone
+        //indicates whether any changes occurred
         public bool changed { get; protected set; }
 
         public CloneForm()
@@ -78,6 +79,7 @@ namespace PIE
             }
         }
 
+        //removes any existing slices when mass cloning
         private void clearExistingSlices()
         {
             Slice current;
@@ -95,7 +97,7 @@ namespace PIE
                 parent.Nodes[delIndex].Remove();
         }
 
-
+        //clones a slice
         private void cloneNode(long position)
         {
             TreeNode subnode = new TreeNode();
@@ -108,6 +110,7 @@ namespace PIE
                 cloneNode(node, subnode);
         }
 
+        //mass clones a slice
         private void cloneNode(TreeNode original, TreeNode clone)
         {
             TreeNode subnode;
@@ -126,6 +129,7 @@ namespace PIE
             }
         }
 
+        //clones a slice
         private void clone()
         {
             cloneNode(start);

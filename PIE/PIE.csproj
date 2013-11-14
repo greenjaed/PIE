@@ -49,7 +49,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>pumpkin_pie.ico</ApplicationIcon>
+    <ApplicationIcon>PIE.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>
@@ -199,7 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="notes.txt" />
-    <Content Include="pumpkin_pie.ico" />
+    <Content Include="PIE.ico" />
     <None Include="Resources\aboutPIE.jpg" />
     <None Include="Resources\Slice.png" />
     <None Include="Resources\Delete.png" />
