@@ -179,7 +179,6 @@ namespace PIE
             editToolStripMenuItem.DropDownItems["selectAllToolStripMenuItem"].Enabled = toggle;
             editToolStripMenuItem.DropDownItems["findNextToolStripMenuItem"].Enabled = toggle;
             fileToolStripMenuItem.DropDownItems["saveToolStripMenuItem"].Enabled = toggle;
-            fileToolStripMenuItem.DropDownItems["saveAsToolStripMenuItem"].Enabled = toggle;
             fileToolStripMenuItem.DropDownItems["saveProjectToolStripMenuItem"].Enabled = toggle;
             fileToolStripMenuItem.DropDownItems["reloadToolStripMenuItem"].Enabled = toggle;
             fileToolStripMenuItem.DropDownItems["saveAllToolStripMenuItem"].Enabled = toggle;
@@ -279,21 +278,21 @@ namespace PIE
                     if (fileBytes != null)
                         fileBytes.Dispose();
                     fileBytes = new DynamicFileByteProvider(filePath);
+                    fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
+                    fileName = Path.GetFileNameWithoutExtension(filePath);
+                    if (newProject)
+                        initializeProjectTree(fileName);
+                    else if (projectTreeView.Nodes.Count > 0)
+                        projectTreeView.Nodes.Clear();
+                    hexContextMenuStrip.Enabled = true;
+                    displayHexBox.ByteProvider = fileBytes;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: could not open file: " + ex.Message);
+                return;
             }
-
-            fileBytes.LengthChanged += new EventHandler(fileBytes_LengthChanged);
-            fileName = Path.GetFileNameWithoutExtension(filePath);
-            if (newProject)
-                initializeProjectTree(fileName);
-            else if (projectTreeView.Nodes.Count > 0)
-                projectTreeView.Nodes.Clear();
-            hexContextMenuStrip.Enabled = true;
-            displayHexBox.ByteProvider = fileBytes;
         }
 
         //opens a project file
@@ -966,6 +965,7 @@ namespace PIE
             this.Text = "PIE";
             toggleControls(false);
             togglePaste(false);
+            sliceToolStripMenuItem.Enabled = false;
             sliceToolStripStatusLabel.Text = "";
             positionToolStripStatusLabel.Text = "";
         }
@@ -1019,6 +1019,12 @@ namespace PIE
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void infoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NotesForm infoForm = new NotesForm(projectTreeView.SelectedNode.Tag as Slice);
+            infoForm.Show(this);
         }
     }
 

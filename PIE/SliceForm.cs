@@ -48,6 +48,7 @@ namespace PIE
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
             subnode.Text = nodeText;
             Slice subslice = new Slice(dataSource, position, size);
+            subslice.notes = notesTextBox.Text;
             subnode.Tag = subslice;
             node.Nodes.Add(subnode);
         }

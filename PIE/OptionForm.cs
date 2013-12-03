@@ -79,7 +79,7 @@ namespace PIE
             {
                 using (StreamWriter optionWriter = new StreamWriter(Application.StartupPath + Properties.Resources.configFileString))
                 {
-                    optionWriter.WriteLine("HexBox:");
+                    optionWriter.WriteLine("[HexBox]");
                     optionWriter.WriteLine("ForeColor=" + colorConverter.ConvertToString(fontTextBox.ForeColor));
                     optionWriter.WriteLine("Font=" + fontConverter.ConvertToString(fontTextBox.Font));
                     optionWriter.WriteLine("BackColor=" + colorConverter.ConvertToString(backColorButton.BackColor));

@@ -30,6 +30,8 @@ namespace PIE
         //the end address in parentSlice where the data comes from
         [DataMember]
         public long end { get; protected set; }
+        [DataMember]
+        public string notes { get; set; }
         //the data itself
         public IByteProvider dataByteProvider { get; protected set; }
         //indicates if the slice has been changed or not. if no data, returns false
@@ -316,7 +318,7 @@ namespace PIE
         }
 
         //deserializes a Slice and returns it
-        public static virtual Slice Deserialize(XmlReader reader)
+        public static Slice Deserialize(XmlReader reader)
         {
             DataContractSerializer deserializer = new DataContractSerializer(typeof(Slice));
             return (Slice) deserializer.ReadObject(reader);
