@@ -3,12 +3,13 @@
 <head>
 <title>PIE readme</title>
 <style type="text/css">
+h1, h2 {text-align:center}
 </style>
 </head>
 <body>
 <h1>PIE</h1>
 <h2>A File Editor</h2>
-<h3>Table of Contents</h3>
+<h3 id="Table_of_Contents">Table of Contents</h3>
 <ul>
 <li><a href="#Introduction">Introduction</a></li>
 <ul>
@@ -21,14 +22,17 @@
 </ul>
 <li><a href="#Hex_Editor">Hex Editor</a></li>
 <ul>
-<li><a href="#Basic_Editing">Basic Editing</a></li>
+<li><a href="#Editing_Data">Editing Data</a></li>
+<li><a href="#Finding_Data">Finding Data</a></li>
+</ul>
+<li><a href="#Acknowledgements">Acknowledgements</a></li>
 </ul>
 <div>
 <h3><a id="Introduction">Introduction</a></h3>
 <p>PIE is a file editor which allows for multiple views of the same file.  It does this by isolating parts of the file, allowing each part to be viewed differently.  The purpose of this editor is to allow for a user to easily view and edit files containing multiple types of data (executables, archives, roms, etc.).  The goal for this editor is to support the editing and viewing of the most common forms of data, allowing for less common types via plugins and the import and export of data.  For the initial release, the program consists of a basic hex editor with some nice features and the ability to create "slices" from a file.</p>
 <h4><a id="What_is_a_slice"> What is a Slice?</a></h4>
 <p>A slice is a contiguous, static-size, non-overlapping section of data derived from either another slice or the file itself.  Each slice can be further subdivided into smaller slices.  Unrelated slices—those slices that do not share data in common—are treated as separate entities and do not affect each other.  When used correctly, each slice should represent a specific entity within the file, such as a code bank, text, or a table.</p>
-<p>As an example, let's suppose we have a rom which is data divided into 16 kilobyte banks, each bank containing various types of data.  When loaded, each bank occupies the same address space.  Slices allow us to partition the file into 16 kilobyte banks, each able to be viewed with the correct address space.  Further, each slice can be subdivided to isolate the different types of data contained in the bank.</p>
+<p>As an example, let's suppose we have a rom which is divided into 16 kilobyte banks, each bank containing various types of data.  When loaded, each bank occupies the same address space.  Slices allow us to partition the file into 16 kilobyte banks, each able to be viewed with the correct address space.  Further, each slice can be subdivided to isolate the different types of data contained in the bank.</p>
 </div>
 <div>
 <h3><a id="Projects">Projects</a></h3>
@@ -41,8 +45,35 @@
 <div>
 <h3><a id="Hex_Editor">Hex Editor</a></h3>
 <p>The hex editor is the base way in which to view and edit data in PIE.  While currently it is also the only way to edit data, all current and future slices can be viewed via the hex editor.</p>
-<h4><a id="Basic_Editing">Basic Editing</a></h4>
-<p>The hex editor can overwrite and insert data.  You can do this by either entering hexidecimal values or ascii characters.</p>
+<h4><a id="Editing_Data">Editing Data</a></h4>
+<p>The hex editor can overwrite and insert data.  You can do this by either entering hexidecimal values or ascii characters.  The hex editor also allows for standard copy/paste actions:
+<ul>
+<li><dfn>copy</dfn> - copies the selected data to the clipboard</li>
+<li><dfn>cut</dfn> - copies the selected data to the clipboard and then removes the data.</li>
+<li><dfn>paste</dfn> - inserts data from the clipboard at the cursor location</li>
+<li><dfn>paste over</dfn> - overwrites data at the cursor location using the contents of the clipboard</li></ul></p>
+<h4><a id="Finding_Data">Finding Data</a></h4>
+<p>To find a certain string of hex or ASCII characters, click on "Find" under the "Edit" menu.  PIE will open another window allowing you to enter a search query.  If you are searching for a hex string, keep in mind that PIE will add a <kbd>0</kbd> to the beginning of an odd number of characters.  So, a search for <kbd>f10</kbd> would submit a search for <kbd>0f10</kbd>.  If you are searching for an ASCII, select the "ASCII Text" radio button.  To make your search context-sensitive, check the "Match Case" checkbox.  To go to the next search result, click on "Edit" and select the "Find Next" option.</p>
 </div>
+<div>
+<h3><a id="Slices">Slices</a></h3>
+<p>Slices are the main way that data is managed and viewed.  All existing slices are shown in a tree structure to the right of the main program.  To view a specific slice, double click on the slice or select it and either Select "Show" under "Slice" or by right-clicking.</p>
+<h4><a id="Creating_Slices">Creating Slices</a></h4>
+<p>There are multiple ways to create slices.  The quick and easy way is to highlight a section of data,  and either right click and select "Slice" or click the slice button.  If successful, the new slice is created and displayed in the project view.</p>
+<p>To manually create a slice, select the slice to slice and select "Slice..." by either right-clicking or by selecting the "Slice" menu.  This will open another window.  In this window, you can name the slice, specify its bounds, and enter information about the slice.  If you check "advanced," you can set the slice to a specific size as well as repeat it to fill the slice.  Once you are done, click "Slice" and the new slice(s) will be created.</p>
+<p><strong>NOTE:</strong> When creating a slice, make sure that it lies within the bounds of the slice you are creating it from and that it does not overlap another slice.  Otherwise, you will recieve an error.  If you get an error, change the slice bounds until the slice you are attempting to create is valid.</p>
+<h4><a id="Copying_Slices">Copying Slices</a></h4>
+<p>If you create a slice and would like to duplicate it, select the slice and click on "Clone..." by either right-clicking or by going into the "Slice" menu.  This will open another window.  From here, specify the start address.  By default, it is the address right after the slice you are cloning.  If you just want the top level slice, keep "Include sub-slices" unchecked.  Otherwise, check it to clone the entire slice structure.  If you want this current slice cloned over the entire slice, select "Repeat over the slice" to get multiple clones of the slice.  Note that cloning a slice will only clone the slice structure, not the data within the slice.</p>
+<h4><a id="Modifying_Slices">Modifying Slices</a></h4>
+<p>If the slice you create is the wrong size, it can be resized by selecting the slice and selecting "Resize..." from either the right-click menu or from the "Slice" menu.  This will open another window with the current bounds.  After you have edited them to your satisfaction, click OK for the resize to take effect.  Note that, just like when creating a slice, the bounds you specify must not overlap another slice and must be within the bounds of the parent slice.</p>
+<h4><a id="Importing-Exporting_Slices">Importing/Exporting Slices</a></h4>
+</div>
+<h3><a id="Acknowledgements">Acknowledgments</a></h3>
+<p>HexBox is open source and used under the MIT license.  It can be found <a href=https://sourceforge.net/projects/hexbox/>here</a>.</p>
+<p>Slice and Program Icons taken from <a href="http://findicons.com">findicons.com</a>
+<ul>
+<li>Program Icon "pumpkin_pie.ico" created by Kate England</li>
+<li>Slice Icon "pie_graph.ico" created by Benjamin Humphrey</li>
+</ul></p>
 </body>
 </html>

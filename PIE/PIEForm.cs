@@ -345,6 +345,7 @@ namespace PIE
                         loadNodes(root, xr);
                     this.Text = "PIE - " + Path.GetFileNameWithoutExtension(projectPath);
                     displaySlice();
+                    toggleControls(true);
                 }
             }
             catch (Exception ex)
