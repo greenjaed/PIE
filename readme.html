@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PIE readme</title>
+<style type="text/css">
+</style>
+</head>
+<body>
+<h1>PIE</h1>
+<h2>A File Editor</h2>
+<h3>Table of Contents</h3>
+<ul>
+<li><a href="#Introduction">Introduction</a></li>
+<ul>
+<li><a href="#What_is_a_slice">What is a Slice?</a></li>
+</ul>
+<li><a href="#Projects">Projects</a></li>
+<ul>
+<li><a href="#Creating_a_Project">Creating a Project</a></li>
+<li><a href="#Saving_a_Project">Saving a Project</a></li>
+</ul>
+<li><a href="#Hex_Editor">Hex Editor</a></li>
+<ul>
+<li><a href="#Basic_Editing">Basic Editing</a></li>
+</ul>
+<div>
+<h3><a id="Introduction">Introduction</a></h3>
+<p>PIE is a file editor which allows for multiple views of the same file.  It does this by isolating parts of the file, allowing each part to be viewed differently.  The purpose of this editor is to allow for a user to easily view and edit files containing multiple types of data (executables, archives, roms, etc.).  The goal for this editor is to support the editing and viewing of the most common forms of data, allowing for less common types via plugins and the import and export of data.  For the initial release, the program consists of a basic hex editor with some nice features and the ability to create "slices" from a file.</p>
+<h4><a id="What_is_a_slice"> What is a Slice?</a></h4>
+<p>A slice is a contiguous, static-size, non-overlapping section of data derived from either another slice or the file itself.  Each slice can be further subdivided into smaller slices.  Unrelated slices—those slices that do not share data in common—are treated as separate entities and do not affect each other.  When used correctly, each slice should represent a specific entity within the file, such as a code bank, text, or a table.</p>
+<p>As an example, let's suppose we have a rom which is data divided into 16 kilobyte banks, each bank containing various types of data.  When loaded, each bank occupies the same address space.  Slices allow us to partition the file into 16 kilobyte banks, each able to be viewed with the correct address space.  Further, each slice can be subdivided to isolate the different types of data contained in the bank.</p>
+</div>
+<div>
+<h3><a id="Projects">Projects</a></h3>
+<p>In order to save all the slice metadata associated with a project, PIE uses project files.  These project files are xml documents that store the data associated with each slice as well as the entire project.  Included in the project file is the directory of the file associated with the project.  If the file is moved, PIE will search in the project directory for the file.  But if it can't find it in either location the project will fail to open.</p>
+<h4><a id="Creating_a_Project">Creating a Project</a></h4>
+<p>Before you can begin editing a file, you must create a new project.  You can do this by either clicking on the "New Project" button in the toolbar or by clicking on "File" and selecting "New Project."  PIE will then ask you to select the file to be associated with the project.  After you have selected the file, it will open and be ready to edit.</p>
+<h4><a id="Saving_a_Project">Saving a Project</a></h4>
+<p>To save a project, click on "File" and select "Save Project."  If this project is newly created, PIE will ask you what you want it named and where you want to save it.  After clicking save, the project file will be created.</p>
+</div>
+<div>
+<h3><a id="Hex_Editor">Hex Editor</a></h3>
+<p>The hex editor is the base way in which to view and edit data in PIE.  While currently it is also the only way to edit data, all current and future slices can be viewed via the hex editor.</p>
+<h4><a id="Basic_Editing">Basic Editing</a></h4>
+<p>The hex editor can overwrite and insert data.  You can do this by either entering hexidecimal values or ascii characters.</p>
+</div>
+</body>
+</html>

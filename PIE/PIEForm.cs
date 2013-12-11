@@ -1021,7 +1021,7 @@ namespace PIE
             }
         }
 
-        private void infoToolStripMenuItem_Click(object sender, EventArgs e)
+        private void notesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NotesForm infoForm = new NotesForm(projectTreeView.SelectedNode.Tag as Slice);
             infoForm.Show(this);
