@@ -415,7 +415,7 @@ namespace PIE
             slice = new TreeNode();
             slice.Name = uniqueID.ToString();
             //the initial name is the data range
-            slice.Text = start.ToString("X") + "-" + (start + size - 1).ToString("X");
+            slice.Text = (start + activeSlice.lastStart).ToString("X") + "-" + (start + size + activeSlice.lastStart - 1).ToString("X");
             slice.Tag = view;
             currentTreeNode.Nodes.Add(slice);
 
@@ -441,10 +441,13 @@ namespace PIE
         //if the user is selecting bytes, shows the range of bytes
         private void updatePosition()
         {
-            currentPosition = (displayHexBox.CurrentLine - 1) * displayHexBox.BytesPerLine + (displayHexBox.CurrentPositionInLine - 1);
-            statusStrip.Items["positionToolStripStatusLabel"].Text = currentPosition.ToString("X");
-            if (isSelecting)
-                statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (currentPosition + displayHexBox.SelectionLength - 1).ToString("X");
+            if (activeSlice != null)
+            {
+                currentPosition = (displayHexBox.CurrentLine - 1) * displayHexBox.BytesPerLine + (displayHexBox.CurrentPositionInLine - 1) + activeSlice.lastStart;
+                statusStrip.Items["positionToolStripStatusLabel"].Text = currentPosition.ToString("X");
+                if (isSelecting)
+                    statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (currentPosition + displayHexBox.SelectionLength - 1).ToString("X");
+            }
         }
 
         private void displayHexBox_CurrentLineChanged(object sender, EventArgs e)
@@ -612,6 +615,7 @@ namespace PIE
                     activeSlice.Hide();
                     (projectTreeView.SelectedNode.Parent.Tag as Slice).Display();
                     currentTreeNode = projectTreeView.SelectedNode.Parent;
+                    activeSlice = currentTreeNode.Tag as Slice;
                 }
                 projectTreeView.SelectedNode.Remove();
             }
@@ -734,6 +738,8 @@ namespace PIE
         {
             long offset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
             activeSlice.ChangeOffset(offset);
+            updateSliceInfo();
+            updatePosition();
         }
 
         private void startAddrToolStripComboBox_KeyUp(object sender, KeyEventArgs e)
@@ -747,6 +753,8 @@ namespace PIE
                     activeSlice.ChangeOffset(potentialAddress);
                     if (!startAddrToolStripComboBox.Items.Contains(startAddrToolStripComboBox.Text))
                         startAddrToolStripComboBox.Items.Add(startAddrToolStripComboBox.Text);
+                    updateSliceInfo();
+                    updatePosition();
                 }
                 catch (Exception ex)
                 {
@@ -812,7 +820,7 @@ namespace PIE
             resizeForm.Show(this);
             if (resizeForm.changed)
                 showProjectChanged();
-            if (projectTreeView.SelectedNode == currentTreeNode)
+            if (resizeForm.node == currentTreeNode)
             {
                 (currentTreeNode.Tag as Slice).Display();
                 activeSlice.FillAddresses(startAddrToolStripComboBox);
@@ -916,8 +924,14 @@ namespace PIE
 
         private void projectTreeView_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + activeSlice.start.ToString("X") + " - " + activeSlice.end.ToString("X");
+            updateSliceInfo();
             showProjectChanged();
+        }
+
+        private void updateSliceInfo()
+        {
+            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + (activeSlice.start + activeSlice.lastStart).ToString("X") +
+                " - " + (activeSlice.end + activeSlice.lastStart).ToString("X");
         }
 
         private void cloneToolStripMenuItem_Click(object sender, EventArgs e)

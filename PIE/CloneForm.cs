@@ -32,14 +32,14 @@ namespace PIE
             parent = node.Parent;
             nodeData = node.Tag as Slice;
             start = nodeData.end + 1;
-            startTextBox.Text = start.ToString("X");
+            startTextBox.Text = (start + nodeData.lastStart).ToString("X");
         }
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
         {
             try
             {
-                start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
+                start = long.Parse(startTextBox.Text, NumberStyles.HexNumber) - nodeData.lastStart;
                 if (start < 0 || start > nodeData.end)
                     throw new ArgumentOutOfRangeException("start address");
                 errorProvider1.SetError(startTextBox, "");

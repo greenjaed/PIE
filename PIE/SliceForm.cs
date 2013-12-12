@@ -14,8 +14,6 @@ namespace PIE
     public partial class SliceForm : ResizeForm
     {
         private Slice dataSource;
-        private long size;
-        private int baseSize;
 
         public SliceForm()
         {
@@ -28,6 +26,8 @@ namespace PIE
             dataSource = node.Tag as Slice;
             okButton.Click -= okButton_Click;
             okButton.Click += new EventHandler(sliceButton_Click);
+            endTextBox.Validating -= base.endTextBox_Validating;
+            endTextBox.Validating += new CancelEventHandler(this.endTextBox_Validating);
             okButton.Text = "Slice";
         }
 
@@ -69,59 +69,11 @@ namespace PIE
                 node.Nodes[delIndex].Remove();
         }
 
-        private void bySizeCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            endLabel.Visible = endTextBox.Visible = !bySizeCheckBox.Checked;
-            sizeLabel.Visible = sizeComboBox.Visible = bySizeCheckBox.Checked;
-            bytesLabel.Visible = bytesComboBox.Visible = bySizeCheckBox.Checked;
-        }
-
-        private void bytesComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            calculateSize();
-        }
-
-        private void sizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            errorProvider1.SetError(sizeComboBox, "");
-        }
-
-        private void sizeComboBox_Validating(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                baseSize = int.Parse(sizeComboBox.Text);
-                calculateSize();
-                if (size > dataSource.size)
-                    throw new ArgumentOutOfRangeException("Size");
-                errorProvider1.SetError(sizeComboBox, "");
-            }
-            catch (Exception ex)
-            {
-                errorProvider1.SetError(sizeComboBox, ex.Message);
-            }
-        }
-
         private void sliceButton_Click(object sender, EventArgs e)
         {
             try
             {
-                checkStart();
-                if (!bySizeCheckBox.Checked)
-                {
-                    checkEnd();
-                    size = 1 + end - start;
-                }
-                else
-                {
-                    if (errorProvider1.GetError(sizeComboBox) != "")
-                        throw new Exception(errorProvider1.GetError(sizeComboBox));
-                    if (size == 0)
-                        throw new Exception("No size selected");
-                    end = start + size - 1;
-                }
-                if (Slice.IsTaken(node, start, end))
-                    throw new Exception(Properties.Resources.overlapString);
+                checkValues();
                 this.Cursor = Cursors.WaitCursor;
                 size = Math.Min(dataSource.size, size);
                 createSlice();
@@ -134,5 +86,25 @@ namespace PIE
                 MessageBox.Show("Error: " + ex.Message, "Slice", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        protected override void endTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                end = long.Parse(endTextBox.Text, NumberStyles.HexNumber) - (node.Tag as Slice).lastStart;
+                if (end <= dataSource.lastStart || end > dataSource.end + dataSource.lastStart)
+                    throw new ArgumentOutOfRangeException("End");
+                if (end < start)
+                    throw new Exception("End address must be greater than start address");
+
+                errorProvider1.SetError(endTextBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(endTextBox, ex.Message);
+            }
+
+        }
+
     }
 }

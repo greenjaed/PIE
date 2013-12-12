@@ -28,11 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.bySizeCheckBox = new System.Windows.Forms.CheckBox();
-            this.sizeLabel = new System.Windows.Forms.Label();
-            this.sizeComboBox = new System.Windows.Forms.ComboBox();
-            this.bytesComboBox = new System.Windows.Forms.ComboBox();
-            this.bytesLabel = new System.Windows.Forms.Label();
             this.nameLabel = new System.Windows.Forms.Label();
             this.nameTextBox = new System.Windows.Forms.TextBox();
             this.infoLabel = new System.Windows.Forms.Label();
@@ -64,73 +59,25 @@
             // 
             this.startTextBox.Location = new System.Drawing.Point(53, 43);
             // 
-            // bySizeCheckBox
-            // 
-            this.bySizeCheckBox.AutoSize = true;
-            this.bySizeCheckBox.Location = new System.Drawing.Point(12, 179);
-            this.bySizeCheckBox.Name = "bySizeCheckBox";
-            this.bySizeCheckBox.Size = new System.Drawing.Size(84, 17);
-            this.bySizeCheckBox.TabIndex = 6;
-            this.bySizeCheckBox.Text = "Specify Size";
-            this.bySizeCheckBox.UseVisualStyleBackColor = true;
-            this.bySizeCheckBox.CheckedChanged += new System.EventHandler(this.bySizeCheckBox_CheckedChanged);
-            // 
             // sizeLabel
             // 
-            this.sizeLabel.AutoSize = true;
-            this.sizeLabel.Location = new System.Drawing.Point(179, 46);
-            this.sizeLabel.Name = "sizeLabel";
-            this.sizeLabel.Size = new System.Drawing.Size(27, 13);
-            this.sizeLabel.TabIndex = 4;
-            this.sizeLabel.Text = "Size";
-            this.sizeLabel.Visible = false;
+            this.sizeLabel.Location = new System.Drawing.Point(178, 46);
             // 
             // sizeComboBox
             // 
-            this.sizeComboBox.FormattingEnabled = true;
-            this.sizeComboBox.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "4",
-            "8",
-            "16",
-            "32",
-            "64",
-            "128",
-            "256",
-            "512"});
-            this.sizeComboBox.Location = new System.Drawing.Point(212, 43);
-            this.sizeComboBox.Name = "sizeComboBox";
-            this.sizeComboBox.Size = new System.Drawing.Size(48, 21);
-            this.sizeComboBox.TabIndex = 1;
-            this.sizeComboBox.Visible = false;
-            this.sizeComboBox.SelectedIndexChanged += new System.EventHandler(this.sizeComboBox_SelectedIndexChanged);
-            this.sizeComboBox.Validating += new System.ComponentModel.CancelEventHandler(this.sizeComboBox_Validating);
+            this.sizeComboBox.Location = new System.Drawing.Point(211, 42);
             // 
             // bytesComboBox
             // 
-            this.bytesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.bytesComboBox.FormattingEnabled = true;
-            this.bytesComboBox.Items.AddRange(new object[] {
-            "",
-            "kilo",
-            "mega"});
-            this.bytesComboBox.Location = new System.Drawing.Point(278, 43);
-            this.bytesComboBox.Name = "bytesComboBox";
-            this.bytesComboBox.Size = new System.Drawing.Size(60, 21);
-            this.bytesComboBox.TabIndex = 2;
-            this.bytesComboBox.Visible = false;
-            this.bytesComboBox.SelectedIndexChanged += new System.EventHandler(this.bytesComboBox_SelectedIndexChanged);
+            this.bytesComboBox.Location = new System.Drawing.Point(280, 42);
             // 
             // bytesLabel
             // 
-            this.bytesLabel.AutoSize = true;
-            this.bytesLabel.Location = new System.Drawing.Point(344, 46);
-            this.bytesLabel.Name = "bytesLabel";
-            this.bytesLabel.Size = new System.Drawing.Size(38, 13);
-            this.bytesLabel.TabIndex = 5;
-            this.bytesLabel.Text = "byte(s)";
-            this.bytesLabel.Visible = false;
+            this.bytesLabel.Location = new System.Drawing.Point(346, 46);
+            // 
+            // bySizeCheckBox
+            // 
+            this.bySizeCheckBox.Location = new System.Drawing.Point(12, 177);
             // 
             // nameLabel
             // 
@@ -174,24 +121,19 @@
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.nameLabel);
-            this.Controls.Add(this.bySizeCheckBox);
-            this.Controls.Add(this.sizeLabel);
-            this.Controls.Add(this.sizeComboBox);
-            this.Controls.Add(this.bytesComboBox);
-            this.Controls.Add(this.bytesLabel);
             this.Name = "SliceForm";
             this.Text = "Slice";
-            this.Controls.SetChildIndex(this.bytesLabel, 0);
-            this.Controls.SetChildIndex(this.bytesComboBox, 0);
-            this.Controls.SetChildIndex(this.sizeComboBox, 0);
             this.Controls.SetChildIndex(this.sizeLabel, 0);
-            this.Controls.SetChildIndex(this.cancelButton, 0);
-            this.Controls.SetChildIndex(this.endLabel, 0);
+            this.Controls.SetChildIndex(this.sizeComboBox, 0);
+            this.Controls.SetChildIndex(this.bytesComboBox, 0);
+            this.Controls.SetChildIndex(this.bytesLabel, 0);
+            this.Controls.SetChildIndex(this.bySizeCheckBox, 0);
             this.Controls.SetChildIndex(this.endTextBox, 0);
+            this.Controls.SetChildIndex(this.endLabel, 0);
+            this.Controls.SetChildIndex(this.cancelButton, 0);
             this.Controls.SetChildIndex(this.okButton, 0);
             this.Controls.SetChildIndex(this.startTextBox, 0);
             this.Controls.SetChildIndex(this.startLabel, 0);
-            this.Controls.SetChildIndex(this.bySizeCheckBox, 0);
             this.Controls.SetChildIndex(this.nameLabel, 0);
             this.Controls.SetChildIndex(this.nameTextBox, 0);
             this.Controls.SetChildIndex(this.infoLabel, 0);
@@ -204,11 +146,6 @@
 
         #endregion
 
-        private System.Windows.Forms.CheckBox bySizeCheckBox;
-        private System.Windows.Forms.Label sizeLabel;
-        private System.Windows.Forms.ComboBox sizeComboBox;
-        private System.Windows.Forms.ComboBox bytesComboBox;
-        private System.Windows.Forms.Label bytesLabel;
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.TextBox nameTextBox;
         private System.Windows.Forms.Label infoLabel;

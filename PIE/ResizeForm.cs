@@ -14,7 +14,10 @@ namespace PIE
     {
         protected long start;
         protected long end;
-        protected TreeNode node;
+        protected long size;
+        private long offsetEnd;
+        protected int baseSize;
+        public TreeNode node { get; protected set; }
         public bool changed { get; protected set; }
 
         public ResizeForm()
@@ -27,19 +30,21 @@ namespace PIE
             InitializeComponent();
             this.node = node;
             Slice nodeData = node.Tag as Slice;
-            startTextBox.Text = nodeData.start.ToString("X");
-            endTextBox.Text = nodeData.end.ToString("X");
-            start = nodeData.start;
-            end = nodeData.end;
+            offsetEnd = nodeData.lastStart + nodeData.size - 1;
+            start = nodeData.lastStart;
+            end = offsetEnd;
+            startTextBox.Text = start.ToString("X");
+            endTextBox.Text = end.ToString("X");
         }
 
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
         {
+            Slice slice = node.Tag as Slice;
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start > (node.Tag as Slice).end)
+                if (start < slice.lastStart - slice.start || start > offsetEnd)
                     throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -49,12 +54,13 @@ namespace PIE
             }
         }
 
-        private void endTextBox_Validating(object sender, CancelEventArgs e)
+        protected virtual void endTextBox_Validating(object sender, CancelEventArgs e)
         {
+            Slice slice = node.Tag as Slice;
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end == 0 || end > (node.Tag as Slice).end)
+                if (end <= slice.lastStart)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");
@@ -77,15 +83,13 @@ namespace PIE
 
             try
             {
-                checkStart();
-                checkEnd();
                 node.Remove();
-                if (Slice.IsTaken(parent, start, end))
-                    throw new Exception(Properties.Resources.overlapString);
+                checkValues();
                 if (node.Nodes.Count > 0 &&
                     MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                     return;
                 wrongSize.Resize(node, start, end);
+                wrongSize.Invalidate();
                 valid = true;
                 changed = true;
             }
@@ -104,25 +108,80 @@ namespace PIE
                 this.Close();
         }
 
-        protected void checkEnd()
+        private void checkField(Control control)
         {
-            if (errorProvider1.GetError(endTextBox) != "")
-                throw new Exception(errorProvider1.GetError(endTextBox));
-            if (endTextBox.Text == "")
-                throw new Exception("No end address specified");
+            if (errorProvider1.GetError(control) != "")
+                throw new Exception(errorProvider1.GetError(control));
+            if (control.Text == "")
+                throw new Exception("No number specified");
         }
 
-        protected void checkStart()
+        protected void checkValues()
         {
-            if (errorProvider1.GetError(startTextBox) != "")
-                throw new Exception(errorProvider1.GetError(startTextBox));
-            if (startTextBox.Text == "")
-                throw new Exception("No start address specified");
+            Slice slice = node.Tag as Slice;
+            checkField(startTextBox);
+            start = slice.start + (start - slice.lastStart);
+            if (!bySizeCheckBox.Checked)
+            {
+                checkField(endTextBox);
+                end = slice.end + (end - offsetEnd);
+                size = 1 + end - start;
+            }
+            else
+            {
+                checkField(sizeComboBox);
+                end = start + size - 1;
+            }
+            if (Slice.IsTaken(node, start, end))
+                throw new Exception(Properties.Resources.overlapString);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
+        private void bySizeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            endLabel.Visible = endTextBox.Visible = !bySizeCheckBox.Checked;
+            sizeLabel.Visible = sizeComboBox.Visible = bySizeCheckBox.Checked;
+            bytesLabel.Visible = bytesComboBox.Visible = bySizeCheckBox.Checked;
+        }
+
+        private void bytesComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            calculateSize();
+        }
+
+        private void sizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            errorProvider1.SetError(sizeComboBox, "");
+        }
+
+        private void sizeComboBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                baseSize = int.Parse(sizeComboBox.Text);
+                calculateSize();
+                if (size > (node.Tag as Slice).size)
+                    throw new ArgumentOutOfRangeException("Size");
+                errorProvider1.SetError(sizeComboBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(sizeComboBox, ex.Message);
+            }
+        }
+
+        //calculates the size of the slice
+        private void calculateSize()
+        {
+            if (bytesComboBox.SelectedIndex == -1)
+                bytesComboBox.SelectedIndex = 0;
+            else
+                size = baseSize << (10 * bytesComboBox.SelectedIndex);
+        }
+
     }
 }
