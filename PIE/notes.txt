@@ -75,3 +75,4 @@ todo:
   create program documentation (half done)
   test on another system
   clean up code?
+  have the current address as well as the slice address reflect the user's offset

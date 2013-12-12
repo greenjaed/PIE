@@ -53,17 +53,41 @@ h1, h2 {text-align:center}
 <li><dfn>paste</dfn> - inserts data from the clipboard at the cursor location</li>
 <li><dfn>paste over</dfn> - overwrites data at the cursor location using the contents of the clipboard</li></ul></p>
 <h4><a id="Finding_Data">Finding Data</a></h4>
-<p>To find a certain string of hex or ASCII characters, click on "Find" under the "Edit" menu.  PIE will open another window allowing you to enter a search query.  If you are searching for a hex string, keep in mind that PIE will add a <kbd>0</kbd> to the beginning of an odd number of characters.  So, a search for <kbd>f10</kbd> would submit a search for <kbd>0f10</kbd>.  If you are searching for an ASCII, select the "ASCII Text" radio button.  To make your search context-sensitive, check the "Match Case" checkbox.  To go to the next search result, click on "Edit" and select the "Find Next" option.</p>
+<p>To find a certain string of hex or ASCII characters, click on "Find" under the "Edit" menu.  PIE will open another window with the following fields:
+<ul>
+<li><dfn>hex</dfn> - allows you to search for a hex string.  Note that if you are searching for a hex string, keep in mind that PIE will add a <kbd>0</kbd> to the beginning of an odd number of characters.  So, a search for <kbd>f10</kbd> would submit a search for <kbd>0f10</kbd>.</li>
+<li><dfn>ascii</dfn> - Let's you search for an ascii string.</li>
+<li><dfn>Match Case</dfn> - if ascii is selected, this allows you to make your string search case sensitive.</li>
+</ul>
+Click "Find" to begin your search.  To go to the next search result, click on "Edit" and select the "Find Next" option.</p>
 </div>
 <div>
 <h3><a id="Slices">Slices</a></h3>
 <p>Slices are the main way that data is managed and viewed.  All existing slices are shown in a tree structure to the right of the main program.  To view a specific slice, double click on the slice or select it and either Select "Show" under "Slice" or by right-clicking.</p>
 <h4><a id="Creating_Slices">Creating Slices</a></h4>
 <p>There are multiple ways to create slices.  The quick and easy way is to highlight a section of data,  and either right click and select "Slice" or click the slice button.  If successful, the new slice is created and displayed in the project view.</p>
-<p>To manually create a slice, select the slice to slice and select "Slice..." by either right-clicking or by selecting the "Slice" menu.  This will open another window.  In this window, you can name the slice, specify its bounds, and enter information about the slice.  If you check "advanced," you can set the slice to a specific size as well as repeat it to fill the slice.  Once you are done, click "Slice" and the new slice(s) will be created.</p>
+<p>To manually create a slice, select the slice to slice and select "Slice..." by either right-clicking or by selecting the "Slice" menu.  This will open another window with the following options:
+<ul>
+<li><dfn>Name</dfn> - Enter the name of the slice here</li>
+<li><dfn>Start</dfn> - This is the relative starting address of the slice</li>
+<li><dfn>End</dfn> - This is the relative ending address of the slice</li>
+<li><dfn>Notes</dfn> - Input any notes or further information about the slice here</li>
+<li><dfn>Specify Size</dfn> - This allows you to specifiy the size rather the end address</li>
+<ul>
+<li><dfn>Size</dfn> - This replaces End and specifies the size of the slice</li>
+<li><dfn>bytes</dfn> - Specified the magnitude of the size specified</li>
+</ul>
+</ul>
+Once you are done, click "Slice" and the new slice(s) will be created.</p>
 <p><strong>NOTE:</strong> When creating a slice, make sure that it lies within the bounds of the slice you are creating it from and that it does not overlap another slice.  Otherwise, you will recieve an error.  If you get an error, change the slice bounds until the slice you are attempting to create is valid.</p>
 <h4><a id="Copying_Slices">Copying Slices</a></h4>
-<p>If you create a slice and would like to duplicate it, select the slice and click on "Clone..." by either right-clicking or by going into the "Slice" menu.  This will open another window.  From here, specify the start address.  By default, it is the address right after the slice you are cloning.  If you just want the top level slice, keep "Include sub-slices" unchecked.  Otherwise, check it to clone the entire slice structure.  If you want this current slice cloned over the entire slice, select "Repeat over the slice" to get multiple clones of the slice.  Note that cloning a slice will only clone the slice structure, not the data within the slice.</p>
+<p>If you create a slice and would like to duplicate it, select the slice and click on "Clone..." by either right-clicking or by going into the "Slice" menu.  This will open another window with the following options:
+<ul>
+<li><dfn>Start</dfn> - Specified the start address of where the clone is to be placed.</li>
+<li><dfn>Include Sub slices</dfn> - If checked, the cloned slice will copy the entire slice structure, not just the base slice.</li>
+<li><dfn>Repeat over the Slice</dfn> - If checked, starting at the start address the slice is cloned until it fills the slice</li>
+</ul>
+Note that cloning a slice will only clone the slice structure, not the data within the slice.  Once you are done, click clone to copy the slice.</p>
 <h4><a id="Modifying_Slices">Modifying Slices</a></h4>
 <p>If the slice you create is the wrong size, it can be resized by selecting the slice and selecting "Resize..." from either the right-click menu or from the "Slice" menu.  This will open another window with the current bounds.  After you have edited them to your satisfaction, click OK for the resize to take effect.  Note that, just like when creating a slice, the bounds you specify must not overlap another slice and must be within the bounds of the parent slice.</p>
 <h4><a id="Importing-Exporting_Slices">Importing/Exporting Slices</a></h4>

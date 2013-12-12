@@ -40,39 +40,16 @@ namespace PIE
                 size = baseSize << (10 * bytesComboBox.SelectedIndex);
         }
 
-        private void createNode(long position, int name)
+        private void createSlice()
         {
             TreeNode subnode = new TreeNode();
-            String nodeText = (nameTextBox.Text == "" ? "block " : nameTextBox.Text + " ") + 
-                (name == 0 ? "" : name.ToString("X"));
+            String nodeText = nameTextBox.Text == "" ? "new slice" : nameTextBox.Text;
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
             subnode.Text = nodeText;
-            Slice subslice = new Slice(dataSource, position, size);
+            Slice subslice = new Slice(dataSource, start, size);
             subslice.notes = notesTextBox.Text;
             subnode.Tag = subslice;
             node.Nodes.Add(subnode);
-        }
-
-        private void slice()
-        {
-            int sliceCounter = 0;
-
-            if (AdvancedCheckBox.Checked && repeatCheckBox.Checked)
-            {
-                long insertPosition = start + size;
-                clearExistingSlices();
-                while (insertPosition + size < dataSource.dataByteProvider.Length - 1)
-                {
-                    createNode(insertPosition, sliceCounter);
-                    ++sliceCounter;
-                    insertPosition += size;
-                }
-
-                if ((size = (dataSource.dataByteProvider.Length - 1) - insertPosition) > 0)
-                    createNode(insertPosition, sliceCounter);
-            }
-            else
-                createNode(start, sliceCounter);
         }
 
         private void clearExistingSlices()
@@ -92,12 +69,11 @@ namespace PIE
                 node.Nodes[delIndex].Remove();
         }
 
-        private void AdvancedCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void bySizeCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            endLabel.Visible = endTextBox.Visible = !AdvancedCheckBox.Checked;
-            sizeLabel.Visible = sizeComboBox.Visible = AdvancedCheckBox.Checked;
-            bytesLabel.Visible = bytesComboBox.Visible = AdvancedCheckBox.Checked;
-            repeatCheckBox.Visible = AdvancedCheckBox.Checked;
+            endLabel.Visible = endTextBox.Visible = !bySizeCheckBox.Checked;
+            sizeLabel.Visible = sizeComboBox.Visible = bySizeCheckBox.Checked;
+            bytesLabel.Visible = bytesComboBox.Visible = bySizeCheckBox.Checked;
         }
 
         private void bytesComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -131,12 +107,10 @@ namespace PIE
             try
             {
                 checkStart();
-                if (!AdvancedCheckBox.Checked)
+                if (!bySizeCheckBox.Checked)
                 {
                     checkEnd();
                     size = 1 + end - start;
-                    if (Slice.IsTaken(node, start, end))
-                        throw new Exception(Properties.Resources.overlapString);
                 }
                 else
                 {
@@ -145,18 +119,12 @@ namespace PIE
                     if (size == 0)
                         throw new Exception("No size selected");
                     end = start + size - 1;
-                    if (repeatCheckBox.Checked)
-                    {
-                        if (MessageBox.Show("Warning: operation will overwrite existing slices", "Slice", MessageBoxButtons.OKCancel) ==
-                            DialogResult.Cancel)
-                            return;
-                    }
-                    else if (Slice.IsTaken(node, start, end))
-                        throw new Exception(Properties.Resources.overlapString);
                 }
+                if (Slice.IsTaken(node, start, end))
+                    throw new Exception(Properties.Resources.overlapString);
                 this.Cursor = Cursors.WaitCursor;
                 size = Math.Min(dataSource.size, size);
-                slice();
+                createSlice();
                 changed = true;
                 this.Cursor = Cursors.Arrow;
                 this.Close();
