@@ -13,7 +13,7 @@ namespace PIE
 {
     public partial class SliceForm : ResizeForm
     {
-        private Slice dataSource;
+        private long offsetEnd;
 
         public SliceForm()
         {
@@ -23,12 +23,20 @@ namespace PIE
         public SliceForm(TreeNode node) : base(node)
         {
             InitializeComponent();
-            dataSource = node.Tag as Slice;
+            nodeSlice = node.Tag as Slice;
             okButton.Click -= okButton_Click;
             okButton.Click += new EventHandler(sliceButton_Click);
             endTextBox.Validating -= base.endTextBox_Validating;
             endTextBox.Validating += new CancelEventHandler(this.endTextBox_Validating);
+            startTextBox.Validating -= base.startTextBox_Validating;
+            startTextBox.Validating += new CancelEventHandler(startTextBox_Validating);
             okButton.Text = "Slice";
+
+            offsetEnd = nodeSlice.lastStart + nodeSlice.end;
+            start = nodeSlice.lastStart;
+            end = offsetEnd;
+            endTextBox.Text = end.ToString("X");
+            startTextBox.Text = start.ToString("X");
         }
 
         //calculates the size of the slice
@@ -46,7 +54,7 @@ namespace PIE
             String nodeText = nameTextBox.Text == "" ? "new slice" : nameTextBox.Text;
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
             subnode.Text = nodeText;
-            Slice subslice = new Slice(dataSource, start, size);
+            Slice subslice = new Slice(nodeSlice, start, size);
             subslice.notes = notesTextBox.Text;
             subnode.Tag = subslice;
             node.Nodes.Add(subnode);
@@ -73,12 +81,12 @@ namespace PIE
         {
             try
             {
-                checkValues();
+                checkValues(nodeSlice.lastStart);
                 this.Cursor = Cursors.WaitCursor;
-                size = Math.Min(dataSource.size, size);
+                size = Math.Min(nodeSlice.size, size);
                 createSlice();
-                changed = true;
                 this.Cursor = Cursors.Arrow;
+                DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
@@ -87,12 +95,27 @@ namespace PIE
             }
         }
 
-        protected override void endTextBox_Validating(object sender, CancelEventArgs e)
+        protected new void startTextBox_Validating(object sender, CancelEventArgs e)
         {
             try
             {
-                end = long.Parse(endTextBox.Text, NumberStyles.HexNumber) - (node.Tag as Slice).lastStart;
-                if (end <= dataSource.lastStart || end > dataSource.end + dataSource.lastStart)
+                start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
+                if (start < nodeSlice.lastStart || start >= offsetEnd)
+                    throw new ArgumentOutOfRangeException("Start");
+                errorProvider1.SetError(startTextBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(startTextBox, ex.Message);
+            }
+        }
+
+        protected new void endTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
+                if (end <= nodeSlice.lastStart || end > offsetEnd)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");

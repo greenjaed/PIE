@@ -17,8 +17,6 @@ namespace PIE
         TreeNode node; //the node to clone
         TreeNode parent; //the parent node
         Slice nodeData; //the slice to clone
-        //indicates whether any changes occurred
-        public bool changed { get; protected set; }
 
         public CloneForm()
         {
@@ -31,16 +29,17 @@ namespace PIE
             this.node = node;
             parent = node.Parent;
             nodeData = node.Tag as Slice;
-            start = nodeData.end + 1;
-            startTextBox.Text = (start + nodeData.lastStart).ToString("X");
+            start = (node.Parent.Tag as Slice).lastStart + nodeData.size;
+            startTextBox.Text = start.ToString("X");
         }
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
         {
+            Slice slice = parent.Tag as Slice;
             try
             {
-                start = long.Parse(startTextBox.Text, NumberStyles.HexNumber) - nodeData.lastStart;
-                if (start < 0 || start > nodeData.end)
+                start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
+                if (start < slice.lastStart || start >= slice.end)
                     throw new ArgumentOutOfRangeException("start address");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -52,6 +51,7 @@ namespace PIE
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
@@ -61,6 +61,7 @@ namespace PIE
             {
                 if (errorProvider1.GetError(startTextBox) != "")
                     throw new Exception(errorProvider1.GetError(startTextBox));
+                start -= (node.Parent.Tag as Slice).lastStart;
                 if (!repeatCheckBox.Checked && Slice.IsTaken(parent, start, start + nodeData.size - 1))
                     throw new Exception(Properties.Resources.overlapString);
                 if (repeatCheckBox.Checked &&
@@ -69,8 +70,8 @@ namespace PIE
 
                 this.Cursor = Cursors.WaitCursor;
                 clone();
-                changed = true;
                 this.Cursor = Cursors.Arrow;
+                DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)

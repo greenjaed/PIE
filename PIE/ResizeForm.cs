@@ -15,10 +15,10 @@ namespace PIE
         protected long start;
         protected long end;
         protected long size;
-        private long offsetEnd;
         protected int baseSize;
         public TreeNode node { get; protected set; }
-        public bool changed { get; protected set; }
+        protected Slice nodeSlice;
+        private Slice parentSlice;
 
         public ResizeForm()
         {
@@ -29,22 +29,24 @@ namespace PIE
         {
             InitializeComponent();
             this.node = node;
-            Slice nodeData = node.Tag as Slice;
-            offsetEnd = nodeData.lastStart + nodeData.size - 1;
-            start = nodeData.lastStart;
-            end = offsetEnd;
-            startTextBox.Text = start.ToString("X");
-            endTextBox.Text = end.ToString("X");
+            nodeSlice = node.Tag as Slice;
+            if (node.Parent != null)
+            {
+                parentSlice = node.Parent.Tag as Slice;
+                start = parentSlice.lastStart + nodeSlice.start;
+                end = parentSlice.lastStart + nodeSlice.end;
+                startTextBox.Text = start.ToString("X");
+                endTextBox.Text = end.ToString("X");
+            }
         }
 
 
-        private void startTextBox_Validating(object sender, CancelEventArgs e)
+        protected virtual void startTextBox_Validating(object sender, CancelEventArgs e)
         {
-            Slice slice = node.Tag as Slice;
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < slice.lastStart - slice.start || start > offsetEnd)
+                if (start < parentSlice.start + parentSlice.lastStart || start >= parentSlice.end + nodeSlice.lastStart)
                     throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -56,11 +58,10 @@ namespace PIE
 
         protected virtual void endTextBox_Validating(object sender, CancelEventArgs e)
         {
-            Slice slice = node.Tag as Slice;
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end <= slice.lastStart)
+                if (end <= parentSlice.start + parentSlice.lastStart || end > parentSlice.end + nodeSlice.lastStart)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");
@@ -76,7 +77,6 @@ namespace PIE
 
         protected virtual void okButton_Click(object sender, EventArgs e)
         {
-            Slice wrongSize = node.Tag as Slice;
             TreeNode parent = node.Parent;
             int nodeIndex = node.Index;
             bool valid;
@@ -84,14 +84,13 @@ namespace PIE
             try
             {
                 node.Remove();
-                checkValues();
+                checkValues(parentSlice.lastStart);
                 if (node.Nodes.Count > 0 &&
                     MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                     return;
-                wrongSize.Resize(node, start, end);
-                wrongSize.Invalidate();
+                nodeSlice.Resize(node, start, end);
+                nodeSlice.Invalidate();
                 valid = true;
-                changed = true;
             }
             catch (Exception ex)
             {
@@ -105,7 +104,10 @@ namespace PIE
             }
 
             if (valid)
+            {
+                DialogResult = DialogResult.OK;
                 this.Close();
+            }
         }
 
         private void checkField(Control control)
@@ -116,15 +118,14 @@ namespace PIE
                 throw new Exception("No number specified");
         }
 
-        protected void checkValues()
+        protected void checkValues(long offset)
         {
-            Slice slice = node.Tag as Slice;
             checkField(startTextBox);
-            start = slice.start + (start - slice.lastStart);
+            start -= offset;
             if (!bySizeCheckBox.Checked)
             {
                 checkField(endTextBox);
-                end = slice.end + (end - offsetEnd);
+                end -= offset;
                 size = 1 + end - start;
             }
             else
@@ -138,6 +139,7 @@ namespace PIE
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
+            DialogResult = DialogResult.Cancel;
             this.Close();
         }
 

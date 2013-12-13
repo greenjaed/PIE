@@ -718,8 +718,7 @@ namespace PIE
         private void sliceToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             SliceForm sliceForm = new SliceForm(projectTreeView.SelectedNode);
-            sliceForm.Show(this);
-            if (sliceForm.changed)
+            if (sliceForm.ShowDialog(this) == DialogResult.OK)
                 showProjectChanged();
         }
 
@@ -817,8 +816,7 @@ namespace PIE
         private void resizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ResizeForm resizeForm = new ResizeForm(projectTreeView.SelectedNode);
-            resizeForm.Show(this);
-            if (resizeForm.changed)
+            if (resizeForm.ShowDialog(this) == DialogResult.OK)
                 showProjectChanged();
             if (resizeForm.node == currentTreeNode)
             {
@@ -937,8 +935,7 @@ namespace PIE
         private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CloneForm cloneForm = new CloneForm(projectTreeView.SelectedNode);
-            cloneForm.Show(this);
-            if (cloneForm.changed)
+            if (cloneForm.ShowDialog(this) == DialogResult.OK)
                 showProjectChanged();
         }
 
