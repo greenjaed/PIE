@@ -13,17 +13,28 @@ h1, h2 {text-align:center}
 <ul>
 <li><a href="#Introduction">Introduction</a></li>
 <ul>
-<li><a href="#What_is_a_slice">What is a Slice?</a></li>
+	<li><a href="#What_is_a_slice">What is a Slice?</a></li>
 </ul>
 <li><a href="#Projects">Projects</a></li>
 <ul>
-<li><a href="#Creating_a_Project">Creating a Project</a></li>
-<li><a href="#Saving_a_Project">Saving a Project</a></li>
+	<li><a href="#Creating_a_Project">Creating a Project</a></li>
+	<li><a href="#Saving_a_Project">Saving a Project</a></li>
 </ul>
 <li><a href="#Hex_Editor">Hex Editor</a></li>
 <ul>
-<li><a href="#Editing_Data">Editing Data</a></li>
-<li><a href="#Finding_Data">Finding Data</a></li>
+	<li><a href="#Editing_Data">Editing Data</a></li>
+	<li><a href="#Finding_Data">Finding Data</a></li>
+	<li><a HREF="#Customizing">Customizing</a></li>
+</ul>
+<li><a href="#Slices">Slices</a>
+<ul>
+	<li><a href="#Creating_Slices">Creating Slices</a></li>
+	<li><a href="#Editing_Slice_Data">Editing Slice Data</a></li>
+	<li><a href="#Saving-Reloading_Slices">Saving/Reloading Slices</a></li>
+	<li><a href="#Copying_Slices">Copying Slices</a></li>
+	<li><a href="#Modifying_Slices">Modifying Slices</a></li>
+	<li><a href="#Deleting_Slices">Deleting Slices</a></li>
+	<li><a href="#Importing-Exporting_Slices">Importing/Exporting Slices</a></li>
 </ul>
 <li><a href="#Acknowledgements">Acknowledgements</a></li>
 </ul>
@@ -36,7 +47,7 @@ h1, h2 {text-align:center}
 </div>
 <div>
 <h3><a id="Projects">Projects</a></h3>
-<p>In order to save all the slice metadata associated with a project, PIE uses project files.  These project files are xml documents that store the data associated with each slice as well as the entire project.  Included in the project file is the directory of the file associated with the project.  If the file is moved, PIE will search in the project directory for the file.  But if it can't find it in either location the project will fail to open.</p>
+<p>In order to save all the slice metadata associated with a project, PIE uses project files.  These project files are XML documents that store the data associated with each slice as well as the entire project.  Included in the project file is the directory of the file associated with the project.  If the file is moved, PIE will search in the project directory for the file.  But if it can't find it in either location the project will fail to open.</p>
 <h4><a id="Creating_a_Project">Creating a Project</a></h4>
 <p>Before you can begin editing a file, you must create a new project.  You can do this by either clicking on the "New Project" button in the toolbar or by clicking on "File" and selecting "New Project."  PIE will then ask you to select the file to be associated with the project.  After you have selected the file, it will open and be ready to edit.</p>
 <h4><a id="Saving_a_Project">Saving a Project</a></h4>
@@ -46,7 +57,7 @@ h1, h2 {text-align:center}
 <h3><a id="Hex_Editor">Hex Editor</a></h3>
 <p>The hex editor is the base way in which to view and edit data in PIE.  While currently it is also the only way to edit data, all current and future slices can be viewed via the hex editor.</p>
 <h4><a id="Editing_Data">Editing Data</a></h4>
-<p>The hex editor can overwrite and insert data.  You can do this by either entering hexidecimal values or ascii characters.  The hex editor also allows for standard copy/paste actions:
+<p>The hex editor can overwrite and insert data.  You can do this by either entering hexadecimal values or ASCII characters.  The hex editor also allows for standard copy/paste actions:
 <ul>
 <li><dfn>copy</dfn> - copies the selected data to the clipboard</li>
 <li><dfn>cut</dfn> - copies the selected data to the clipboard and then removes the data.</li>
@@ -56,10 +67,28 @@ h1, h2 {text-align:center}
 <p>To find a certain string of hex or ASCII characters, click on "Find" under the "Edit" menu.  PIE will open another window with the following fields:
 <ul>
 <li><dfn>hex</dfn> - allows you to search for a hex string.  Note that if you are searching for a hex string, keep in mind that PIE will add a <kbd>0</kbd> to the beginning of an odd number of characters.  So, a search for <kbd>f10</kbd> would submit a search for <kbd>0f10</kbd>.</li>
-<li><dfn>ascii</dfn> - Let's you search for an ascii string.</li>
-<li><dfn>Match Case</dfn> - if ascii is selected, this allows you to make your string search case sensitive.</li>
+<li><dfn>ASCII</dfn> - Let's you search for an ASCII string.</li>
+<li><dfn>Match Case</dfn> - if ASCII is selected, this allows you to make your string search case sensitive.</li>
 </ul>
 Click "Find" to begin your search.  To go to the next search result, click on "Edit" and select the "Find Next" option.</p>
+<h4><a id="Customizing">Customizing</a></h4>
+<p>To change the appearance of the hex editor, select "Options" from the "Tools" menu. This opens the options windows with customization for the following:
+<ul>
+	<li>Font and Color
+	<ul>
+		<li><dfn>Font</dfn> - Click on the "Change..." button to select the font for the hex editor. The fonts are limited to monospace fonts.</li>
+		<li><dfn>Back Color</dfn> - Click on the back color button to change the back color.</li>
+		<li><dfn>Invert</dfn> - To quickly swap the fore and back colors, push invert </li>
+	</ul>
+	<li>Display</li>
+	<ul>
+		<li><dfn>Characters</dfn> - Enables	or disables the ASCII characters in the hex editor.</li>
+		<li><dfn>Line Address</dfn> - Enables or disables the line address</li>
+		<li><dfn>Hex Case</dfn> - Switches the case for hex numbers</li>
+		<li><dfn>Bytes per Line</dfn> - Controls how many bytes are	displayed per line</li>
+	</ul>
+</ul>
+<p>Once finished editing the options, click "OK" to apply the changes.</p>
 </div>
 <div>
 <h3><a id="Slices">Slices</a></h3>
@@ -68,29 +97,51 @@ Click "Find" to begin your search.  To go to the next search result, click on "E
 <p>There are multiple ways to create slices.  The quick and easy way is to highlight a section of data,  and either right click and select "Slice" or click the slice button.  If successful, the new slice is created and displayed in the project view.</p>
 <p>To manually create a slice, select the slice to slice and select "Slice..." by either right-clicking or by selecting the "Slice" menu.  This will open another window with the following options:
 <ul>
-<li><dfn>Name</dfn> - Enter the name of the slice here</li>
-<li><dfn>Start</dfn> - This is the relative starting address of the slice</li>
-<li><dfn>End</dfn> - This is the relative ending address of the slice</li>
-<li><dfn>Notes</dfn> - Input any notes or further information about the slice here</li>
-<li><dfn>Specify Size</dfn> - This allows you to specifiy the size rather the end address</li>
+	<li><dfn>Name</dfn> - Enter the name of the slice here</li>
+	<li><dfn>Start</dfn> - This is the relative starting address of the slice</li>
+	<li><dfn>End</dfn> - This is the relative ending address of the slice</li>
+	<li><dfn>Notes</dfn> - Input any notes or further information about the slice here</li>
+	<li><dfn>Specify Size</dfn> - This allows you to specify the size rather the end address</li>
 <ul>
 <li><dfn>Size</dfn> - This replaces End and specifies the size of the slice</li>
 <li><dfn>bytes</dfn> - Specified the magnitude of the size specified</li>
 </ul>
 </ul>
 Once you are done, click "Slice" and the new slice(s) will be created.</p>
-<p><strong>NOTE:</strong> When creating a slice, make sure that it lies within the bounds of the slice you are creating it from and that it does not overlap another slice.  Otherwise, you will recieve an error.  If you get an error, change the slice bounds until the slice you are attempting to create is valid.</p>
+<p><strong>NOTE:</strong> When creating a slice, make sure that it lies within the bounds of the slice you are creating it from and that it does not overlap another slice.  Otherwise, you will receive an error.  If you get an error, change the slice bounds until the slice you are attempting to create is valid.</p>
+<h4><a id="Editing_Slice_Data">Editing Slice Data</a></h4>
+<p>When editing a slice, it's important to understand that the size
+of the slice can not be changed. Therefore, if you insert data, that
+same amount will roll off the end of the slice. Conversely, if you
+remove data from a slice, the end of the slice is padded with zeroes.</p>
+<h4><a id="Saving-Reloading_Slices">Saving/Reloading Slices</a></h4>
+<p>To save a slice, either select "Save" from the "File" menu or click the "Save" button in the toolbar. When saving, all changes are propagated up to the containing slices all the way to the file.</p>
+<p>To reload a slice, select "Reload" from the "Slice" menu. By reloading the slice, PIE copies the data from the containing slice, including any unsaved changes. Keep this in mind if the slice doesn't reload what you think it should.</p>
 <h4><a id="Copying_Slices">Copying Slices</a></h4>
 <p>If you create a slice and would like to duplicate it, select the slice and click on "Clone..." by either right-clicking or by going into the "Slice" menu.  This will open another window with the following options:
 <ul>
-<li><dfn>Start</dfn> - Specified the start address of where the clone is to be placed.</li>
-<li><dfn>Include Sub slices</dfn> - If checked, the cloned slice will copy the entire slice structure, not just the base slice.</li>
-<li><dfn>Repeat over the Slice</dfn> - If checked, starting at the start address the slice is cloned until it fills the slice</li>
+	<li><dfn>Start</dfn> - Specified the start address of where the clone is to be placed. The address is relative to the parent slice. </li>
+	<li><dfn>Include Sub slices</dfn> - If checked, the cloned slice will copy the entire slice structure, not just the base slice.</li>
+	<li><dfn>Repeat over the Slice</dfn> - If checked, starting at the start address the slice is cloned until it fills the slice</li>
 </ul>
 Note that cloning a slice will only clone the slice structure, not the data within the slice.  Once you are done, click clone to copy the slice.</p>
 <h4><a id="Modifying_Slices">Modifying Slices</a></h4>
-<p>If the slice you create is the wrong size, it can be resized by selecting the slice and selecting "Resize..." from either the right-click menu or from the "Slice" menu.  This will open another window with the current bounds.  After you have edited them to your satisfaction, click OK for the resize to take effect.  Note that, just like when creating a slice, the bounds you specify must not overlap another slice and must be within the bounds of the parent slice.</p>
+<p>If the slice you create is the wrong size, it can be resized by selecting the slice and selecting "Resize..." from either the right-click menu or from the "Slice" menu. The options are similar for creating a slice:
+<ul>
+	<li><dfn>Start</dfn> - This is the starting address of the slice relative to the parent slice.</li>
+	<li><dfn>End</dfn> - This is the ending address of the slice relative to the parent slice.</li>
+	<li><dfn>Specify Size</dfn> - This allows you to specify the size rather the end address.</li>
+	<ul>
+		<li><dfn>Size</dfn> - This replaces	end and specifies the size of the slice.</li>
+		<li><dfn>Bytes</dfn> - Specified the magnitude of the size specified.</li>
+	</ul>
+</ul>
+<p>After you have edited them to your satisfaction, click OK for the resize to take effect. Note that, just like when creating a slice, the bounds you specify must not overlap another slice and must be within the bounds of the parent slice.</p>
+<h4><a id="Deleting_Slices"></a>Deleting Slices</h4>
+<p>To delete a slice, select the slice and either press the Delete key or select "Delete" from either the "Slice" menu or by right-clicking on the slice. Note that when deleting a slice, all sub-slices will be deleted along with it. Note also that none of the data contained in the slice is deleted, merely the slice structure itself.</p>
 <h4><a id="Importing-Exporting_Slices">Importing/Exporting Slices</a></h4>
+<p>To export the data of any slice, open the slice you want to export and select "Export..." from the file menu. Choose where you want it saved and name it. After you click save, the slice will be saved in the format of the slice.</p>
+<p>To import a slice, click "Import..." under the "File" menu and select the file to import. Note that, just like editing data, the data will be modified to fit the slice.</p>
 </div>
 <h3><a id="Acknowledgements">Acknowledgments</a></h3>
 <p>HexBox is open source and used under the MIT license.  It can be found <a href=https://sourceforge.net/projects/hexbox/>here</a>.</p>

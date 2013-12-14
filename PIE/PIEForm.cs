@@ -833,7 +833,7 @@ namespace PIE
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OptionForm optionForm = new OptionForm(displayHexBox);
-            optionForm.Show(this);
+            optionForm.ShowDialog(this);
         }
 
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
