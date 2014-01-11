@@ -14,6 +14,7 @@ namespace PIE
     public partial class CloneForm : Form
     {
         long start; //the starting address
+        long copies; //the number of times the slice is cloned;
         TreeNode node; //the node to clone
         TreeNode parent; //the parent node
         Slice nodeData; //the slice to clone
@@ -31,6 +32,7 @@ namespace PIE
             nodeData = node.Tag as Slice;
             start = (node.Parent.Tag as Slice).lastStart + nodeData.size;
             startTextBox.Text = start.ToString("X");
+            copies = 1;
         }
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
@@ -57,6 +59,7 @@ namespace PIE
 
         private void cloneButton_Click(object sender, EventArgs e)
         {
+            bool cloned;
             try
             {
                 if (errorProvider1.GetError(startTextBox) != "")
@@ -64,15 +67,15 @@ namespace PIE
                 start -= (node.Parent.Tag as Slice).lastStart;
                 if (!repeatCheckBox.Checked && Slice.IsTaken(parent, start, start + nodeData.size - 1))
                     throw new Exception(Properties.Resources.overlapString);
-                if (repeatCheckBox.Checked &&
-                    MessageBox.Show("Warning: operation will overwrite existing slices", "Slice", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-                    return;
 
                 this.Cursor = Cursors.WaitCursor;
-                clone();
+                cloned = clone();
                 this.Cursor = Cursors.Arrow;
-                DialogResult = DialogResult.OK;
-                this.Close();
+                if (cloned)
+                {
+                    DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -81,10 +84,10 @@ namespace PIE
         }
 
         //removes any existing slices when mass cloning
-        private void clearExistingSlices()
+        private bool clearExistingSlices()
         {
             Slice current;
-            int delIndex = 0;
+            int delIndex = -1;
 
             foreach (TreeNode t in parent.Nodes)
             {
@@ -94,8 +97,16 @@ namespace PIE
                 delIndex = t.Index;
                 break;
             }
-            while (parent.Nodes.Count > delIndex)
-                parent.Nodes[delIndex].Remove();
+            if (delIndex >= 0)
+            {
+                if (MessageBox.Show("Warning: operation will overwrite existing slices", "Slice", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                    return false;
+                else
+                    while (parent.Nodes.Count > delIndex)
+                        parent.Nodes[delIndex].Remove();
+            }
+            
+            return true;
         }
 
         //clones a slice
@@ -131,22 +142,49 @@ namespace PIE
         }
 
         //clones a slice
-        private void clone()
+        private bool clone()
         {
-            cloneNode(start);
+            long size = nodeData.size;
+            long insertPosition = start;
+            long totalSize = (parent.Tag as Slice).dataByteProvider.Length - 1;
+            long max = (totalSize - insertPosition) / size;
 
             if (repeatCheckBox.Checked)
+                copies = max;
+            else
+                copies = Math.Min(copies, max);
+
+            if (clearExistingSlices())
             {
-                long size = nodeData.size;
-                long insertPosition = start;
-                long totalSize = (parent.Tag as Slice).dataByteProvider.Length - 1;
-                clearExistingSlices();
-                while (insertPosition + size < totalSize)
+                for (int i = 0; i < copies; ++i)
                 {
                     cloneNode(insertPosition);
                     insertPosition += size;
                 }
+                return true;
             }
+            else
+                return false;
+        }
+
+        private void copiesTextBox_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                copies = int.Parse(copiesTextBox.Text);
+                if (copies <= 0)
+                    throw new Exception("The number of copies must be 1 or greater");
+                errorProvider1.SetError(copiesTextBox, "");
+            }
+            catch (Exception ex)
+            {
+                errorProvider1.SetError(copiesTextBox, ex.Message);
+            }
+        }
+
+        private void repeatCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            copiesTextBox.Enabled = !repeatCheckBox.Checked;
         }
 
 

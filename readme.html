@@ -121,8 +121,11 @@ remove data from a slice, the end of the slice is padded with zeroes.</p>
 <p>If you create a slice and would like to duplicate it, select the slice and click on "Clone..." by either right-clicking or by going into the "Slice" menu.  This will open another window with the following options:
 <ul>
 	<li><dfn>Start</dfn> - Specified the start address of where the clone is to be placed. The address is relative to the parent slice. </li>
+	<li><dfn>Copies</dfn> - Indicates the number of consecutive slice copies to place.  If you specify too many slices, it will instead fill the slice.</li>
+	<ul>
+		<li><dfn>Fill the Slice</dfn> - If checked, starting at the start address the slice is cloned until it fills the slice</li>
+	</ul>
 	<li><dfn>Include Sub slices</dfn> - If checked, the cloned slice will copy the entire slice structure, not just the base slice.</li>
-	<li><dfn>Repeat over the Slice</dfn> - If checked, starting at the start address the slice is cloned until it fills the slice</li>
 </ul>
 Note that cloning a slice will only clone the slice structure, not the data within the slice.  Once you are done, click clone to copy the slice.</p>
 <h4><a id="Modifying_Slices">Modifying Slices</a></h4>

@@ -1038,6 +1038,11 @@ namespace PIE
             NotesForm infoForm = new NotesForm(projectTreeView.SelectedNode.Tag as Slice);
             infoForm.Show(this);
         }
+
+        private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Help.ShowHelp(this, "readme.html");
+        }
     }
 
     //sorts the nodes in projectTreeView by the start value of the contained slice

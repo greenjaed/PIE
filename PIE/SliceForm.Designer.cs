@@ -54,10 +54,12 @@
             // endTextBox
             // 
             this.endTextBox.Location = new System.Drawing.Point(211, 43);
+            this.endTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // startTextBox
             // 
             this.startTextBox.Location = new System.Drawing.Point(53, 43);
+            this.startTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // sizeLabel
             // 
