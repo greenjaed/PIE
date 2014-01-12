@@ -838,7 +838,11 @@ namespace PIE
 
         private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             saveAllChanges();
+            if (saveProject())
+                this.Text.TrimEnd(changed);
+            this.Cursor = Cursors.Arrow;
         }
 
         //saves the project
