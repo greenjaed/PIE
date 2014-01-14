@@ -1045,7 +1045,14 @@ namespace PIE
 
         private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Help.ShowHelp(this, "readme.html");
+            try
+            {
+                Help.ShowHelp(this, "PIE help.chm");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to locate help file.");
+            }
         }
     }
 
