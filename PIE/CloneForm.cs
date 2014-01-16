@@ -30,7 +30,7 @@ namespace PIE
             this.node = node;
             parent = node.Parent;
             nodeData = node.Tag as Slice;
-            start = (node.Parent.Tag as Slice).lastStart + nodeData.size;
+            start = (parent.Tag as Slice).lastStart + nodeData.start + nodeData.size;
             startTextBox.Text = start.ToString("X");
             copies = 1;
         }
@@ -110,11 +110,11 @@ namespace PIE
         }
 
         //clones a slice
-        private void cloneNode(long position)
+        private void cloneNode(long position, int cloneID)
         {
             TreeNode subnode = new TreeNode();
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
-            subnode.Text = position.ToString("X") + "-" + (position + nodeData.size - 1).ToString("X");
+            subnode.Text = node.Text + " " + cloneID.ToString();
             Slice subslice = new Slice(parent.Tag as Slice, position, nodeData.size);
             subnode.Tag = subslice;
             parent.Nodes.Add(subnode);
@@ -158,7 +158,7 @@ namespace PIE
             {
                 for (int i = 0; i < copies; ++i)
                 {
-                    cloneNode(insertPosition);
+                    cloneNode(insertPosition, i + 1);
                     insertPosition += size;
                 }
                 return true;
