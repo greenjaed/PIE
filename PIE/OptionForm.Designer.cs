@@ -37,9 +37,13 @@
             this.lineCheckBox = new System.Windows.Forms.CheckBox();
             this.charCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.invertButton = new System.Windows.Forms.Button();
             this.changeButton = new System.Windows.Forms.Button();
+            this.selectionColorButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.addressColorButton = new System.Windows.Forms.Button();
             this.backColorButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.fontTextBox = new System.Windows.Forms.TextBox();
@@ -47,6 +51,10 @@
             this.okButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
+            this.label7 = new System.Windows.Forms.Label();
+            this.groupSizeMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
+            this.columnIndexCheckBox = new System.Windows.Forms.CheckBox();
+            this.byteGroupCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -73,21 +81,25 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.cancelButton);
             this.splitContainer1.Panel2.Controls.Add(this.okButton);
-            this.splitContainer1.Size = new System.Drawing.Size(349, 253);
-            this.splitContainer1.SplitterDistance = 202;
+            this.splitContainer1.Size = new System.Drawing.Size(353, 321);
+            this.splitContainer1.SplitterDistance = 270;
             this.splitContainer1.TabIndex = 0;
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.groupSizeMaskedTextBox);
             this.groupBox2.Controls.Add(this.bytesMaskedTextBox);
+            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.hexCaseComboBox);
             this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.byteGroupCheckBox);
+            this.groupBox2.Controls.Add(this.columnIndexCheckBox);
             this.groupBox2.Controls.Add(this.lineCheckBox);
             this.groupBox2.Controls.Add(this.charCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(12, 113);
+            this.groupBox2.Location = new System.Drawing.Point(12, 142);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(326, 80);
+            this.groupBox2.Size = new System.Drawing.Size(326, 124);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Display";
@@ -106,9 +118,9 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(159, 48);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(70, 13);
+            this.label5.Size = new System.Drawing.Size(75, 13);
             this.label5.TabIndex = 5;
-            this.label5.Text = "Bytes per line";
+            this.label5.Text = "Bytes Per Line";
             // 
             // hexCaseComboBox
             // 
@@ -134,7 +146,7 @@
             // lineCheckBox
             // 
             this.lineCheckBox.AutoSize = true;
-            this.lineCheckBox.Location = new System.Drawing.Point(7, 48);
+            this.lineCheckBox.Location = new System.Drawing.Point(7, 47);
             this.lineCheckBox.Name = "lineCheckBox";
             this.lineCheckBox.Size = new System.Drawing.Size(87, 17);
             this.lineCheckBox.TabIndex = 2;
@@ -153,18 +165,40 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.invertButton);
             this.groupBox1.Controls.Add(this.changeButton);
+            this.groupBox1.Controls.Add(this.selectionColorButton);
             this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.addressColorButton);
             this.groupBox1.Controls.Add(this.backColorButton);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.fontTextBox);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(326, 95);
+            this.groupBox1.Size = new System.Drawing.Size(326, 124);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Font and Color";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(154, 90);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(78, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "Selection Color";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 90);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Address Color";
             // 
             // invertButton
             // 
@@ -186,6 +220,16 @@
             this.changeButton.UseVisualStyleBackColor = true;
             this.changeButton.Click += new System.EventHandler(this.changeButton_Click);
             // 
+            // selectionColorButton
+            // 
+            this.selectionColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.selectionColorButton.Location = new System.Drawing.Point(238, 86);
+            this.selectionColorButton.Name = "selectionColorButton";
+            this.selectionColorButton.Size = new System.Drawing.Size(23, 23);
+            this.selectionColorButton.TabIndex = 5;
+            this.selectionColorButton.UseVisualStyleBackColor = true;
+            this.selectionColorButton.Click += new System.EventHandler(this.selectionColorButton_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -194,6 +238,16 @@
             this.label1.Size = new System.Drawing.Size(28, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Font";
+            // 
+            // addressColorButton
+            // 
+            this.addressColorButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.addressColorButton.Location = new System.Drawing.Point(93, 86);
+            this.addressColorButton.Name = "addressColorButton";
+            this.addressColorButton.Size = new System.Drawing.Size(23, 23);
+            this.addressColorButton.TabIndex = 5;
+            this.addressColorButton.UseVisualStyleBackColor = true;
+            this.addressColorButton.Click += new System.EventHandler(this.addressColorButton_Click);
             // 
             // backColorButton
             // 
@@ -253,13 +307,52 @@
             this.fontDialog1.FixedPitchOnly = true;
             this.fontDialog1.ShowColor = true;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(159, 74);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "Bytes Per Group";
+            // 
+            // groupSizeMaskedTextBox
+            // 
+            this.groupSizeMaskedTextBox.Location = new System.Drawing.Point(247, 71);
+            this.groupSizeMaskedTextBox.Mask = "999";
+            this.groupSizeMaskedTextBox.Name = "groupSizeMaskedTextBox";
+            this.groupSizeMaskedTextBox.PromptChar = ' ';
+            this.groupSizeMaskedTextBox.Size = new System.Drawing.Size(66, 20);
+            this.groupSizeMaskedTextBox.TabIndex = 6;
+            // 
+            // columnIndexCheckBox
+            // 
+            this.columnIndexCheckBox.AutoSize = true;
+            this.columnIndexCheckBox.Location = new System.Drawing.Point(7, 99);
+            this.columnIndexCheckBox.Name = "columnIndexCheckBox";
+            this.columnIndexCheckBox.Size = new System.Drawing.Size(90, 17);
+            this.columnIndexCheckBox.TabIndex = 2;
+            this.columnIndexCheckBox.Text = "Column Index";
+            this.columnIndexCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // byteGroupCheckBox
+            // 
+            this.byteGroupCheckBox.AutoSize = true;
+            this.byteGroupCheckBox.Location = new System.Drawing.Point(7, 73);
+            this.byteGroupCheckBox.Name = "byteGroupCheckBox";
+            this.byteGroupCheckBox.Size = new System.Drawing.Size(93, 17);
+            this.byteGroupCheckBox.TabIndex = 2;
+            this.byteGroupCheckBox.Text = "Byte Grouping";
+            this.byteGroupCheckBox.UseVisualStyleBackColor = true;
+            this.byteGroupCheckBox.CheckedChanged += new System.EventHandler(this.byteGroupCheckBox_CheckedChanged);
+            // 
             // OptionForm
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(349, 253);
+            this.ClientSize = new System.Drawing.Size(353, 321);
             this.Controls.Add(this.splitContainer1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "OptionForm";
@@ -298,6 +391,14 @@
         private System.Windows.Forms.MaskedTextBox bytesMaskedTextBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button invertButton;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button addressColorButton;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button selectionColorButton;
+        private System.Windows.Forms.MaskedTextBox groupSizeMaskedTextBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox byteGroupCheckBox;
+        private System.Windows.Forms.CheckBox columnIndexCheckBox;
 
 
     }

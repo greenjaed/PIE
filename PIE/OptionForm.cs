@@ -40,6 +40,10 @@ namespace PIE
             lineCheckBox.Checked = hexBox.LineInfoVisible;
             hexCaseComboBox.SelectedIndex = hexBox.HexCasing == HexCasing.Lower ? 0 : 1;
             bytesMaskedTextBox.Text = hexBox.BytesPerLine.ToString();
+            addressColorButton.BackColor = hexBox.InfoForeColor;
+            selectionColorButton.BackColor = hexBox.SelectionBackColor;
+            byteGroupCheckBox.Checked = groupSizeMaskedTextBox.Enabled = hexBox.GroupSeparatorVisible;
+            columnIndexCheckBox.Checked = hexBox.ColumnInfoVisible;
         }
 
         private void changeButton_Click(object sender, EventArgs e)
@@ -57,6 +61,7 @@ namespace PIE
 
         private void backColorButton_Click(object sender, EventArgs e)
         {
+            colorDialog1.Color = backColorButton.BackColor;
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
                 backColorButton.BackColor = colorDialog1.Color;
@@ -117,6 +122,34 @@ namespace PIE
             fontTextBox.ForeColor = fontTextBox.BackColor;
             fontTextBox.BackColor = temp;
             backColorButton.BackColor = temp;
+        }
+
+        private void byteGroupCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            groupSizeMaskedTextBox.Enabled = byteGroupCheckBox.Checked;
+        }
+
+        private void addressColorButton_Click(object sender, EventArgs e)
+        {
+            colorDialog1.Color = addressColorButton.BackColor;
+
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+                addressColorButton.BackColor = colorDialog1.Color;
+
+        }
+
+        private void selectionColorButton_Click(object sender, EventArgs e)
+        {
+            colorDialog1.Color = selectionColorButton.BackColor;
+
+            if (colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                selectionColorButton.BackColor = colorDialog1.Color;
+                //make the shadowselectioncolor a lighter shade of the selected color
+                //make the selection fore color the inverse of the selected color
+                //OR
+                //make the selection fore color black if color is light and white if color is dark
+            }
         }
     }
 }

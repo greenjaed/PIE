@@ -72,8 +72,9 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator19 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.sliceToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.positionToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -105,8 +106,6 @@
             this.cloneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
             this.notesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.displayPanel = new System.Windows.Forms.Panel();
-            this.displayHexBox = new Be.Windows.Forms.HexBox();
             this.hexContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -119,7 +118,7 @@
             this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.toolStripSeparator19 = new System.Windows.Forms.ToolStripSeparator();
+            this.displayHexBox = new Be.Windows.Forms.HexBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -128,7 +127,6 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.projectContextMenuStrip.SuspendLayout();
-            this.displayPanel.SuspendLayout();
             this.hexContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -496,20 +494,25 @@
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "&Help";
             // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.aboutToolStripMenuItem.Text = "&About...";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
             // viewHelpToolStripMenuItem
             // 
             this.viewHelpToolStripMenuItem.Name = "viewHelpToolStripMenuItem";
             this.viewHelpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.viewHelpToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.viewHelpToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.viewHelpToolStripMenuItem.Text = "View Help";
             this.viewHelpToolStripMenuItem.Click += new System.EventHandler(this.viewHelpToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator19
+            // 
+            this.toolStripSeparator19.Name = "toolStripSeparator19";
+            this.toolStripSeparator19.Size = new System.Drawing.Size(143, 6);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.aboutToolStripMenuItem.Text = "&About...";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // statusStrip
             // 
@@ -699,7 +702,7 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.displayPanel);
+            this.splitContainer1.Panel2.Controls.Add(this.displayHexBox);
             this.splitContainer1.Size = new System.Drawing.Size(784, 491);
             this.splitContainer1.SplitterDistance = 140;
             this.splitContainer1.TabIndex = 3;
@@ -808,35 +811,6 @@
             this.notesToolStripMenuItem.Text = "Notes";
             this.notesToolStripMenuItem.Click += new System.EventHandler(this.notesToolStripMenuItem_Click);
             // 
-            // displayPanel
-            // 
-            this.displayPanel.Controls.Add(this.displayHexBox);
-            this.displayPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.displayPanel.Location = new System.Drawing.Point(0, 0);
-            this.displayPanel.Name = "displayPanel";
-            this.displayPanel.Size = new System.Drawing.Size(640, 491);
-            this.displayPanel.TabIndex = 0;
-            // 
-            // displayHexBox
-            // 
-            this.displayHexBox.ContextMenuStrip = this.hexContextMenuStrip;
-            this.displayHexBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.displayHexBox.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayHexBox.InfoForeColor = System.Drawing.Color.Empty;
-            this.displayHexBox.LineInfoVisible = true;
-            this.displayHexBox.Location = new System.Drawing.Point(0, 0);
-            this.displayHexBox.Name = "displayHexBox";
-            this.displayHexBox.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.displayHexBox.Size = new System.Drawing.Size(640, 491);
-            this.displayHexBox.StringViewVisible = true;
-            this.displayHexBox.TabIndex = 0;
-            this.displayHexBox.UseFixedBytesPerLine = true;
-            this.displayHexBox.VScrollBarVisible = true;
-            this.displayHexBox.SelectionLengthChanged += new System.EventHandler(this.displayHexBox_SelectionLengthChanged);
-            this.displayHexBox.CurrentLineChanged += new System.EventHandler(this.displayHexBox_CurrentLineChanged);
-            this.displayHexBox.CurrentPositionInLineChanged += new System.EventHandler(this.displayHexBox_CurrentPositionInLineChanged);
-            this.displayHexBox.Copied += new System.EventHandler(this.displayHexBox_Copied);
-            // 
             // hexContextMenuStrip
             // 
             this.hexContextMenuStrip.Enabled = false;
@@ -939,10 +913,26 @@
             // 
             this.saveFileDialog1.Filter = "Pie files (.pie)|*.pie|All files (*.*)|*.*";
             // 
-            // toolStripSeparator19
+            // displayHexBox
             // 
-            this.toolStripSeparator19.Name = "toolStripSeparator19";
-            this.toolStripSeparator19.Size = new System.Drawing.Size(149, 6);
+            this.displayHexBox.ContextMenuStrip = this.hexContextMenuStrip;
+            this.displayHexBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.displayHexBox.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayHexBox.InfoForeColor = System.Drawing.Color.Gray;
+            this.displayHexBox.LineInfoVisible = true;
+            this.displayHexBox.Location = new System.Drawing.Point(0, 0);
+            this.displayHexBox.Name = "displayHexBox";
+            this.displayHexBox.Padding = new System.Windows.Forms.Padding(50);
+            this.displayHexBox.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.displayHexBox.Size = new System.Drawing.Size(640, 491);
+            this.displayHexBox.StringViewVisible = true;
+            this.displayHexBox.TabIndex = 0;
+            this.displayHexBox.UseFixedBytesPerLine = true;
+            this.displayHexBox.VScrollBarVisible = true;
+            this.displayHexBox.SelectionLengthChanged += new System.EventHandler(this.displayHexBox_SelectionLengthChanged);
+            this.displayHexBox.CurrentLineChanged += new System.EventHandler(this.displayHexBox_CurrentLineChanged);
+            this.displayHexBox.CurrentPositionInLineChanged += new System.EventHandler(this.displayHexBox_CurrentPositionInLineChanged);
+            this.displayHexBox.Copied += new System.EventHandler(this.displayHexBox_Copied);
             // 
             // PIEForm
             // 
@@ -971,7 +961,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.projectContextMenuStrip.ResumeLayout(false);
-            this.displayPanel.ResumeLayout(false);
             this.hexContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1015,12 +1004,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView projectTreeView;
-        private System.Windows.Forms.Panel displayPanel;
         private System.Windows.Forms.ContextMenuStrip projectContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteSliceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sliceSliceToolStripMenuItem;
-        private Be.Windows.Forms.HexBox displayHexBox;
         private System.Windows.Forms.ContextMenuStrip hexContextMenuStrip;
         private System.Windows.Forms.ToolStripStatusLabel positionToolStripStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem sliceHexToolStripMenuItem;
@@ -1070,6 +1057,7 @@
         private System.Windows.Forms.ToolStripMenuItem notesToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem viewHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator19;
+        private Be.Windows.Forms.HexBox displayHexBox;
     }
 }
 

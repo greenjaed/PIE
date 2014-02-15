@@ -1051,7 +1051,7 @@ namespace PIE
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to locate help file.");
+                MessageBox.Show(ex.Message);
             }
         }
     }
