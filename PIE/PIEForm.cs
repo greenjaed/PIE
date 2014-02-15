@@ -238,6 +238,14 @@ namespace PIE
                     line = settingsFile.ReadLine();
                     displayHexBox.BackColor = (Color)cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
                     line = settingsFile.ReadLine();
+                    displayHexBox.InfoForeColor = (Color)cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.SelectionBackColor = (Color)cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.ShadowSelectionColor = (Color)cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.SelectionForeColor = (Color)cc.ConvertFromString(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
                     displayHexBox.StringViewVisible = bool.Parse(line.Substring(line.IndexOf('=') + 1));
                     line = settingsFile.ReadLine();
                     displayHexBox.LineInfoVisible = bool.Parse(line.Substring(line.IndexOf('=') + 1));
@@ -245,6 +253,13 @@ namespace PIE
                     displayHexBox.HexCasing = (HexCasing)Enum.Parse(typeof(HexCasing), line.Substring(line.IndexOf('=') + 1));
                     line = settingsFile.ReadLine();
                     displayHexBox.BytesPerLine = int.Parse(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.GroupSeparatorVisible = bool.Parse(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.GroupSize = int.Parse(line.Substring(line.IndexOf('=') + 1));
+                    line = settingsFile.ReadLine();
+                    displayHexBox.ColumnInfoVisible = bool.Parse(line.Substring(line.IndexOf('=') + 1));
+
                 }
             }
             catch (Exception ex)

@@ -30,10 +30,14 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupSizeMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
             this.bytesMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.hexCaseComboBox = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.byteGroupCheckBox = new System.Windows.Forms.CheckBox();
+            this.columnNumberCheckBox = new System.Windows.Forms.CheckBox();
             this.lineCheckBox = new System.Windows.Forms.CheckBox();
             this.charCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -51,10 +55,6 @@
             this.okButton = new System.Windows.Forms.Button();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.fontDialog1 = new System.Windows.Forms.FontDialog();
-            this.label7 = new System.Windows.Forms.Label();
-            this.groupSizeMaskedTextBox = new System.Windows.Forms.MaskedTextBox();
-            this.columnIndexCheckBox = new System.Windows.Forms.CheckBox();
-            this.byteGroupCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -94,7 +94,7 @@
             this.groupBox2.Controls.Add(this.hexCaseComboBox);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.byteGroupCheckBox);
-            this.groupBox2.Controls.Add(this.columnIndexCheckBox);
+            this.groupBox2.Controls.Add(this.columnNumberCheckBox);
             this.groupBox2.Controls.Add(this.lineCheckBox);
             this.groupBox2.Controls.Add(this.charCheckBox);
             this.groupBox2.Location = new System.Drawing.Point(12, 142);
@@ -104,6 +104,15 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Display";
             // 
+            // groupSizeMaskedTextBox
+            // 
+            this.groupSizeMaskedTextBox.Location = new System.Drawing.Point(247, 71);
+            this.groupSizeMaskedTextBox.Mask = "999";
+            this.groupSizeMaskedTextBox.Name = "groupSizeMaskedTextBox";
+            this.groupSizeMaskedTextBox.PromptChar = ' ';
+            this.groupSizeMaskedTextBox.Size = new System.Drawing.Size(66, 20);
+            this.groupSizeMaskedTextBox.TabIndex = 6;
+            // 
             // bytesMaskedTextBox
             // 
             this.bytesMaskedTextBox.Location = new System.Drawing.Point(247, 45);
@@ -112,6 +121,15 @@
             this.bytesMaskedTextBox.PromptChar = ' ';
             this.bytesMaskedTextBox.Size = new System.Drawing.Size(66, 20);
             this.bytesMaskedTextBox.TabIndex = 6;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(159, 74);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(84, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "Bytes Per Group";
             // 
             // label5
             // 
@@ -142,6 +160,27 @@
             this.label4.Size = new System.Drawing.Size(53, 13);
             this.label4.TabIndex = 3;
             this.label4.Text = "Hex Case";
+            // 
+            // byteGroupCheckBox
+            // 
+            this.byteGroupCheckBox.AutoSize = true;
+            this.byteGroupCheckBox.Location = new System.Drawing.Point(7, 73);
+            this.byteGroupCheckBox.Name = "byteGroupCheckBox";
+            this.byteGroupCheckBox.Size = new System.Drawing.Size(93, 17);
+            this.byteGroupCheckBox.TabIndex = 2;
+            this.byteGroupCheckBox.Text = "Byte Grouping";
+            this.byteGroupCheckBox.UseVisualStyleBackColor = true;
+            this.byteGroupCheckBox.CheckedChanged += new System.EventHandler(this.byteGroupCheckBox_CheckedChanged);
+            // 
+            // columnNumberCheckBox
+            // 
+            this.columnNumberCheckBox.AutoSize = true;
+            this.columnNumberCheckBox.Location = new System.Drawing.Point(7, 99);
+            this.columnNumberCheckBox.Name = "columnNumberCheckBox";
+            this.columnNumberCheckBox.Size = new System.Drawing.Size(101, 17);
+            this.columnNumberCheckBox.TabIndex = 2;
+            this.columnNumberCheckBox.Text = "Column Number";
+            this.columnNumberCheckBox.UseVisualStyleBackColor = true;
             // 
             // lineCheckBox
             // 
@@ -307,45 +346,6 @@
             this.fontDialog1.FixedPitchOnly = true;
             this.fontDialog1.ShowColor = true;
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(159, 74);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(84, 13);
-            this.label7.TabIndex = 5;
-            this.label7.Text = "Bytes Per Group";
-            // 
-            // groupSizeMaskedTextBox
-            // 
-            this.groupSizeMaskedTextBox.Location = new System.Drawing.Point(247, 71);
-            this.groupSizeMaskedTextBox.Mask = "999";
-            this.groupSizeMaskedTextBox.Name = "groupSizeMaskedTextBox";
-            this.groupSizeMaskedTextBox.PromptChar = ' ';
-            this.groupSizeMaskedTextBox.Size = new System.Drawing.Size(66, 20);
-            this.groupSizeMaskedTextBox.TabIndex = 6;
-            // 
-            // columnIndexCheckBox
-            // 
-            this.columnIndexCheckBox.AutoSize = true;
-            this.columnIndexCheckBox.Location = new System.Drawing.Point(7, 99);
-            this.columnIndexCheckBox.Name = "columnIndexCheckBox";
-            this.columnIndexCheckBox.Size = new System.Drawing.Size(90, 17);
-            this.columnIndexCheckBox.TabIndex = 2;
-            this.columnIndexCheckBox.Text = "Column Index";
-            this.columnIndexCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // byteGroupCheckBox
-            // 
-            this.byteGroupCheckBox.AutoSize = true;
-            this.byteGroupCheckBox.Location = new System.Drawing.Point(7, 73);
-            this.byteGroupCheckBox.Name = "byteGroupCheckBox";
-            this.byteGroupCheckBox.Size = new System.Drawing.Size(93, 17);
-            this.byteGroupCheckBox.TabIndex = 2;
-            this.byteGroupCheckBox.Text = "Byte Grouping";
-            this.byteGroupCheckBox.UseVisualStyleBackColor = true;
-            this.byteGroupCheckBox.CheckedChanged += new System.EventHandler(this.byteGroupCheckBox_CheckedChanged);
-            // 
             // OptionForm
             // 
             this.AcceptButton = this.okButton;
@@ -398,7 +398,7 @@
         private System.Windows.Forms.MaskedTextBox groupSizeMaskedTextBox;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox byteGroupCheckBox;
-        private System.Windows.Forms.CheckBox columnIndexCheckBox;
+        private System.Windows.Forms.CheckBox columnNumberCheckBox;
 
 
     }

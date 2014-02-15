@@ -15,6 +15,8 @@ namespace PIE
     {
         private HexBox hexBox;
         private FontConverter fontConverter;
+        private Color shadowSelectionColor;
+        private Color selectionForeColor;
 
         public OptionForm()
         {
@@ -43,7 +45,10 @@ namespace PIE
             addressColorButton.BackColor = hexBox.InfoForeColor;
             selectionColorButton.BackColor = hexBox.SelectionBackColor;
             byteGroupCheckBox.Checked = groupSizeMaskedTextBox.Enabled = hexBox.GroupSeparatorVisible;
-            columnIndexCheckBox.Checked = hexBox.ColumnInfoVisible;
+            columnNumberCheckBox.Checked = hexBox.ColumnInfoVisible;
+            groupSizeMaskedTextBox.Text = hexBox.GroupSize.ToString();
+            selectionForeColor = hexBox.SelectionForeColor;
+            shadowSelectionColor = hexBox.ShadowSelectionColor;
         }
 
         private void changeButton_Click(object sender, EventArgs e)
@@ -88,10 +93,17 @@ namespace PIE
                     optionWriter.WriteLine("ForeColor=" + colorConverter.ConvertToString(fontTextBox.ForeColor));
                     optionWriter.WriteLine("Font=" + fontConverter.ConvertToString(fontTextBox.Font));
                     optionWriter.WriteLine("BackColor=" + colorConverter.ConvertToString(backColorButton.BackColor));
+                    optionWriter.WriteLine("AddressColor=" + colorConverter.ConvertToString(addressColorButton.BackColor));
+                    optionWriter.WriteLine("SelectionColor=" + colorConverter.ConvertToString(selectionColorButton.BackColor));
+                    optionWriter.WriteLine("ShadowSelectionColor=" + colorConverter.ConvertToString(shadowSelectionColor));
+                    optionWriter.WriteLine("SelectionForeColor=" + colorConverter.ConvertToString(selectionForeColor));
                     optionWriter.WriteLine("StringViewVisible=" + charCheckBox.Checked.ToString());
                     optionWriter.WriteLine("LineInfoVisible=" + lineCheckBox.Checked.ToString());
                     optionWriter.WriteLine("HexCasing=" + (hexCaseComboBox.SelectedIndex == 0 ? HexCasing.Lower.ToString() : HexCasing.Upper.ToString()));
                     optionWriter.WriteLine("BytesPerLine=" + bytesMaskedTextBox.Text);
+                    optionWriter.WriteLine("ByteGrouping=" + byteGroupCheckBox.Checked.ToString());
+                    optionWriter.WriteLine("ByteGroupSize=" + groupSizeMaskedTextBox.Text);
+                    optionWriter.WriteLine("ColumnNumber=" + columnNumberCheckBox.Checked.ToString());
                 }
             }
             catch (Exception ex)
@@ -105,10 +117,17 @@ namespace PIE
             hexBox.ForeColor = fontTextBox.ForeColor;
             hexBox.Font = fontTextBox.Font;
             hexBox.BackColor = fontTextBox.BackColor;
+            hexBox.InfoForeColor = addressColorButton.BackColor;
+            hexBox.SelectionBackColor = selectionColorButton.BackColor;
+            hexBox.ShadowSelectionColor = shadowSelectionColor;
+            hexBox.SelectionForeColor = selectionForeColor;
             hexBox.StringViewVisible = charCheckBox.Checked;
             hexBox.LineInfoVisible = lineCheckBox.Checked;
             hexBox.HexCasing = hexCaseComboBox.SelectedIndex == 0 ? HexCasing.Lower : HexCasing.Upper;
             hexBox.BytesPerLine = int.Parse(bytesMaskedTextBox.Text);
+            hexBox.GroupSeparatorVisible = byteGroupCheckBox.Checked;
+            hexBox.GroupSize = int.Parse(groupSizeMaskedTextBox.Text);
+            hexBox.ColumnInfoVisible = columnNumberCheckBox.Checked;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -144,11 +163,19 @@ namespace PIE
 
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
-                selectionColorButton.BackColor = colorDialog1.Color;
-                //make the shadowselectioncolor a lighter shade of the selected color
+                Color selectColor = colorDialog1.Color;
+                selectionColorButton.BackColor = selectColor;
+                shadowSelectionColor = Color.FromArgb(100, selectColor.R, selectColor.G, selectColor.B);
+
                 //make the selection fore color the inverse of the selected color
                 //OR
                 //make the selection fore color black if color is light and white if color is dark
+                //Luminance:
+                //Y = 0.2126 R + 0.7152 G + 0.0722 B
+                if (0.2126 * selectColor.R + 0.7152 * selectColor.G + 0.0722 * selectColor.B > 127.0)
+                    selectionForeColor = Color.Black;
+                else
+                    selectionForeColor = Color.White;
             }
         }
     }
