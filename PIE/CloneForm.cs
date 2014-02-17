@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Be.Windows.Forms;
 
 namespace PIE
 {
@@ -147,7 +141,7 @@ namespace PIE
             long size = nodeData.size;
             long insertPosition = start;
             long totalSize = (parent.Tag as Slice).dataByteProvider.Length - 1;
-            long max = (totalSize - insertPosition) / size;
+            long max = (totalSize + 1 - insertPosition) / size;
 
             if (repeatCheckBox.Checked)
                 copies = max;

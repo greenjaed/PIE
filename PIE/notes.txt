@@ -72,6 +72,3 @@ what to save?
  file
 
 todo:
-  create program documentation (half done)
-  test on another system
-  clean up code?

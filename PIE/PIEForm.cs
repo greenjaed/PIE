@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
@@ -184,6 +185,8 @@ namespace PIE
             fileToolStripMenuItem.DropDownItems["saveAllToolStripMenuItem"].Enabled = toggle;
             fileToolStripMenuItem.DropDownItems["closeProjectToolStripMenuItem"].Enabled = toggle;
             standardToolStrip.Items["saveToolStripButton"].Enabled = toggle;
+            standardToolStrip.Items["saveProjectToolStripButton"].Enabled = toggle;
+            standardToolStrip.Items["saveAllToolStripButton"].Enabled = toggle;
             hexContextMenuStrip.Items["selectAllHexToolStripMenuItem"].Enabled = toggle;
             startAddrToolStripComboBox.Enabled = toggle;
             gotoToolStripTextBox.Enabled = toggle;
@@ -305,7 +308,7 @@ namespace PIE
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: could not open file: " + ex.Message);
+                MessageBox.Show("Error, could not open file: " + ex.Message);
                 return;
             }
         }
@@ -341,26 +344,29 @@ namespace PIE
                     
                     openFile(false);
 
-                    //initialize idIndex
-                    idIndex = int.Parse(xr.ReadElementContentAsString());
-                    xr.ReadToFollowing("Node");
-                    xr.Read();
-                    //initialize the main slice
-                    root = new TreeNode(xr.ReadElementContentAsString());
-                    root.Text = xr.ReadElementContentAsString();
-                    whole = Slice.Deserialize(xr);
-                    whole.display = displayHexBox;
-                    whole.updateMainSlice(fileBytes);
-                    root.Tag = whole;
-                    projectTreeView.Nodes.Add(root);
-                    activeSlice = whole;
-                    currentTreeNode = root;
-                    //if the root has children, initialize them
-                    if (xr.IsStartElement())
-                        loadNodes(root, xr);
-                    this.Text = "PIE - " + Path.GetFileNameWithoutExtension(projectPath);
-                    displaySlice();
-                    toggleControls(true);
+                    if (fileBytes != null)
+                    {
+                        //initialize idIndex
+                        idIndex = int.Parse(xr.ReadElementContentAsString());
+                        xr.ReadToFollowing("Node");
+                        xr.Read();
+                        //initialize the main slice
+                        root = new TreeNode(xr.ReadElementContentAsString());
+                        root.Text = xr.ReadElementContentAsString();
+                        whole = Slice.Deserialize(XmlDictionaryReader.CreateDictionaryReader(xr));
+                        whole.display = displayHexBox;
+                        whole.updateMainSlice(fileBytes);
+                        root.Tag = whole;
+                        projectTreeView.Nodes.Add(root);
+                        activeSlice = whole;
+                        currentTreeNode = root;
+                        //if the root has children, initialize them
+                        if (xr.IsStartElement())
+                            loadNodes(root, XmlDictionaryReader.CreateDictionaryReader(xr));
+                        this.Text = "PIE - " + Path.GetFileNameWithoutExtension(projectPath);
+                        displaySlice();
+                        toggleControls(true);
+                    }
                 }
             }
             catch (Exception ex)
@@ -370,7 +376,7 @@ namespace PIE
         }
 
         //recursively initializes and adds nodes into current using the passed in XmlReader
-        private void loadNodes(TreeNode current, XmlReader xr)
+        private void loadNodes(TreeNode current, XmlDictionaryReader xdr)
         {
             Slice slice;
             TreeNode node;
@@ -378,16 +384,16 @@ namespace PIE
             do
             {
                 //load the TreeNode information
-                xr.Read();
-                node = new TreeNode(xr.ReadElementContentAsString());
-                node.Text = xr.ReadElementContentAsString();
-                slice = Slice.Deserialize(xr);
+                xdr.Read();
+                node = new TreeNode(xdr.ReadElementContentAsString());
+                node.Text = xdr.ReadElementContentAsString();
+                slice = Slice.Deserialize(xdr);
                 node.Tag = new Slice(slice, current.Tag as Slice);
                 current.Nodes.Add(node);
                 //if this TreeNode has children, recurse
-                if (xr.IsStartElement())
-                    loadNodes(node, xr);
-            } while (xr.ReadToNextSibling("Node"));
+                if (xdr.IsStartElement())
+                    loadNodes(node, xdr);
+            } while (xdr.ReadToNextSibling("Node"));
         }
 
         void fileBytes_LengthChanged(object sender, EventArgs e)
@@ -891,10 +897,12 @@ namespace PIE
                             projectFile.WriteElementString("filePath", filePath);
                             projectFile.WriteElementString("idIndex", idIndex.ToString());
                         projectFile.WriteEndElement();
-                        saveSlices(projectTreeView.Nodes[0], projectFile);
+                        saveSlices(projectTreeView.Nodes[0], XmlDictionaryWriter.CreateDictionaryWriter(projectFile));
                     projectFile.WriteEndElement();
                     projectFile.WriteEndDocument();
                 }
+
+                projectChanged = false;
             }
             catch (Exception ex)
             {
@@ -906,7 +914,7 @@ namespace PIE
         }
 
         //saves project slices
-        private void saveSlices(TreeNode current, XmlWriter writer)
+        private void saveSlices(TreeNode current, XmlDictionaryWriter writer)
         {
             writer.WriteStartElement("Node");
                 writer.WriteElementString("Name", current.Name);
@@ -962,7 +970,7 @@ namespace PIE
         {
             this.Cursor = Cursors.WaitCursor;
             if (saveProject())
-                this.Text.TrimEnd(changed);
+                this.Text = "PIE - " + Path.GetFileNameWithoutExtension(projectPath);
             this.Cursor = Cursors.Arrow;
         }
 

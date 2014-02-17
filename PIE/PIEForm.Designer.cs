@@ -82,6 +82,7 @@
             this.newToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.saveProjectToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.cutToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -106,6 +107,7 @@
             this.cloneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
             this.notesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayHexBox = new Be.Windows.Forms.HexBox();
             this.hexContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cutHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -118,7 +120,7 @@
             this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.displayHexBox = new Be.Windows.Forms.HexBox();
+            this.saveAllToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -545,6 +547,8 @@
             this.newToolStripButton,
             this.openToolStripButton,
             this.saveToolStripButton,
+            this.saveProjectToolStripButton,
+            this.saveAllToolStripButton,
             this.toolStripSeparator6,
             this.cutToolStripButton,
             this.copyToolStripButton,
@@ -558,6 +562,7 @@
             this.sliceToolStripButton});
             this.standardToolStrip.Location = new System.Drawing.Point(0, 24);
             this.standardToolStrip.Name = "standardToolStrip";
+            this.standardToolStrip.Padding = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.standardToolStrip.Size = new System.Drawing.Size(784, 25);
             this.standardToolStrip.TabIndex = 2;
             this.standardToolStrip.Text = "toolStrip1";
@@ -594,6 +599,18 @@
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveToolStripButton.Text = "&Save";
             this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveProjectToolStripButton
+            // 
+            this.saveProjectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveProjectToolStripButton.Enabled = false;
+            this.saveProjectToolStripButton.Image = global::PIE.Properties.Resources.SaveProject;
+            this.saveProjectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveProjectToolStripButton.Name = "saveProjectToolStripButton";
+            this.saveProjectToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.saveProjectToolStripButton.Text = "toolStripButton1";
+            this.saveProjectToolStripButton.ToolTipText = "Save Project";
+            this.saveProjectToolStripButton.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
@@ -811,6 +828,27 @@
             this.notesToolStripMenuItem.Text = "Notes";
             this.notesToolStripMenuItem.Click += new System.EventHandler(this.notesToolStripMenuItem_Click);
             // 
+            // displayHexBox
+            // 
+            this.displayHexBox.ContextMenuStrip = this.hexContextMenuStrip;
+            this.displayHexBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.displayHexBox.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayHexBox.InfoForeColor = System.Drawing.Color.Gray;
+            this.displayHexBox.LineInfoVisible = true;
+            this.displayHexBox.Location = new System.Drawing.Point(0, 0);
+            this.displayHexBox.Name = "displayHexBox";
+            this.displayHexBox.Padding = new System.Windows.Forms.Padding(50);
+            this.displayHexBox.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
+            this.displayHexBox.Size = new System.Drawing.Size(640, 491);
+            this.displayHexBox.StringViewVisible = true;
+            this.displayHexBox.TabIndex = 0;
+            this.displayHexBox.UseFixedBytesPerLine = true;
+            this.displayHexBox.VScrollBarVisible = true;
+            this.displayHexBox.SelectionLengthChanged += new System.EventHandler(this.displayHexBox_SelectionLengthChanged);
+            this.displayHexBox.CurrentLineChanged += new System.EventHandler(this.displayHexBox_CurrentLineChanged);
+            this.displayHexBox.CurrentPositionInLineChanged += new System.EventHandler(this.displayHexBox_CurrentPositionInLineChanged);
+            this.displayHexBox.Copied += new System.EventHandler(this.displayHexBox_Copied);
+            // 
             // hexContextMenuStrip
             // 
             this.hexContextMenuStrip.Enabled = false;
@@ -913,26 +951,17 @@
             // 
             this.saveFileDialog1.Filter = "Pie files (.pie)|*.pie|All files (*.*)|*.*";
             // 
-            // displayHexBox
+            // saveAllToolStripButton
             // 
-            this.displayHexBox.ContextMenuStrip = this.hexContextMenuStrip;
-            this.displayHexBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.displayHexBox.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayHexBox.InfoForeColor = System.Drawing.Color.Gray;
-            this.displayHexBox.LineInfoVisible = true;
-            this.displayHexBox.Location = new System.Drawing.Point(0, 0);
-            this.displayHexBox.Name = "displayHexBox";
-            this.displayHexBox.Padding = new System.Windows.Forms.Padding(50);
-            this.displayHexBox.ShadowSelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(60)))), ((int)(((byte)(188)))), ((int)(((byte)(255)))));
-            this.displayHexBox.Size = new System.Drawing.Size(640, 491);
-            this.displayHexBox.StringViewVisible = true;
-            this.displayHexBox.TabIndex = 0;
-            this.displayHexBox.UseFixedBytesPerLine = true;
-            this.displayHexBox.VScrollBarVisible = true;
-            this.displayHexBox.SelectionLengthChanged += new System.EventHandler(this.displayHexBox_SelectionLengthChanged);
-            this.displayHexBox.CurrentLineChanged += new System.EventHandler(this.displayHexBox_CurrentLineChanged);
-            this.displayHexBox.CurrentPositionInLineChanged += new System.EventHandler(this.displayHexBox_CurrentPositionInLineChanged);
-            this.displayHexBox.Copied += new System.EventHandler(this.displayHexBox_Copied);
+            this.saveAllToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveAllToolStripButton.Enabled = false;
+            this.saveAllToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveAllToolStripButton.Image")));
+            this.saveAllToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveAllToolStripButton.Name = "saveAllToolStripButton";
+            this.saveAllToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.saveAllToolStripButton.Text = "toolStripButton1";
+            this.saveAllToolStripButton.ToolTipText = "Save All";
+            this.saveAllToolStripButton.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
             // 
             // PIEForm
             // 
@@ -1058,6 +1087,8 @@
         private System.Windows.Forms.ToolStripMenuItem viewHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator19;
         private Be.Windows.Forms.HexBox displayHexBox;
+        private System.Windows.Forms.ToolStripButton saveProjectToolStripButton;
+        private System.Windows.Forms.ToolStripButton saveAllToolStripButton;
     }
 }
 

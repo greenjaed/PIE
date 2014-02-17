@@ -209,6 +209,7 @@
   <ItemGroup>
     <Content Include="notes.txt" />
     <Content Include="PIE.ico" />
+    <None Include="Resources\SaveProject.png" />
     <None Include="Resources\aboutPIE.jpg" />
     <None Include="Resources\Slice.png" />
     <None Include="Resources\Delete.png" />

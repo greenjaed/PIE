@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using Be.Windows.Forms;
@@ -13,34 +10,35 @@ namespace PIE
     [DataContract]
     public class Slice
     {
-        //the slice the current slice is contained in
-        protected Slice parentSlice;
         //a custom start address for displaying the data
         [DataMember]
         public long customStart { get; set; }
-        //the last selected start address
-        [DataMember]
-        public long lastStart { get; protected set; }
-        //the start address in parentSlice where the data comes from
-        [DataMember]
-        public long start { get; protected set; }
-        //the size of the slice
-        [DataMember]
-        public long size { get; protected set; }
+        //the HexBox showing the data
+        public HexBox display { get; set; }
         //the end address in parentSlice where the data comes from
         [DataMember]
         public long end { get; protected set; }
-        [DataMember]
-        public string notes { get; set; }
-        //the data itself
-        public IByteProvider dataByteProvider { get; protected set; }
         //indicates if the slice has been changed or not. if no data, returns false
         public bool isChanged
         {
             get { return dataByteProvider != null ? dataByteProvider.HasChanges() : false; }
         }
-        //the HexBox showing the data
-        public HexBox display { get; set; }
+        //the last selected start address
+        [DataMember]
+        public long lastStart { get; protected set; }
+        //stores notes about the slice
+        [DataMember]
+        public string notes { get; set; }
+        //the slice the current slice is contained in
+        protected Slice parentSlice;
+        //the size of the slice
+        [DataMember]
+        public long size { get; protected set; }
+        //the start address in parentSlice where the data comes from
+        [DataMember]
+        public long start { get; protected set; }
+        //the data itself
+        public IByteProvider dataByteProvider { get; protected set; }
 
         //required for serialization
         public Slice()
@@ -51,9 +49,12 @@ namespace PIE
         //copy constructor with a different parent
         public Slice(Slice source, Slice parent)
         {
+            customStart = source.customStart;
+            lastStart = source.lastStart;
             start = source.start;
             size = source.size;
             end = source.end;
+            notes = source.notes;
             parentSlice = parent;
         }
 
@@ -311,14 +312,14 @@ namespace PIE
         }
 
         //serializes the slice
-        public virtual void Serialize(XmlWriter writer)
+        public virtual void Serialize(XmlDictionaryWriter writer)
         {
             DataContractSerializer dcs = new DataContractSerializer(typeof(Slice));
             dcs.WriteObject(writer, this);
         }
 
         //deserializes a Slice and returns it
-        public static Slice Deserialize(XmlReader reader)
+        public static Slice Deserialize(XmlDictionaryReader reader)
         {
             DataContractSerializer deserializer = new DataContractSerializer(typeof(Slice));
             return (Slice) deserializer.ReadObject(reader);

@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Globalization;
-using Be.Windows.Forms;
 
 namespace PIE
 {
@@ -55,7 +49,6 @@ namespace PIE
             subnode.Name = (Owner as PIEForm).uniqueID.ToString();
             subnode.Text = nodeText;
             Slice subslice = new Slice(nodeSlice, start, size);
-            subslice.notes = notesTextBox.Text;
             subnode.Tag = subslice;
             node.Nodes.Add(subnode);
         }
