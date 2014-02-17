@@ -49,9 +49,6 @@ namespace PIE
         {
             InitializeComponent();
             projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
-            //if a configuration file exists, load settings from it
-            if (File.Exists(Application.StartupPath + Properties.Resources.configFileString))
-                loadSettings();
         }
 
         //enables/disables a bunch of controls relating to cut/copy/paste, delete and slicing
@@ -346,6 +343,13 @@ namespace PIE
 
                     if (fileBytes != null)
                     {
+                        if (Properties.Settings.Default.mru.Contains(projectPath))
+                            Properties.Settings.Default.mru.Remove(projectPath);
+                        else
+                            addRecent(projectPath);
+                        Properties.Settings.Default.mru.Add(projectPath);
+                        Properties.Settings.Default.Save();
+                        recentProjectsToolStripMenuItem.Enabled = true;
                         //initialize idIndex
                         idIndex = int.Parse(xr.ReadElementContentAsString());
                         xr.ReadToFollowing("Node");
@@ -902,6 +906,16 @@ namespace PIE
                     projectFile.WriteEndDocument();
                 }
 
+                if (!Properties.Settings.Default.mru.Contains(projectPath))
+                {
+                    Properties.Settings.Default.mru.Add(projectPath);
+                    if (Properties.Settings.Default.mru.Count > 10)
+                        Properties.Settings.Default.mru.RemoveAt(10);
+                    Properties.Settings.Default.Save();
+                    addRecent(projectPath);
+                    recentProjectsToolStripMenuItem.Enabled = true;
+                }
+
                 projectChanged = false;
             }
             catch (Exception ex)
@@ -999,6 +1013,7 @@ namespace PIE
             if (!(closeFile() && closeProject()))
                 return;
             displayHexBox.ByteProvider = null;
+            fileBytes.Dispose();
             fileBytes = null;
             projectTreeView.Nodes.Clear();
             this.Text = "PIE";
@@ -1076,6 +1091,36 @@ namespace PIE
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void PIEForm_Load(object sender, EventArgs e)
+        {
+            //if a configuration file exists, load settings from it
+            if (File.Exists(Application.StartupPath + Properties.Resources.configFileString))
+                loadSettings();
+            foreach (string s in Properties.Settings.Default.mru)
+                addRecent(s);
+
+            if (!recentProjectsToolStripMenuItem.HasDropDownItems)
+                recentProjectsToolStripMenuItem.Enabled = false;
+        }
+
+        private void addRecent(string recent)
+        {
+            ToolStripMenuItem recentFile = new ToolStripMenuItem(recent);
+            recentProjectsToolStripMenuItem.DropDownItems.Insert(0, recentFile);
+        }
+
+        private void recentProjectsToolStripMenuItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            //if a project is already opened and the user doesn't close it, return
+            if (fileBytes != null && !(closeFile() && closeProject()))
+                return;
+            projectPath = e.ClickedItem.Text;
+            openProject();
+            if (fileBytes != null)
+                this.Text = "PIE - " + Path.GetFileNameWithoutExtension(openFileDialog1.FileName);
+
         }
     }
 

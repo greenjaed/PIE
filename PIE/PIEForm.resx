@@ -259,16 +259,16 @@
   <data name="saveAllToolStripButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIHSURBVDhPtZHdT1IBHIb5V7rtL8gmExQV8QP8AKwwUCQ3
-        JUuBzXSzkqQPSzalllkJlgZZ6ZjZl5Y6nGu62QdrleVNtba6iLWKyosnzwE6NUZdtN7td3fe5znvObL/
-        kpGLLwkEnnNm4Cm+/ijHex7g7lqmo30RhyOCvXGWnaZxko+nRyjfnYH+vq/8ms/xdQ4fe4LTOYzREEoH
-        /Mnsci3QsmcemzWM0xXGoA+mAzKZv8S/c25ojdZWPzrteezN81SUX5AAf9vcbL9HrXkSsyUoAmptt9GW
-        nZUAmcwfP33DYr2PUrkffVWQ3XsjlJUOYjCF0RT5JMDghvnWzXU83e+T1UR57U0M3Y45TDWjlOuGqNs1
-        TbHmFKWVYxTk90gAX1+UcDiO0/FMKr+OsRR9S5b2urhZMBtrJlEXelEVj5KrdEsAYfPlsRgO1yPxlXXb
-        59iyUdyUF2Kz+oq4WTCXVV1FlXcEucqPPLtdAhxyLxMYfsfpgVec8K7S1R2lrWMJe0uEuoZpcXPCfAml
-        4iBbs5ziJesymfC1hXKv9wWKUsvPK6isF0/YnDAHfjenIvyq3qRZKJqsjYxcm2Jx5SFqfYO4Wak4kG5O
-        palpFrfnMSXmO2QXVtDW6WElusr41A3kuUXJzfvSi6nU18/Yqo0TH7ZVT6DXh9Dp/JRoTpKvOkpOTmdm
-        879HJvsB0U3QFU5+w0MAAAAASUVORK5CYII=
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIHSURBVDhPtZHrT1IBHIb5V/raX5BNJijeUC5egC4YqJCb
+        kqXAZrpZSdLFkk2pZVaCpUFWOmZ201JHc003u7BWWX6p1lYfYq2i8sOT5wCdGqM+tN7t9+28z3Pec2T/
+        JSMXXhIMPuf0wFP8/TGO9TzA07VER/sCTmcUR+MsO8zjpB7PjFC+MwP9fV/5NZ8Taxw6+gSXaxiTMZwJ
+        +JPZ7b5Hy+557PURXO4IRkMoE5DN/CXxnbNDq7S2BtDrzuFonqey4rwE+NvmZsddai2TWKwhEVBrv4VO
+        e0YCZDN//PQNa/19lMp9GKpD7NoTRasZxGiOoC71S4DBdfPNG2t4u9+nqsny6ps4+u1zmGtGqdAPUbdz
+        mjL1STRVYxQV9kgAf1+MSCSBy/lMKr+Osxh7S47umrhZMJtqJikp9qEqGyVf6ZEAwuZLY3Gc7kfiK+u3
+        zbFpvbihIMzGksviZsGsrb6CquAwclUAeW67BDjoWSI4/I5TA6847luhqztGW8cijpYodQ3T4uak+SJK
+        xQE257jES9VlMuFrC+Ve3wsUGuvPK6qyiSdsTpqDv5vTEX5Vb8osFM31jYxcnWJh+SElhgZxs1KxP9Oc
+        TlPTLB7vY8ott8ktrqSt08tybIXxqevI80tTm/dmFtOx2WbsJtPEh61bJjAYwuj1AcrVJyhUHSEvrzO7
+        +d8jk/0A0NTQFCY2Kt8AAAAASUVORK5CYII=
 </value>
   </data>
   <data name="cutToolStripButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">

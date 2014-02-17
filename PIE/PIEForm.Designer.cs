@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentProjectsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.closeProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
@@ -83,6 +84,7 @@
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.saveProjectToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.saveAllToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.cutToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.copyToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -120,7 +122,6 @@
             this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.saveAllToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -151,6 +152,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.recentProjectsToolStripMenuItem,
             this.toolStripSeparator,
             this.closeProjectToolStripMenuItem,
             this.toolStripSeparator5,
@@ -187,6 +189,13 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
             this.openToolStripMenuItem.Text = "&Open Project";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            // 
+            // recentProjectsToolStripMenuItem
+            // 
+            this.recentProjectsToolStripMenuItem.Name = "recentProjectsToolStripMenuItem";
+            this.recentProjectsToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.recentProjectsToolStripMenuItem.Text = "Recent Projects";
+            this.recentProjectsToolStripMenuItem.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.recentProjectsToolStripMenuItem_DropDownItemClicked);
             // 
             // toolStripSeparator
             // 
@@ -612,6 +621,18 @@
             this.saveProjectToolStripButton.ToolTipText = "Save Project";
             this.saveProjectToolStripButton.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
+            // saveAllToolStripButton
+            // 
+            this.saveAllToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveAllToolStripButton.Enabled = false;
+            this.saveAllToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveAllToolStripButton.Image")));
+            this.saveAllToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveAllToolStripButton.Name = "saveAllToolStripButton";
+            this.saveAllToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.saveAllToolStripButton.Text = "toolStripButton1";
+            this.saveAllToolStripButton.ToolTipText = "Save All";
+            this.saveAllToolStripButton.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
+            // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
@@ -951,18 +972,6 @@
             // 
             this.saveFileDialog1.Filter = "Pie files (.pie)|*.pie|All files (*.*)|*.*";
             // 
-            // saveAllToolStripButton
-            // 
-            this.saveAllToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.saveAllToolStripButton.Enabled = false;
-            this.saveAllToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveAllToolStripButton.Image")));
-            this.saveAllToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.saveAllToolStripButton.Name = "saveAllToolStripButton";
-            this.saveAllToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.saveAllToolStripButton.Text = "toolStripButton1";
-            this.saveAllToolStripButton.ToolTipText = "Save All";
-            this.saveAllToolStripButton.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
-            // 
             // PIEForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -979,6 +988,7 @@
             this.Text = "PIE";
             this.Activated += new System.EventHandler(this.PIEForm_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PIEForm_FormClosing);
+            this.Load += new System.EventHandler(this.PIEForm_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -1089,6 +1099,7 @@
         private Be.Windows.Forms.HexBox displayHexBox;
         private System.Windows.Forms.ToolStripButton saveProjectToolStripButton;
         private System.Windows.Forms.ToolStripButton saveAllToolStripButton;
+        private System.Windows.Forms.ToolStripMenuItem recentProjectsToolStripMenuItem;
     }
 }
 
