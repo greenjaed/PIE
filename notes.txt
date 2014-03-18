@@ -72,5 +72,3 @@ what to save?
  file
 
 todo:
-  add "split" and "merge" functionality to the project tree view and slice class
-  add shift-select functionality to the project tree view

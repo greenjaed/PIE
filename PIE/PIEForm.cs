@@ -35,15 +35,17 @@ namespace PIE
         //the current position in the data
         long currentPosition;
         //generates a unique ID
-        public int uniqueID { get { return idIndex++; } }
+        public ulong uniqueID { get { return idIndex++; } }
         //the unique ID
-        private int idIndex;
+        private ulong idIndex;
         //searches for data
         FindForm search;
         //the character indicating the file/slice has changes
         static char[] changed = new char[] { '*' };
         //indicates if the size of the file has changed
         bool lengthChanged;
+        //the start and end of a slice selection
+        TreeNode selectionStart, selectionEnd;
 
         public PIEForm()
         {
@@ -351,7 +353,7 @@ namespace PIE
                         Properties.Settings.Default.Save();
                         recentProjectsToolStripMenuItem.Enabled = true;
                         //initialize idIndex
-                        idIndex = int.Parse(xr.ReadElementContentAsString());
+                        idIndex = ulong.Parse(xr.ReadElementContentAsString());
                         xr.ReadToFollowing("Node");
                         xr.Read();
                         //initialize the main slice
@@ -520,7 +522,10 @@ namespace PIE
             projectPath = openFileDialog1.FileName;
             openProject();
             if (fileBytes != null)
+            {
                 this.Text = "PIE - " + Path.GetFileNameWithoutExtension(openFileDialog1.FileName);
+                projectTreeView.SelectedNode = projectTreeView.Nodes[0];
+            }
         }
 
         //saves the files
@@ -621,7 +626,36 @@ namespace PIE
 
         private void deleteSliceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            deleteSlice();
+            if (selectionEnd == selectionStart)
+                deleteSlice();
+            else
+                deleteSlices();
+            projectChanged = true;
+        }
+
+        //deletes all selected slices
+        private void deleteSlices()
+        {
+            int start = Math.Min(selectionStart.Index, selectionEnd.Index);
+            int end = Math.Max(selectionStart.Index, selectionEnd.Index);
+            TreeNodeCollection nodes = selectionStart.Parent.Nodes;
+            TreeNode parent = selectionStart.Parent;
+
+            for (int i = start; i <= end; ++i)
+            {
+                projectTreeView.SelectedNode = nodes[i];
+                deleteSlice();
+            }
+
+            if (nodes.Count > start)
+                projectTreeView.SelectedNode = nodes[start];
+            else if (nodes.Count > 0)
+                projectTreeView.SelectedNode = nodes[nodes.Count - 1];
+            else
+                projectTreeView.SelectedNode = parent;
+
+            selectionStart = selectionEnd = projectTreeView.SelectedNode;
+            clearSelection();
         }
 
         //deletes a slice from projectTreeView
@@ -653,8 +687,39 @@ namespace PIE
             displayHexBox.SelectAll();
         }
 
+        private void clearSelection()
+        {
+            if (selectionStart.Parent == null)
+                return;
+            foreach (TreeNode node in selectionStart.Parent.Nodes)
+            {
+                node.ForeColor = projectTreeView.ForeColor;
+                node.BackColor = projectTreeView.BackColor;
+            }
+        }
+
         private void projectTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
+            TreeNode node = e.Node;
+            //if the shift key is held and both nodes are in the same tier
+            if (ModifierKeys == Keys.Shift && selectionStart.Parent == node.Parent)
+            {
+                int start = Math.Min(node.Index, selectionStart.Index);
+                int end = Math.Max(node.Index, selectionStart.Index);
+                if (start != end)
+                {
+                    clearSelection();
+                    selectionEnd = node;
+                    for (int i = start; i <= end; ++i)
+                        highlightSelection(node.Parent.Nodes[i]);
+                }
+            }
+            else if (e.Button != MouseButtons.Right)
+            {
+                if (node.Parent != null && selectionStart != selectionEnd)
+                    clearSelection();
+                selectionStart = selectionEnd = node;
+            }
             projectTreeView.SelectedNode = e.Node;
             if (!projectContextMenuStrip.Enabled)
             {
@@ -668,8 +733,12 @@ namespace PIE
             {
                 sliceToolStripMenuItem.DropDownItems["resizeToolStripMenuItem1"].Enabled = false;
                 sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = false;
+                sliceToolStripMenuItem.DropDownItems["splitToolStripMenuItem1"].Visible = false;
+                sliceToolStripMenuItem.DropDownItems["mergeToolStripMenuItem1"].Visible = false;
                 projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
                 projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = false;
+                projectContextMenuStrip.Items["splitToolStripMenuItem"].Visible = false;
+                projectContextMenuStrip.Items["mergeToolStripMenuItem"].Visible = false;
             }
             else
             {
@@ -677,6 +746,10 @@ namespace PIE
                 sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = true;
                 projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = true;
                 projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = true;
+                projectContextMenuStrip.Items["splitToolStripMenuItem"].Visible = 
+                    sliceToolStripMenuItem.DropDownItems["splitToolStripMenuItem1"].Visible = projectTreeView.SelectedNode.Nodes.Count > 0;
+                projectContextMenuStrip.Items["mergeToolStripMenuItem"].Visible = 
+                    sliceToolStripMenuItem.DropDownItems["mergeToolStripMenuItem1"].Visible = selectionStart != selectionEnd;
             }
         }
 
@@ -747,15 +820,61 @@ namespace PIE
                 showProjectChanged();
         }
 
+        private bool selectionIsGrowing(TreeNode current)
+        {
+            return selectionStart.Index >= selectionEnd.Index && current.Index < selectionEnd.Index ||
+                selectionStart.Index <= selectionEnd.Index && current.Index > selectionEnd.Index;
+        }
+
         private void projectTreeView_KeyUp(object sender, KeyEventArgs e)
         {
             if (projectTreeView.SelectedNode != null)
             {
-                if (e.KeyCode == Keys.Enter)
-                    displaySlice();
-                else if (e.KeyCode == Keys.Delete)
-                    deleteSlice();
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        displaySlice();
+                        break;
+                    case Keys.Delete:
+                        if (selectionStart == selectionEnd)
+                            deleteSlice();
+                        else
+                            deleteSlices();
+                        projectChanged = true;
+                        break;
+                    case Keys.Up:
+                    case Keys.Down:
+                        if (ModifierKeys == Keys.Shift &&
+                            projectTreeView.SelectedNode.Parent == selectionStart.Parent)
+                        {
+                            if (!selectionIsGrowing(projectTreeView.SelectedNode))
+                            {
+                                selectionEnd.BackColor = projectTreeView.BackColor;
+                                selectionEnd.ForeColor = projectTreeView.ForeColor;
+                            }
+                            else if (projectTreeView.SelectedNode != selectionEnd)
+                            {
+                                if (selectionStart == selectionEnd)
+                                    highlightSelection(selectionStart);
+                                selectionEnd = projectTreeView.SelectedNode;
+                                highlightSelection(selectionEnd);
+                            }
+                            selectionEnd = projectTreeView.SelectedNode;
+                        }
+                        else
+                        {
+                            clearSelection();
+                            selectionStart = selectionEnd = projectTreeView.SelectedNode;
+                        }
+                        break;
+                }
             }
+        }
+
+        private void highlightSelection(TreeNode toHighlight)
+        {
+            toHighlight.BackColor = SystemColors.Highlight;
+            toHighlight.ForeColor = SystemColors.HighlightText;
         }
 
         private void startAddrToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1121,6 +1240,18 @@ namespace PIE
             if (fileBytes != null)
                 this.Text = "PIE - " + Path.GetFileNameWithoutExtension(openFileDialog1.FileName);
 
+        }
+
+        private void gotoToolStripTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
+        private void projectTreeView_Leave(object sender, EventArgs e)
+        {
+            clearSelection();
+            selectionStart = selectionEnd = projectTreeView.SelectedNode;
         }
     }
 
