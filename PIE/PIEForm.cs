@@ -46,6 +46,8 @@ namespace PIE
         bool lengthChanged;
         //the start and end of a slice selection
         TreeNode selectionStart, selectionEnd;
+        //messageBox for confirming multiple actions
+        yesNoAllForm confirm;
 
         public PIEForm()
         {
@@ -630,7 +632,7 @@ namespace PIE
                 deleteSlice();
             else
                 deleteSlices();
-            projectChanged = true;
+            showProjectChanged();
         }
 
         //deletes all selected slices
@@ -640,6 +642,7 @@ namespace PIE
             int end = Math.Max(selectionStart.Index, selectionEnd.Index);
             TreeNodeCollection nodes = selectionStart.Parent.Nodes;
             TreeNode parent = selectionStart.Parent;
+            confirm = new yesNoAllForm("All sub-slices will be deleted.", "Warning");
 
             for (int i = start; i <= end; ++i)
             {
@@ -664,11 +667,25 @@ namespace PIE
             //if the slice is not the entire file
             if (projectTreeView.SelectedNode != projectTreeView.Nodes[0])
             {
-                //if the slice is sliced and the user doesn't want to remove them all, cancel
-                if (projectTreeView.SelectedNode.Nodes.Count > 0 &&
-                    MessageBox.Show("All sub-slices will be deleted.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning)
-                        == DialogResult.Cancel)
-                    return;
+                if (selectionStart == selectionEnd)
+                {
+                    //if the slice is sliced and the user doesn't want to remove them all, cancel
+                    if (projectTreeView.SelectedNode.Nodes.Count > 0 &&
+                        MessageBox.Show("All sub-slices will be deleted.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning)
+                            == DialogResult.Cancel)
+                        return;
+                }
+                else if (projectTreeView.SelectedNode.Nodes.Count > 0)
+                {
+                    if (confirm.Result == yesNoAllResult.NoAll)
+                        return;
+                    else if (confirm.Result != yesNoAllResult.YesAll)
+                    {
+                        confirm.ShowDialog(this);
+                        if (confirm.Result == yesNoAllResult.No || confirm.Result == yesNoAllResult.NoAll)
+                            return;
+                    }
+                }
                 if (projectTreeView.SelectedNode == currentTreeNode)
                 {
                     activeSlice.Hide();
@@ -1252,6 +1269,62 @@ namespace PIE
         {
             clearSelection();
             selectionStart = selectionEnd = projectTreeView.SelectedNode;
+        }
+
+        //removes the parent slice and moves the child slices up
+        private void splitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode toSplit = projectTreeView.SelectedNode;
+            TreeNode parent = toSplit.Parent;
+            TreeNode temp;
+            toSplit.Remove();
+
+            while (toSplit.Nodes.Count > 0)
+            {
+                temp = toSplit.Nodes[0];
+                //adjust parent, start, and end for each slice
+                (temp.Tag as Slice).Split();
+                toSplit.Nodes.Remove(temp);
+                parent.Nodes.Add(temp);
+            }
+
+            projectTreeView.SelectedNode = selectionStart;
+            selectionEnd = selectionStart;
+            showProjectChanged();
+        }
+
+        //puts a group of slices all under the same slice
+        private void mergeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int start = Math.Min(selectionStart.Index, selectionEnd.Index);
+            int end = Math.Max(selectionStart.Index, selectionEnd.Index);
+            TreeNode mergedNode = new TreeNode(idIndex.ToString());
+            TreeNode parent = selectionStart.Parent;
+            TreeNode temp;
+            TreeNodeCollection toMerge = selectionStart.Parent.Nodes;
+            long sliceStart = (toMerge[start].Tag as Slice).start;
+            long size = (toMerge[end].Tag as Slice).end + 1 - sliceStart;
+
+            Slice mergedSlice = new Slice(selectionStart.Parent.Tag as Slice, sliceStart, size);
+            mergedNode.Tag = mergedSlice;
+            mergedNode.Text = toMerge[start].Text + " - " + toMerge[end].Text;
+
+            for (int i = start; i <= end; ++i)
+            {
+                temp = toMerge[start];
+                (temp.Tag as Slice).Merge(mergedSlice, sliceStart);
+                toMerge.Remove(temp);
+                mergedNode.Nodes.Add(temp);
+            }
+
+            parent.Nodes.Add(mergedNode);
+            projectTreeView.SelectedNode = mergedNode;
+            showProjectChanged();
+        }
+
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            projectTreeView.SelectedNode.BeginEdit();
         }
     }
 

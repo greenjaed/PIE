@@ -124,6 +124,12 @@
     <Compile Include="SliceForm.Designer.cs">
       <DependentUpon>SliceForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="yesNoAllForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="yesNoAllForm.Designer.cs">
+      <DependentUpon>yesNoAllForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="CloneForm.resx">
       <DependentUpon>CloneForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -157,6 +163,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SliceForm.resx">
       <DependentUpon>SliceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="yesNoAllForm.resx">
+      <DependentUpon>yesNoAllForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />

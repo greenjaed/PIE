@@ -63,6 +63,8 @@
             this.showToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.splitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.mergeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
             this.resizeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -102,7 +104,10 @@
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.splitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mergeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSliceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.resizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sliceSliceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -122,10 +127,7 @@
             this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.splitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mergeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.splitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.mergeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.standardToolStrip.SuspendLayout();
@@ -411,6 +413,7 @@
             this.splitToolStripMenuItem1,
             this.mergeToolStripMenuItem1,
             this.deleteToolStripMenuItem1,
+            this.renameToolStripMenuItem1,
             this.toolStripSeparator15,
             this.resizeToolStripMenuItem1,
             this.sliceToolStripMenuItem1,
@@ -440,6 +443,22 @@
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
             this.toolStripSeparator14.Size = new System.Drawing.Size(149, 6);
+            // 
+            // splitToolStripMenuItem1
+            // 
+            this.splitToolStripMenuItem1.Name = "splitToolStripMenuItem1";
+            this.splitToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.splitToolStripMenuItem1.Text = "Split";
+            this.splitToolStripMenuItem1.Visible = false;
+            this.splitToolStripMenuItem1.Click += new System.EventHandler(this.splitToolStripMenuItem_Click);
+            // 
+            // mergeToolStripMenuItem1
+            // 
+            this.mergeToolStripMenuItem1.Name = "mergeToolStripMenuItem1";
+            this.mergeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.mergeToolStripMenuItem1.Text = "Merge";
+            this.mergeToolStripMenuItem1.Visible = false;
+            this.mergeToolStripMenuItem1.Click += new System.EventHandler(this.mergeToolStripMenuItem_Click);
             // 
             // deleteToolStripMenuItem1
             // 
@@ -771,7 +790,6 @@
             // 
             // projectContextMenuStrip
             // 
-            this.projectContextMenuStrip.Enabled = false;
             this.projectContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showToolStripMenuItem,
             this.reloadToolStripMenuItem1,
@@ -779,6 +797,7 @@
             this.splitToolStripMenuItem,
             this.mergeToolStripMenuItem,
             this.deleteSliceToolStripMenuItem,
+            this.renameToolStripMenuItem,
             this.toolStripSeparator13,
             this.resizeToolStripMenuItem,
             this.sliceSliceToolStripMenuItem,
@@ -786,13 +805,13 @@
             this.toolStripSeparator17,
             this.notesToolStripMenuItem});
             this.projectContextMenuStrip.Name = "projectContextMenuStrip";
-            this.projectContextMenuStrip.Size = new System.Drawing.Size(116, 220);
+            this.projectContextMenuStrip.Size = new System.Drawing.Size(118, 242);
             // 
             // showToolStripMenuItem
             // 
             this.showToolStripMenuItem.Enabled = false;
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
@@ -800,33 +819,59 @@
             // 
             this.reloadToolStripMenuItem1.Enabled = false;
             this.reloadToolStripMenuItem1.Name = "reloadToolStripMenuItem1";
-            this.reloadToolStripMenuItem1.Size = new System.Drawing.Size(115, 22);
+            this.reloadToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.reloadToolStripMenuItem1.Text = "Reload";
             this.reloadToolStripMenuItem1.Click += new System.EventHandler(this.reloadSliceToolStripMenuItem_Click);
             // 
             // toolStripSeparator12
             // 
             this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator12.Size = new System.Drawing.Size(114, 6);
+            // 
+            // splitToolStripMenuItem
+            // 
+            this.splitToolStripMenuItem.Enabled = false;
+            this.splitToolStripMenuItem.Name = "splitToolStripMenuItem";
+            this.splitToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.splitToolStripMenuItem.Text = "Split";
+            this.splitToolStripMenuItem.Visible = false;
+            this.splitToolStripMenuItem.Click += new System.EventHandler(this.splitToolStripMenuItem_Click);
+            // 
+            // mergeToolStripMenuItem
+            // 
+            this.mergeToolStripMenuItem.Enabled = false;
+            this.mergeToolStripMenuItem.Name = "mergeToolStripMenuItem";
+            this.mergeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.mergeToolStripMenuItem.Text = "Merge";
+            this.mergeToolStripMenuItem.Visible = false;
+            this.mergeToolStripMenuItem.Click += new System.EventHandler(this.mergeToolStripMenuItem_Click);
             // 
             // deleteSliceToolStripMenuItem
             // 
             this.deleteSliceToolStripMenuItem.Enabled = false;
             this.deleteSliceToolStripMenuItem.Name = "deleteSliceToolStripMenuItem";
-            this.deleteSliceToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.deleteSliceToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.deleteSliceToolStripMenuItem.Text = "Delete";
             this.deleteSliceToolStripMenuItem.Click += new System.EventHandler(this.deleteSliceToolStripMenuItem_Click);
+            // 
+            // renameToolStripMenuItem
+            // 
+            this.renameToolStripMenuItem.Enabled = false;
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // toolStripSeparator13
             // 
             this.toolStripSeparator13.Name = "toolStripSeparator13";
-            this.toolStripSeparator13.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator13.Size = new System.Drawing.Size(114, 6);
             // 
             // resizeToolStripMenuItem
             // 
             this.resizeToolStripMenuItem.Enabled = false;
             this.resizeToolStripMenuItem.Name = "resizeToolStripMenuItem";
-            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.resizeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.resizeToolStripMenuItem.Text = "Resize...";
             this.resizeToolStripMenuItem.Click += new System.EventHandler(this.resizeToolStripMenuItem_Click);
             // 
@@ -834,7 +879,7 @@
             // 
             this.sliceSliceToolStripMenuItem.Enabled = false;
             this.sliceSliceToolStripMenuItem.Name = "sliceSliceToolStripMenuItem";
-            this.sliceSliceToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.sliceSliceToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.sliceSliceToolStripMenuItem.Text = "Slice...";
             this.sliceSliceToolStripMenuItem.Click += new System.EventHandler(this.sliceToolStripMenuItem_Click_1);
             // 
@@ -842,20 +887,20 @@
             // 
             this.cloneToolStripMenuItem.Enabled = false;
             this.cloneToolStripMenuItem.Name = "cloneToolStripMenuItem";
-            this.cloneToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.cloneToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.cloneToolStripMenuItem.Text = "Clone...";
             this.cloneToolStripMenuItem.Click += new System.EventHandler(this.cloneToolStripMenuItem_Click);
             // 
             // toolStripSeparator17
             // 
             this.toolStripSeparator17.Name = "toolStripSeparator17";
-            this.toolStripSeparator17.Size = new System.Drawing.Size(112, 6);
+            this.toolStripSeparator17.Size = new System.Drawing.Size(114, 6);
             // 
             // notesToolStripMenuItem
             // 
             this.notesToolStripMenuItem.Enabled = false;
             this.notesToolStripMenuItem.Name = "notesToolStripMenuItem";
-            this.notesToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
+            this.notesToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.notesToolStripMenuItem.Text = "Notes";
             this.notesToolStripMenuItem.Click += new System.EventHandler(this.notesToolStripMenuItem_Click);
             // 
@@ -982,35 +1027,12 @@
             // 
             this.saveFileDialog1.Filter = "Pie files (.pie)|*.pie|All files (*.*)|*.*";
             // 
-            // splitToolStripMenuItem
+            // renameToolStripMenuItem1
             // 
-            this.splitToolStripMenuItem.Enabled = false;
-            this.splitToolStripMenuItem.Name = "splitToolStripMenuItem";
-            this.splitToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.splitToolStripMenuItem.Text = "Split";
-            this.splitToolStripMenuItem.Visible = false;
-            // 
-            // mergeToolStripMenuItem
-            // 
-            this.mergeToolStripMenuItem.Enabled = false;
-            this.mergeToolStripMenuItem.Name = "mergeToolStripMenuItem";
-            this.mergeToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
-            this.mergeToolStripMenuItem.Text = "Merge";
-            this.mergeToolStripMenuItem.Visible = false;
-            // 
-            // splitToolStripMenuItem1
-            // 
-            this.splitToolStripMenuItem1.Name = "splitToolStripMenuItem1";
-            this.splitToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.splitToolStripMenuItem1.Text = "Split";
-            this.splitToolStripMenuItem1.Visible = false;
-            // 
-            // mergeToolStripMenuItem1
-            // 
-            this.mergeToolStripMenuItem1.Name = "mergeToolStripMenuItem1";
-            this.mergeToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.mergeToolStripMenuItem1.Text = "Merge";
-            this.mergeToolStripMenuItem1.Visible = false;
+            this.renameToolStripMenuItem1.Name = "renameToolStripMenuItem1";
+            this.renameToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.renameToolStripMenuItem1.Text = "Rename";
+            this.renameToolStripMenuItem1.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // PIEForm
             // 
@@ -1144,6 +1166,8 @@
         private System.Windows.Forms.ToolStripMenuItem mergeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem splitToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem mergeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem1;
     }
 }
 

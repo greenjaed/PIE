@@ -39,6 +39,14 @@ namespace PIE
         public long start { get; protected set; }
         //the data itself
         public IByteProvider dataByteProvider { get; protected set; }
+        public Slice Parent
+        {
+            set
+            {
+                if (value != null)
+                    parentSlice = value;
+            }
+        }
 
         //required for serialization
         public Slice()
@@ -251,6 +259,20 @@ namespace PIE
                         parentSlice.setBytes(start, bytes);
                 }
             }
+        }
+
+        public void Merge(Slice parent, long offset)
+        {
+            parentSlice = parent;
+            start -= offset;
+            end -= offset;
+        }
+
+        public void Split()
+        {
+            start += parentSlice.start;
+            end += parentSlice.start;
+            parentSlice = parentSlice.parentSlice;
         }
 
         //saves any changes and applies the changes up the slices
