@@ -1,6 +1,6 @@
 ﻿namespace PIE
 {
-    partial class yesNoAllForm
+    partial class YesNoAllForm
     {
         /// <summary>
         /// Required designer variable.

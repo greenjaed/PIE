@@ -17,16 +17,16 @@ namespace PIE
         NoAll
     };
 
-    public partial class yesNoAllForm : Form
+    public partial class YesNoAllForm : Form
     {
         public yesNoAllResult Result { get; protected set; }
 
-        public yesNoAllForm()
+        public YesNoAllForm()
         {
             InitializeComponent();
         }
 
-        public yesNoAllForm(String body, String caption)
+        public YesNoAllForm(String body, String caption)
         {
             bodyLabel.Text = body;
             this.Text = caption;

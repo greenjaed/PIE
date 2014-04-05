@@ -47,7 +47,7 @@ namespace PIE
         //the start and end of a slice selection
         TreeNode selectionStart, selectionEnd;
         //messageBox for confirming multiple actions
-        yesNoAllForm confirm;
+        YesNoAllForm confirm;
 
         public PIEForm()
         {
@@ -396,7 +396,8 @@ namespace PIE
                 node = new TreeNode(xdr.ReadElementContentAsString());
                 node.Text = xdr.ReadElementContentAsString();
                 slice = Slice.Deserialize(xdr);
-                node.Tag = new Slice(slice, current.Tag as Slice);
+                slice.Parent = current.Tag as Slice;
+                node.Tag = slice;
                 current.Nodes.Add(node);
                 //if this TreeNode has children, recurse
                 if (xdr.IsStartElement())
@@ -642,7 +643,7 @@ namespace PIE
             int end = Math.Max(selectionStart.Index, selectionEnd.Index);
             TreeNodeCollection nodes = selectionStart.Parent.Nodes;
             TreeNode parent = selectionStart.Parent;
-            confirm = new yesNoAllForm("All sub-slices will be deleted.", "Warning");
+            confirm = new YesNoAllForm("All sub-slices will be deleted.", "Warning");
 
             for (int i = start; i <= end; ++i)
             {
@@ -715,6 +716,31 @@ namespace PIE
             }
         }
 
+        private void toggleChildrenControls(bool toggle)
+        {
+            sliceToolStripMenuItem.DropDownItems["resizeToolStripMenuItem1"].Enabled = toggle;
+            sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = toggle;
+            projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = toggle;
+            projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = toggle;
+            hexToolStripButton.Enabled = toggle;
+            tableToolStripButton.Enabled = toggle;
+            if (toggle)
+            {
+                projectContextMenuStrip.Items["splitToolStripMenuItem"].Visible =
+                       sliceToolStripMenuItem.DropDownItems["splitToolStripMenuItem1"].Visible = projectTreeView.SelectedNode.Nodes.Count > 0;
+                projectContextMenuStrip.Items["mergeToolStripMenuItem"].Visible =
+                    sliceToolStripMenuItem.DropDownItems["mergeToolStripMenuItem1"].Visible = selectionStart != selectionEnd;
+            }
+            else
+            {
+                projectContextMenuStrip.Items["splitToolStripMenuItem"].Visible = false;
+                sliceToolStripMenuItem.DropDownItems["splitToolStripMenuItem1"].Visible = false;
+                projectContextMenuStrip.Items["mergeToolStripMenuItem"].Visible = false;
+                sliceToolStripMenuItem.DropDownItems["mergeToolStripMenuItem1"].Visible = false;
+            }
+
+        }
+
         private void projectTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode node = e.Node;
@@ -746,28 +772,7 @@ namespace PIE
             }
             sliceToolStripMenuItem.Enabled = true;
             //if the slice is not the entire file, enable resizing and cloning
-            if (e.Node.Parent == null)
-            {
-                sliceToolStripMenuItem.DropDownItems["resizeToolStripMenuItem1"].Enabled = false;
-                sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = false;
-                sliceToolStripMenuItem.DropDownItems["splitToolStripMenuItem1"].Visible = false;
-                sliceToolStripMenuItem.DropDownItems["mergeToolStripMenuItem1"].Visible = false;
-                projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = false;
-                projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = false;
-                projectContextMenuStrip.Items["splitToolStripMenuItem"].Visible = false;
-                projectContextMenuStrip.Items["mergeToolStripMenuItem"].Visible = false;
-            }
-            else
-            {
-                sliceToolStripMenuItem.DropDownItems["resizeToolStripMenuItem1"].Enabled = true;
-                sliceToolStripMenuItem.DropDownItems["cloneToolStripMenuItem1"].Enabled = true;
-                projectContextMenuStrip.Items["resizeToolStripMenuItem"].Enabled = true;
-                projectContextMenuStrip.Items["cloneToolStripMenuItem"].Enabled = true;
-                projectContextMenuStrip.Items["splitToolStripMenuItem"].Visible = 
-                    sliceToolStripMenuItem.DropDownItems["splitToolStripMenuItem1"].Visible = projectTreeView.SelectedNode.Nodes.Count > 0;
-                projectContextMenuStrip.Items["mergeToolStripMenuItem"].Visible = 
-                    sliceToolStripMenuItem.DropDownItems["mergeToolStripMenuItem1"].Visible = selectionStart != selectionEnd;
-            }
+            toggleChildrenControls(e.Node.Parent == null ? false : true);
         }
 
         private void projectTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -1141,7 +1146,7 @@ namespace PIE
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PIEAboutBox about = new PIEAboutBox();
-            about.Show(this);
+            about.ShowDialog(this);
         }
 
         private void closeProjectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1325,6 +1330,28 @@ namespace PIE
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
             projectTreeView.SelectedNode.BeginEdit();
+        }
+
+        private void displayHexBox_InsertActiveChanged(object sender, EventArgs e)
+        {
+            insertToolStripStatusLabel.Text = displayHexBox.InsertActive ? "Insert" : "Overwrite";
+        }
+
+        private void tableToolStripButton_Click(object sender, EventArgs e)
+        {
+            if (!(activeSlice is TableSlice))
+            {
+                TableSlice table = new TableSlice(activeSlice);
+                currentTreeNode.Tag = activeSlice = table;
+                if (table.EditColumns())
+                    showProjectChanged();
+            }
+            activeSlice.Display();
+        }
+
+        private void hexToolStripButton_Click(object sender, EventArgs e)
+        {
+            activeSlice.DisplayHex();
         }
     }
 

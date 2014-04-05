@@ -112,6 +112,16 @@ namespace PIE.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap document_binary {
+            get {
+                object obj = ResourceManager.GetObject("document_binary", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Find {
             get {
                 object obj = ResourceManager.GetObject("Find", resourceCulture);
@@ -164,6 +174,16 @@ namespace PIE.Properties {
         internal static System.Drawing.Bitmap Slice {
             get {
                 object obj = ResourceManager.GetObject("Slice", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Table {
+            get {
+                object obj = ResourceManager.GetObject("Table", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

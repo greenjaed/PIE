@@ -14,7 +14,7 @@ namespace PIE
         [DataMember]
         public long customStart { get; set; }
         //the HexBox showing the data
-        public HexBox display { get; set; }
+        public HexBox display;
         //the end address in parentSlice where the data comes from
         [DataMember]
         public long end { get; protected set; }
@@ -28,7 +28,7 @@ namespace PIE
         public long lastStart { get; protected set; }
         //stores notes about the slice
         [DataMember]
-        public string notes { get; set; }
+        public string notes;
         //the slice the current slice is contained in
         protected Slice parentSlice;
         //the size of the slice
@@ -52,6 +52,18 @@ namespace PIE
         public Slice()
         {
 
+        }
+
+        //copy constructor
+        public Slice(Slice toCopy)
+        {
+            customStart = toCopy.customStart;
+            lastStart = toCopy.lastStart;
+            start = toCopy.start;
+            size = toCopy.size;
+            end = toCopy.end;
+            notes = toCopy.notes;
+            parentSlice = toCopy.parentSlice;
         }
 
         //copy constructor with a different parent
@@ -151,14 +163,20 @@ namespace PIE
                 addrSelector.Text = lastStart.ToString("X");
         }
 
-        //Displays the data
-        public virtual void Display()
+        public void DisplayHex()
         {
             if (dataByteProvider == null)
                 SetByteProvider(parentSlice.getBytes(start, size));
             display.ByteProvider = dataByteProvider;
             display.LineInfoOffset = lastStart;
             display.Visible = true;
+            display.BringToFront();
+        }
+
+        //Displays the data
+        public virtual void Display()
+        {
+            DisplayHex();
         }
 
         //changes the address offset

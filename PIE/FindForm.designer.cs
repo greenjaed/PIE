@@ -41,7 +41,6 @@
             // 
             // searchTextBox
             // 
-            this.searchTextBox.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.searchTextBox.Location = new System.Drawing.Point(12, 29);
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.Size = new System.Drawing.Size(343, 20);
