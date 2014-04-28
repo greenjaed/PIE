@@ -146,6 +146,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ColumnForm";
             this.Text = "Columns";
+            this.Load += new System.EventHandler(this.ColumnForm_Load);
             this.ResumeLayout(false);
 
         }

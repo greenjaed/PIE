@@ -445,7 +445,7 @@ namespace PIE
             slice = new TreeNode();
             slice.Name = uniqueID.ToString();
             //the initial name is the data range
-            slice.Text = (start + activeSlice.lastStart).ToString("X") + "-" + (start + size + activeSlice.lastStart - 1).ToString("X");
+            slice.Text = (start + activeSlice.Offset).ToString("X") + "-" + (start + size + activeSlice.Offset - 1).ToString("X");
             slice.Tag = view;
             currentTreeNode.Nodes.Add(slice);
 
@@ -473,7 +473,7 @@ namespace PIE
         {
             if (activeSlice != null)
             {
-                currentPosition = (displayHexBox.CurrentLine - 1) * displayHexBox.BytesPerLine + (displayHexBox.CurrentPositionInLine - 1) + activeSlice.lastStart;
+                currentPosition = (displayHexBox.CurrentLine - 1) * displayHexBox.BytesPerLine + (displayHexBox.CurrentPositionInLine - 1) + activeSlice.Offset;
                 statusStrip.Items["positionToolStripStatusLabel"].Text = currentPosition.ToString("X");
                 if (isSelecting)
                     statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (currentPosition + displayHexBox.SelectionLength - 1).ToString("X");
@@ -902,7 +902,7 @@ namespace PIE
         private void startAddrToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             long offset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
-            activeSlice.ChangeOffset(offset);
+            activeSlice.Offset = offset;
             updateSliceInfo();
             updatePosition();
         }
@@ -915,7 +915,7 @@ namespace PIE
                 try
                 {
                     potentialAddress = long.Parse(startAddrToolStripComboBox.Text, NumberStyles.HexNumber);
-                    activeSlice.ChangeOffset(potentialAddress);
+                    activeSlice.Offset = potentialAddress;
                     if (!startAddrToolStripComboBox.Items.Contains(startAddrToolStripComboBox.Text))
                         startAddrToolStripComboBox.Items.Add(startAddrToolStripComboBox.Text);
                     updateSliceInfo();
@@ -1110,8 +1110,8 @@ namespace PIE
 
         private void updateSliceInfo()
         {
-            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + (activeSlice.start + activeSlice.lastStart).ToString("X") +
-                " - " + (activeSlice.end + activeSlice.lastStart).ToString("X");
+            sliceToolStripStatusLabel.Text = currentTreeNode.Text + ":  " + (activeSlice.start + activeSlice.Offset).ToString("X") +
+                " - " + (activeSlice.end + activeSlice.Offset).ToString("X");
         }
 
         private void cloneToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1341,12 +1341,23 @@ namespace PIE
         {
             if (!(activeSlice is TableSlice))
             {
-                TableSlice table = new TableSlice(activeSlice);
-                currentTreeNode.Tag = activeSlice = table;
+                TableSlice table;
+                if (projectTreeView.Focused)
+                    table = new TableSlice(projectTreeView.SelectedNode.Tag as Slice);
+                else
+                    table = new TableSlice(activeSlice);
+                table.tableDisplay = displayDataGridView;
                 if (table.EditColumns())
+                {
+                    currentTreeNode.Tag = activeSlice = table;
                     showProjectChanged();
+                    Cursor.Current = Cursors.WaitCursor;
+                    activeSlice.Display();
+                    Cursor.Current = Cursors.Default;
+                }
             }
-            activeSlice.Display();
+            else
+                activeSlice.Display();
         }
 
         private void hexToolStripButton_Click(object sender, EventArgs e)

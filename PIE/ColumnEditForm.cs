@@ -25,8 +25,12 @@ namespace PIE
             nameTextBox.Text = init.name;
             typeComboBox.Text = init.dataType;
             sizeComboBox.Text = init.size.ToString();
-            signedCheckBox.Checked = init.signed;
-            hexCheckBox.Checked = init.hex;
+            if (init.intFormat == IntFormat.Signed)
+                signedRadioButton.Checked = true;
+            else if (init.intFormat == IntFormat.Hex)
+                hexRadioButton.Checked = true;
+            else
+                noneRadioButton.Checked = true;
             fractionNumericUpDown.Value = init.fraction;
             fractionNumericUpDown.Maximum = init.size;
             if (init.dataType == "String" || init.dataType == "Floating Point")
@@ -34,7 +38,7 @@ namespace PIE
             else if (init.dataType == "Integer")
                 fractionLabel.Enabled = fractionNumericUpDown.Enabled = false;
             else
-                hexCheckBox.Enabled = false;
+                hexRadioButton.Enabled = false;
 
         }
 
@@ -44,8 +48,9 @@ namespace PIE
             sizeLabel.Text = "Size (bits)";
             sizeComboBox.Items.Clear();
             optionsGroupBox.Enabled = true;
-            hexCheckBox.Enabled = false;
+            hexRadioButton.Enabled = false;
             fractionLabel.Enabled = fractionNumericUpDown.Enabled = false;
+            noneRadioButton.Checked = true;
         }
 
         private void typeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -55,7 +60,7 @@ namespace PIE
             {
                 case 0:
                     sizeComboBox.Items.AddRange(bitSelect);
-                    hexCheckBox.Enabled = true;
+                    hexRadioButton.Enabled = true;
                     break;
                 case 1:
                     sizeComboBox.Items.AddRange(bitSelect);
@@ -82,6 +87,8 @@ namespace PIE
             {
                 fractionLabel.Enabled = fractionNumericUpDown.Enabled = true;
                 fractionNumericUpDown.Maximum = int.Parse(sizeComboBox.Text);
+                if (signedRadioButton.Checked)
+                    --fractionNumericUpDown.Maximum;
             }
         }
 
@@ -96,8 +103,12 @@ namespace PIE
                 return;
             }
             column.size = int.Parse(sizeComboBox.Text);
-            column.signed = signedCheckBox.Checked;
-            column.hex = hexCheckBox.Checked;
+            if (signedRadioButton.Checked)
+                column.intFormat = IntFormat.Signed;
+            else if (hexRadioButton.Checked)
+                column.intFormat = IntFormat.Hex;
+            else
+                column.intFormat = IntFormat.None;
             column.fraction = (int) fractionNumericUpDown.Value;
             DialogResult = DialogResult.OK;
             this.Close();
@@ -119,5 +130,18 @@ namespace PIE
             DialogResult = DialogResult.Cancel;
             this.Close();
         }
+
+        private void signedCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (typeComboBox.SelectedIndex == 2 && sizeComboBox.Text != "")
+            {
+                if (signedRadioButton.Checked)
+                    --fractionNumericUpDown.Maximum;
+                else
+                    ++fractionNumericUpDown.Maximum;
+            }
+        }
+
+
     }
 }

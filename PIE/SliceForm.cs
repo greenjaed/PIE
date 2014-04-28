@@ -26,8 +26,8 @@ namespace PIE
             startTextBox.Validating += new CancelEventHandler(startTextBox_Validating);
             okButton.Text = "Slice";
 
-            offsetEnd = nodeSlice.lastStart + nodeSlice.end;
-            start = nodeSlice.lastStart;
+            offsetEnd = nodeSlice.Offset + nodeSlice.end;
+            start = nodeSlice.Offset;
             end = offsetEnd;
             endTextBox.Text = end.ToString("X");
             startTextBox.Text = start.ToString("X");
@@ -74,7 +74,7 @@ namespace PIE
         {
             try
             {
-                checkValues(nodeSlice.lastStart);
+                checkValues(nodeSlice.Offset);
                 this.Cursor = Cursors.WaitCursor;
                 size = Math.Min(nodeSlice.size, size);
                 createSlice();
@@ -93,7 +93,7 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < nodeSlice.lastStart || start >= offsetEnd)
+                if (start < nodeSlice.Offset || start >= offsetEnd)
                     throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -108,7 +108,7 @@ namespace PIE
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end <= nodeSlice.lastStart || end > offsetEnd)
+                if (end <= nodeSlice.Offset || end > offsetEnd)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");

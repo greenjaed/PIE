@@ -131,7 +131,6 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.sliceHexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayDataGridView = new System.Windows.Forms.DataGridView();
-            this.Address = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip.SuspendLayout();
@@ -1089,19 +1088,12 @@
             this.displayDataGridView.AllowUserToAddRows = false;
             this.displayDataGridView.AllowUserToDeleteRows = false;
             this.displayDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.displayDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Address});
+            this.displayDataGridView.ContextMenuStrip = this.hexContextMenuStrip;
             this.displayDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.displayDataGridView.Location = new System.Drawing.Point(0, 0);
             this.displayDataGridView.Name = "displayDataGridView";
             this.displayDataGridView.Size = new System.Drawing.Size(640, 439);
             this.displayDataGridView.TabIndex = 1;
-            // 
-            // Address
-            // 
-            this.Address.HeaderText = "";
-            this.Address.Name = "Address";
-            this.Address.ReadOnly = true;
             // 
             // openFileDialog1
             // 
@@ -1248,7 +1240,6 @@
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem1;
         private System.Windows.Forms.ToolStripStatusLabel insertToolStripStatusLabel;
         private System.Windows.Forms.DataGridView displayDataGridView;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Address;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator20;
         private System.Windows.Forms.ToolStripButton hexToolStripButton;
         private System.Windows.Forms.ToolStripButton tableToolStripButton;

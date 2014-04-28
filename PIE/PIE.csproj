@@ -140,7 +140,9 @@
     <Compile Include="SliceForm.Designer.cs">
       <DependentUpon>SliceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TableSlice.cs" />
+    <Compile Include="TableSlice.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="yesNoAllForm.cs">
       <SubType>Form</SubType>
     </Compile>

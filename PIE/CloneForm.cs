@@ -24,7 +24,7 @@ namespace PIE
             this.node = node;
             parent = node.Parent;
             nodeData = node.Tag as Slice;
-            start = (parent.Tag as Slice).lastStart + nodeData.start + nodeData.size;
+            start = (parent.Tag as Slice).Offset + nodeData.start + nodeData.size;
             startTextBox.Text = start.ToString("X");
             copies = 1;
         }
@@ -35,7 +35,7 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < slice.lastStart || start >= slice.end)
+                if (start < slice.Offset || start >= slice.end)
                     throw new ArgumentOutOfRangeException("start address");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -58,7 +58,7 @@ namespace PIE
             {
                 if (errorProvider1.GetError(startTextBox) != "")
                     throw new Exception(errorProvider1.GetError(startTextBox));
-                start -= (node.Parent.Tag as Slice).lastStart;
+                start -= (node.Parent.Tag as Slice).Offset;
                 if (!repeatCheckBox.Checked && Slice.IsTaken(parent, start, start + nodeData.size - 1))
                     throw new Exception(Properties.Resources.overlapString);
 

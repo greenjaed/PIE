@@ -25,7 +25,7 @@ namespace PIE
         }
         //the last selected start address
         [DataMember]
-        public long lastStart { get; protected set; }
+        protected long lastStart;
         //stores notes about the slice
         [DataMember]
         public string notes;
@@ -48,6 +48,21 @@ namespace PIE
             }
         }
 
+        public virtual long Offset
+        {
+            get
+            {
+                return lastStart;
+            }
+            set
+            {
+                display.LineInfoOffset = value;
+                lastStart = value;
+                if (value != 0 || value != start)
+                    customStart = value;
+            }
+        }
+
         //required for serialization
         public Slice()
         {
@@ -64,6 +79,7 @@ namespace PIE
             end = toCopy.end;
             notes = toCopy.notes;
             parentSlice = toCopy.parentSlice;
+            display = toCopy.display;
         }
 
         //copy constructor with a different parent
@@ -76,6 +92,7 @@ namespace PIE
             end = source.end;
             notes = source.notes;
             parentSlice = parent;
+            display = source.display;
         }
 
         //constructs the main slice with the fileByteProvider
@@ -128,6 +145,11 @@ namespace PIE
             }
             else
                 parentSlice.setBytes(start + this.start, toInsert);
+        }
+
+        protected void SetByteProvider()
+        {
+            SetByteProvider(parentSlice.getBytes(start, size));
         }
 
         //sets dataByteProvider
@@ -193,6 +215,7 @@ namespace PIE
         {
             display.ByteProvider = null;
             display.Visible = false;
+            display.SendToBack();
         }
 
         public virtual void Cut()

@@ -84,8 +84,10 @@ namespace PIE
         {
             ColumnEditForm add = new ColumnEditForm();
             if (add.ShowDialog(this) == DialogResult.OK)
+            {
                 columnListBox.Items.Add(add.column);
-            okButton.Enabled = true;
+                okButton.Enabled = true;
+            }
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -96,6 +98,19 @@ namespace PIE
                 int index = columnListBox.SelectedIndex;
                 columnListBox.Items.RemoveAt(index);
                 columnListBox.Items.Insert(index, edit.column);
+            }
+        }
+
+        private void ColumnForm_Load(object sender, EventArgs e)
+        {
+            if (columnListBox.Items.Count == 0)
+            {
+                ColumnEditForm columnNew = new ColumnEditForm();
+                if (columnNew.ShowDialog(this) == DialogResult.OK)
+                {
+                    columnListBox.Items.Add(columnNew.column);
+                    okButton.Enabled = true;
+                }
             }
         }
     }

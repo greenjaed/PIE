@@ -28,8 +28,8 @@ namespace PIE
             if (node.Parent != null)
             {
                 parentSlice = node.Parent.Tag as Slice;
-                start = parentSlice.lastStart + nodeSlice.start;
-                end = parentSlice.lastStart + nodeSlice.end;
+                start = parentSlice.Offset + nodeSlice.start;
+                end = parentSlice.Offset + nodeSlice.end;
                 startTextBox.Text = start.ToString("X");
                 endTextBox.Text = end.ToString("X");
             }
@@ -41,7 +41,7 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < parentSlice.start + parentSlice.lastStart || start >= parentSlice.end + nodeSlice.lastStart)
+                if (start < parentSlice.start + parentSlice.Offset || start >= parentSlice.end + nodeSlice.Offset)
                     throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -56,7 +56,7 @@ namespace PIE
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end <= parentSlice.start + parentSlice.lastStart || end > parentSlice.end + nodeSlice.lastStart)
+                if (end <= parentSlice.start + parentSlice.Offset || end > parentSlice.end + nodeSlice.Offset)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");
@@ -79,7 +79,7 @@ namespace PIE
             try
             {
                 node.Remove();
-                checkValues(parentSlice.lastStart);
+                checkValues(parentSlice.Offset);
                 if (node.Nodes.Count > 0 &&
                     MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                     return;

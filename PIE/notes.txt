@@ -51,9 +51,6 @@ things to do with music
  display (loops, notes)
  edit
 
-
-project file - probably going to be an xaml document describing the different slices set up
-
 program features
  export - not the entire thing, but individual parts (text, graphics, tables, etc.)
  action history - it would be nice to have undo/redo functionality in the program
@@ -72,5 +69,5 @@ what to save?
  file
 
 todo:
-  add "split" and "merge" functionality to the project tree view and slice class
-  add shift-select functionality to the project tree view
+  finish table display
+  show unused space in a slice in projectTreeView as slices (disabled)
