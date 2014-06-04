@@ -103,6 +103,8 @@ namespace PIE
                 return;
             }
             column.size = int.Parse(sizeComboBox.Text);
+            if (typeComboBox.SelectedIndex == 3)
+                column.size *= 8;
             if (signedRadioButton.Checked)
                 column.intFormat = IntFormat.Signed;
             else if (hexRadioButton.Checked)

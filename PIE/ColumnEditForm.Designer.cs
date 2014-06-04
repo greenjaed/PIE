@@ -230,7 +230,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "ColumnEditForm";
-            this.Text = "ColumnEditForm";
+            this.Text = "Edit Column";
             this.optionsGroupBox.ResumeLayout(false);
             this.optionsGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fractionNumericUpDown)).EndInit();

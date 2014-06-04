@@ -941,7 +941,7 @@ namespace PIE
                         gotoAddress = displayHexBox.LineInfoOffset;
                     if (gotoAddress > displayHexBox.LineInfoOffset + activeSlice.size)
                         gotoAddress = activeSlice.size - 1;
-                    displayHexBox.ScrollByteIntoView(gotoAddress);
+                    activeSlice.scrollToAddress(gotoAddress);
                 }
                 catch (Exception ex)
                 {

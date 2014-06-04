@@ -415,5 +415,10 @@ namespace PIE
                     dataByteProvider.InsertBytes(readLength, new byte[size - readLength]);
             }
         }
+
+        public virtual void scrollToAddress(long address)
+        {
+            display.ScrollByteIntoView(address);
+        }
     }
 }

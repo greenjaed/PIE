@@ -213,5 +213,10 @@ namespace PIE
             else
                 e.ProposedValue = e.Row[e.Column];
         }
+
+        public override void scrollToAddress(long address)
+        {
+            tableDisplay.FirstDisplayedScrollingRowIndex = (int) address / rowLength;
+        }
     }
 }

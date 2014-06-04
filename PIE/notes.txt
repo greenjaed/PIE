@@ -69,5 +69,12 @@ what to save?
  file
 
 todo:
+ For tables:
+  Add table edit button
+  Add context menu item functionality (editing, selecting)
+  Add csv export feature
+  Add [de]serlialization code
+  Remember how a slice was last viewed (change object class altogether?)
+  ---
   finish table display
   show unused space in a slice in projectTreeView as slices (disabled)

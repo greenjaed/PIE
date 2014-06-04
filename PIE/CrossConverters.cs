@@ -542,7 +542,7 @@ namespace PIE
 
         public string ToString(byte[] Source, int Index)
         {
-            return Encoding.ASCII.GetString(Source, Index, length);
+            return Encoding.ASCII.GetString(Source, Index, length / 8);
         }
 
         public bool ToString(byte[] Source, int Index, out string result)
