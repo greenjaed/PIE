@@ -541,10 +541,10 @@ namespace PIE
             else
             {
                 result = ToBytes(Source);
-                if (Source.Length < length >> 3)
+                if (Source.Length != length >> 3)
                 {
                     byte[] temp = new byte[length >> 3];
-                    Array.Copy(result, temp, result.Length);
+                    Array.Copy(result, temp, Math.Min (result.Length, temp.Length));
                     result = temp;
                 }
             }
