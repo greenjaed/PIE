@@ -1355,6 +1355,7 @@ namespace PIE
                     activeSlice.Display();
                     Cursor.Current = Cursors.Default;
                 }
+                tableToolStripMenuItem.Enabled = true;
             }
             else
                 activeSlice.Display();
@@ -1363,6 +1364,17 @@ namespace PIE
         private void hexToolStripButton_Click(object sender, EventArgs e)
         {
             activeSlice.DisplayHex();
+        }
+
+        private void editColumnsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if ((activeSlice as TableSlice).EditColumns())
+            {
+                showProjectChanged();
+                Cursor.Current = Cursors.WaitCursor;
+                activeSlice.Display();
+                Cursor.Current = Cursors.Default;
+            }
         }
     }
 

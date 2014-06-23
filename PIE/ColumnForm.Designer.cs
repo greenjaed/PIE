@@ -87,6 +87,7 @@
             // 
             // removeButton
             // 
+            this.removeButton.Enabled = false;
             this.removeButton.Image = ((System.Drawing.Image)(resources.GetObject("removeButton.Image")));
             this.removeButton.Location = new System.Drawing.Point(12, 42);
             this.removeButton.Name = "removeButton";

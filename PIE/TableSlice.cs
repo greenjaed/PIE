@@ -46,6 +46,7 @@ namespace PIE
         public DataGridView tableDisplay;
         public ICrossConverter[] dataConverter { get; protected set; }
         private int rowLength;
+        private bool regenerate;
 
         public override long Offset
         {
@@ -140,10 +141,9 @@ namespace PIE
         public override void Display()
         {
             if (dataByteProvider == null)
-            {
                 SetByteProvider();
+            if (regenerate)
                 fillTable();
-            }
             tableDisplay.DataSource = sourceTable;
             tableDisplay.Columns[0].DefaultCellStyle.Format = "X";
             tableDisplay.Visible = true;
@@ -160,7 +160,9 @@ namespace PIE
         public bool EditColumns()
         {
             ColumnForm columnForm = new ColumnForm(this);
-            return columnForm.ShowDialog() == DialogResult.OK ? true : false;
+            bool result = columnForm.ShowDialog() == DialogResult.OK;
+            regenerate = result;
+            return result;
         }
 
         public void AddColumns(ListBox.ObjectCollection columns)
@@ -199,7 +201,7 @@ namespace PIE
             DynamicByteProvider data = dataByteProvider as DynamicByteProvider;
             if (dataConverter[e.Column.Ordinal - 1].ToBytes(e.ProposedValue as string, out changes))
             {
-                int insertPoint = (int)e.Row["Address"] - (int)start;
+                int insertPoint = (int)e.Row["Address"] - (int)Offset;
                 for (int i = 1; i < e.Column.Ordinal; ++i)
                     insertPoint += ColumnInfo[i - 1].size;
                 if (insertPoint > size - 1)

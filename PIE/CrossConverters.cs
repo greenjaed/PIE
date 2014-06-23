@@ -536,7 +536,18 @@ namespace PIE
 
         public bool ToBytes(string Source, out byte[] result)
         {
-            result = ToBytes(Source);
+            if (Source == null)
+                result = new byte[length >> 3];
+            else
+            {
+                result = ToBytes(Source);
+                if (Source.Length < length >> 3)
+                {
+                    byte[] temp = new byte[length >> 3];
+                    Array.Copy(result, temp, result.Length);
+                    result = temp;
+                }
+            }
             return true;
         }
 

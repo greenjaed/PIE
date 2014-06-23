@@ -71,11 +71,15 @@ namespace PIE
             if (columnListBox.SelectedItem != null)
                 columnListBox.Items.Remove(columnListBox.SelectedItem);
             if (columnListBox.Items.Count == 0)
+            {
+                removeButton.Enabled = false;
                 okButton.Enabled = false;
+            }
         }
 
         private void columnListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            removeButton.Enabled = true;
             upButton.Enabled = columnListBox.SelectedIndex == 0 ? false : true;
             downButton.Enabled = columnListBox.SelectedIndex == columnListBox.Items.Count - 1 ? false : true;
         }
