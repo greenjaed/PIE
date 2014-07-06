@@ -526,7 +526,7 @@ namespace PIE
 
         public StringCrossConverter(int length)
         {
-            this.length = length;
+            this.length = length / 8;
         }
 
         public byte[] ToBytes(string Source)
@@ -537,13 +537,13 @@ namespace PIE
         public bool ToBytes(string Source, out byte[] result)
         {
             if (Source == null)
-                result = new byte[length >> 3];
+                result = new byte[length];
             else
             {
                 result = ToBytes(Source);
-                if (Source.Length != length >> 3)
+                if (Source.Length != length)
                 {
-                    byte[] temp = new byte[length >> 3];
+                    byte[] temp = new byte[length];
                     Array.Copy(result, temp, Math.Min (result.Length, temp.Length));
                     result = temp;
                 }
@@ -553,7 +553,7 @@ namespace PIE
 
         public string ToString(byte[] Source, int Index)
         {
-            return Encoding.ASCII.GetString(Source, Index, length / 8);
+            return Encoding.ASCII.GetString(Source, Index, length);
         }
 
         public bool ToString(byte[] Source, int Index, out string result)
