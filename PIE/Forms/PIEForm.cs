@@ -363,7 +363,7 @@ namespace PIE
                         root.Text = xr.ReadElementContentAsString();
                         whole = Slice.Deserialize(XmlDictionaryReader.CreateDictionaryReader(xr));
                         whole.display = displayHexBox;
-                        whole.updateMainSlice(fileBytes);
+                        whole.UpdateMainSlice(fileBytes);
                         root.Tag = whole;
                         projectTreeView.Nodes.Add(root);
                         activeSlice = whole;
@@ -702,7 +702,7 @@ namespace PIE
 
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            displayHexBox.SelectAll();
+            activeSlice.SelectAll();
         }
 
         private void clearSelection()
@@ -799,7 +799,7 @@ namespace PIE
             {
                 fileBytes.Dispose();
                 fileBytes = new DynamicFileByteProvider(filePath);
-                (projectTreeView.Nodes[0].Tag as Slice).updateMainSlice(fileBytes);
+                (projectTreeView.Nodes[0].Tag as Slice).UpdateMainSlice(fileBytes);
                 propagateSave(projectTreeView.Nodes[0]);
                 projectTreeView.Nodes[0].Text = projectTreeView.Nodes[0].Text.TrimEnd(changed);
                 activeSlice.Display();
@@ -941,7 +941,7 @@ namespace PIE
                         gotoAddress = displayHexBox.LineInfoOffset;
                     if (gotoAddress > displayHexBox.LineInfoOffset + activeSlice.size)
                         gotoAddress = activeSlice.size - 1;
-                    activeSlice.scrollToAddress(gotoAddress);
+                    activeSlice.ScrollToAddress(gotoAddress);
                 }
                 catch (Exception ex)
                 {
@@ -1092,7 +1092,7 @@ namespace PIE
             {
                 fileBytes.Dispose();
                 fileBytes = new DynamicFileByteProvider(filePath);
-                selectedData.updateMainSlice(fileBytes);
+                selectedData.UpdateMainSlice(fileBytes);
                 displayHexBox.ByteProvider = fileBytes;
             }
             else
@@ -1153,6 +1153,7 @@ namespace PIE
         {
             if (!(closeFile() && closeProject()))
                 return;
+            activeSlice.Hide();
             displayHexBox.ByteProvider = null;
             fileBytes.Dispose();
             fileBytes = null;
@@ -1346,6 +1347,7 @@ namespace PIE
                     table = new TableSlice(projectTreeView.SelectedNode.Tag as Slice);
                 else
                     table = new TableSlice(activeSlice);
+                table.display = displayHexBox;
                 table.tableDisplay = displayDataGridView;
                 if (table.EditColumns())
                 {
@@ -1375,6 +1377,17 @@ namespace PIE
                 activeSlice.Display();
                 Cursor.Current = Cursors.Default;
             }
+        }
+
+        private void displayDataGridView_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        {
+            e.Column.SortMode = DataGridViewColumnSortMode.NotSortable;
+        }
+
+        private void displayDataGridView_SelectionChanged(object sender, EventArgs e)
+        {
+            toggleEnable(displayDataGridView.SelectedCells.Count > 0);
+            updatePosition();
         }
     }
 

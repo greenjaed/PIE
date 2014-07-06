@@ -121,6 +121,7 @@
             // 
             // editButton
             // 
+            this.editButton.Enabled = false;
             this.editButton.Location = new System.Drawing.Point(42, 113);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(75, 23);
