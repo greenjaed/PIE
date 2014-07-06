@@ -79,7 +79,6 @@ namespace PIE
 
         private void columnListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            editButton.Enabled = true;
             removeButton.Enabled = true;
             upButton.Enabled = columnListBox.SelectedIndex == 0 ? false : true;
             downButton.Enabled = columnListBox.SelectedIndex == columnListBox.Items.Count - 1 ? false : true;
