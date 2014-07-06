@@ -69,6 +69,7 @@ what to save?
  file
 
 todo:
+ Add fill/clear functionality(?)
  For tables:
   Add table edit button
   Add context menu item functionality (editing, selecting)

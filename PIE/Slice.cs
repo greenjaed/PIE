@@ -7,6 +7,7 @@ using Be.Windows.Forms;
 
 namespace PIE
 {
+    //Describes an object for partitioning, viewing, and editing data
     [DataContract]
     public class Slice
     {
@@ -29,7 +30,7 @@ namespace PIE
         //stores notes about the slice
         [DataMember]
         public string notes;
-        //the slice the current slice is contained in
+        //the slice the current one is contained in
         protected Slice parentSlice;
         //the size of the slice
         [DataMember]
@@ -72,6 +73,19 @@ namespace PIE
         //copy constructor
         public Slice(Slice toCopy)
         {
+            copySlice(toCopy);
+        }
+
+        //copy constructor with a different parent
+        public Slice(Slice source, Slice parent)
+        {
+            copySlice(source);
+            parentSlice = parent;
+        }
+
+        //copies data from toCopy to the slice
+        protected void copySlice(Slice toCopy)
+        {
             customStart = toCopy.customStart;
             lastStart = toCopy.lastStart;
             start = toCopy.start;
@@ -80,19 +94,6 @@ namespace PIE
             notes = toCopy.notes;
             parentSlice = toCopy.parentSlice;
             display = toCopy.display;
-        }
-
-        //copy constructor with a different parent
-        public Slice(Slice source, Slice parent)
-        {
-            customStart = source.customStart;
-            lastStart = source.lastStart;
-            start = source.start;
-            size = source.size;
-            end = source.end;
-            notes = source.notes;
-            parentSlice = parent;
-            display = source.display;
         }
 
         //constructs the main slice with the fileByteProvider
@@ -114,7 +115,7 @@ namespace PIE
         }
 
         //updates the main slice ONLY
-        public void updateMainSlice(DynamicFileByteProvider fileByteProvider)
+        public void UpdateMainSlice(DynamicFileByteProvider fileByteProvider)
         {
             if (parentSlice == null)
                 dataByteProvider = fileByteProvider;
@@ -147,13 +148,13 @@ namespace PIE
                 parentSlice.setBytes(start + this.start, toInsert);
         }
 
-        protected void SetByteProvider()
+        protected void setByteProvider()
         {
-            SetByteProvider(parentSlice.getBytes(start, size));
+            setByteProvider(parentSlice.getBytes(start, size));
         }
 
         //sets dataByteProvider
-        private void SetByteProvider(byte[] bytes)
+        private void setByteProvider(byte[] bytes)
         {
             if (dataByteProvider != null)
                 dataByteProvider.LengthChanged -= dataByteProvider_LengthChanged;
@@ -162,7 +163,7 @@ namespace PIE
         }
 
         //when editing a slice, it must stay the same size
-        //this event will never be associated with the main slice
+        //The main slice will never trigger this event
         protected void dataByteProvider_LengthChanged(object sender, EventArgs e)
         {
             if (dataByteProvider.Length > size)
@@ -185,10 +186,11 @@ namespace PIE
                 addrSelector.Text = lastStart.ToString("X");
         }
 
+        //Displays the current slice in the hex editor
         public void DisplayHex()
         {
             if (dataByteProvider == null)
-                SetByteProvider(parentSlice.getBytes(start, size));
+                setByteProvider(parentSlice.getBytes(start, size));
             display.ByteProvider = dataByteProvider;
             display.LineInfoOffset = lastStart;
             display.Visible = true;
@@ -281,7 +283,7 @@ namespace PIE
             Save(true);
         }
 
-        //saves the data if propagateUp is true, propagates the data to the parent
+        //saves the data.  If propagateUp is true, propagates the data to the parent
         public virtual void Save(bool propagateUp)
         {
             if (dataByteProvider.HasChanges())
@@ -295,13 +297,14 @@ namespace PIE
                     byte[] bytes = temp.Bytes.ToArray();
 
                     if (propagateUp)
-                        SaveUp(bytes);
+                        saveUp(bytes);
                     else
                         parentSlice.setBytes(start, bytes);
                 }
             }
         }
 
+        //Changes parent and addresses of slice
         public void Merge(Slice parent, long offset)
         {
             parentSlice = parent;
@@ -309,6 +312,7 @@ namespace PIE
             end -= offset;
         }
 
+        //Dissolves the parent slice and moves this one up a level
         public void Split()
         {
             start += parentSlice.start;
@@ -317,7 +321,7 @@ namespace PIE
         }
 
         //saves any changes and applies the changes up the slices
-        private void SaveUp(byte[] changes)
+        private void saveUp(byte[] changes)
         {
             Slice parent = this.parentSlice; //the parent
             IByteProvider tempParent; //temporary parent data
@@ -341,15 +345,16 @@ namespace PIE
             } while (parent != null);
         }
 
-        /*checks the Slice object passed in against all slices of the same tier
-         *if the new Slice object's data range is found overlapping with any existing objects,
-         *it returns false.  Otherwise it returns true.
-         */
+        //Wrapper for IsTaken
         public static bool IsTaken(TreeNode toSlice, Slice toCheck)
         {
             return IsTaken(toSlice, toCheck.start, toCheck.end);
         }
 
+        /*checks the Slice object passed in against all slices of the same tier
+         *if the new Slice object's data range is found overlapping with any existing objects,
+         *it returns false.  Otherwise it returns true.
+         */
         public static bool IsTaken(TreeNode beingSliced, long start, long end)
         {
             TreeNodeCollection currentTier = beingSliced.Nodes;
@@ -388,7 +393,7 @@ namespace PIE
             return (Slice) deserializer.ReadObject(reader);
         }
 
-        //exports the slice
+        //exports the slice to a file
         public virtual void Export(string fileName)
         {
             using (FileStream export = new FileStream(fileName, FileMode.Create))
@@ -400,7 +405,7 @@ namespace PIE
 
         //imports a slice.
         //If the data is bigger than the slice, the data is truncated
-        //if the data is smaller than the slice, the slice is padded
+        //if the data is smaller than the slice, the slice is padded with 0s
         public virtual void Import(string fileName)
         {
             long readLength;
@@ -410,15 +415,20 @@ namespace PIE
                 readLength = Math.Min(size, import.Length);
                 bytes = new byte[readLength];
                 import.Read(bytes, 0, (int) readLength);
-                SetByteProvider(bytes);
+                setByteProvider(bytes);
                 if (readLength < size)
                     dataByteProvider.InsertBytes(readLength, new byte[size - readLength]);
             }
         }
 
-        public virtual void scrollToAddress(long address)
+        public virtual void ScrollToAddress(long address)
         {
             display.ScrollByteIntoView(address);
+        }
+
+        public virtual void SelectAll()
+        {
+            display.SelectAll();
         }
     }
 }
