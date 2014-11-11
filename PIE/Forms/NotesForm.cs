@@ -20,12 +20,12 @@ namespace PIE
 
         private void InfoForm_Load(object sender, EventArgs e)
         {
-            infoTextBox.Text = slice.notes;
+            infoTextBox.Text = slice.Notes;
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            slice.notes = infoTextBox.Text;
+            slice.Notes = infoTextBox.Text;
             this.Close();
         }
     }

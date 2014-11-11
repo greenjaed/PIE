@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PIE;
-using System.Globalization;
 
 namespace PIETestProject
 {
@@ -18,7 +14,7 @@ namespace PIETestProject
             Byte[] test = new Byte[] { 0x7f };
             Byte[] result;
             String temp;
-            ICrossConverter byteConverter = CrossConverterSelector.SelectIntCC(8, IntFormat.Hex);
+            ICrossConverter byteConverter = CrossConverterFactory.SelectIntCC(8, IntFormat.Hex);
             temp = byteConverter.ToString(test, 0);
             Assert.AreEqual("7F", temp);
             result = byteConverter.ToBytes(temp);
@@ -31,7 +27,7 @@ namespace PIETestProject
         {
             Byte[] test = new Byte[] { 0x9c };
             String temp;
-            ICrossConverter sbyteConverter = CrossConverterSelector.SelectIntCC(8, IntFormat.Signed);
+            ICrossConverter sbyteConverter = CrossConverterFactory.SelectIntCC(8, IntFormat.Signed);
             temp = sbyteConverter.ToString(test, 0);
             Assert.AreEqual("-100", temp);
         }
@@ -42,10 +38,10 @@ namespace PIETestProject
         {
             String invalid = "128";
             Byte[] result;
-            ICrossConverter sbyteConverter = CrossConverterSelector.SelectIntCC(8, IntFormat.Signed);
-            Assert.AreNotEqual(true, sbyteConverter.ToBytes(invalid, out result));
+            ICrossConverter sbyteConverter = CrossConverterFactory.SelectIntCC(8, IntFormat.Signed);
+            Assert.AreNotEqual(true, sbyteConverter.TryToBytes(invalid, out result));
             invalid = "-129";
-            Assert.AreNotEqual(true, sbyteConverter.ToBytes(invalid, out result));
+            Assert.AreNotEqual(true, sbyteConverter.TryToBytes(invalid, out result));
         }
 
         //tests if the min and max values are correctly set
@@ -54,10 +50,10 @@ namespace PIETestProject
         {
             String valid = "127";
             Byte[] result;
-            ICrossConverter sbyteConverter = CrossConverterSelector.SelectIntCC(8, IntFormat.Signed);
-            Assert.AreEqual(true, sbyteConverter.ToBytes(valid, out result));
+            ICrossConverter sbyteConverter = CrossConverterFactory.SelectIntCC(8, IntFormat.Signed);
+            Assert.AreEqual(true, sbyteConverter.TryToBytes(valid, out result));
             valid = "-128";
-            sbyteConverter.ToBytes(valid, out result);
+            sbyteConverter.TryToBytes(valid, out result);
             Assert.AreEqual(0x80, result[0]);
         }
 
@@ -68,7 +64,7 @@ namespace PIETestProject
             Byte[] testVal = new Byte[] { 13 };
             Byte[] resultFinal;
             String result;
-            ICrossConverter fixedConverter = CrossConverterSelector.SelectFixedCC(8, 1, IntFormat.Signed);
+            ICrossConverter fixedConverter = CrossConverterFactory.SelectFixedCC(8, 1, IntFormat.Signed);
             result = fixedConverter.ToString(testVal, 0);
             Assert.AreEqual("6.5", result);
             resultFinal = fixedConverter.ToBytes(result);
@@ -82,9 +78,9 @@ namespace PIETestProject
             Byte[] testVal = new byte[] { 8 };
             Byte[] endResult;
             String result;
-            ICrossConverter fixedConverter = CrossConverterSelector.SelectFixedCC(8, 4, IntFormat.Signed);
-            Assert.AreNotEqual(true, fixedConverter.ToString(testVal, 0, out result));
-            Assert.AreEqual(true, fixedConverter.ToBytes("-8", out endResult));
+            ICrossConverter fixedConverter = CrossConverterFactory.SelectFixedCC(8, 4, IntFormat.Signed);
+            Assert.AreNotEqual(true, fixedConverter.TryToString(testVal, 0, out result));
+            Assert.AreEqual(true, fixedConverter.TryToBytes("-8", out endResult));
         }
 
         //tests for proper detection and conversion of negative numbers
@@ -92,7 +88,7 @@ namespace PIETestProject
         public void TestFixed3()
         {
             Byte[] test = new byte[] { 0xc0 };
-            ICrossConverter fixedConverter = CrossConverterSelector.SelectFixedCC(8, 7, IntFormat.Signed);
+            ICrossConverter fixedConverter = CrossConverterFactory.SelectFixedCC(8, 7, IntFormat.Signed);
             Assert.AreEqual("-0.5", fixedConverter.ToString(test, 0));
         }
     }

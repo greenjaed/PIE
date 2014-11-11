@@ -55,7 +55,7 @@ namespace PIE
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            slice.AddColumns(columnListBox.Items);
+            slice.AddColumns(columnListBox.Items.Cast<ColumnDescriptor>());
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -90,19 +90,19 @@ namespace PIE
             ColumnEditForm add = new ColumnEditForm();
             if (add.ShowDialog(this) == DialogResult.OK)
             {
-                columnListBox.Items.Add(add.column);
+                columnListBox.Items.Add(add.Column);
                 okButton.Enabled = true;
             }
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            ColumnEditForm edit = new ColumnEditForm(columnListBox.SelectedItem as DataInfo);
+            ColumnEditForm edit = new ColumnEditForm(columnListBox.SelectedItem as ColumnDescriptor);
             if (edit.ShowDialog(this) == DialogResult.OK)
             {
                 int index = columnListBox.SelectedIndex;
                 columnListBox.Items.RemoveAt(index);
-                columnListBox.Items.Insert(index, edit.column);
+                columnListBox.Items.Insert(index, edit.Column);
             }
         }
 
@@ -113,7 +113,7 @@ namespace PIE
                 ColumnEditForm columnNew = new ColumnEditForm();
                 if (columnNew.ShowDialog(this) == DialogResult.OK)
                 {
-                    columnListBox.Items.Add(columnNew.column);
+                    columnListBox.Items.Add(columnNew.Column);
                     okButton.Enabled = true;
                 }
             }

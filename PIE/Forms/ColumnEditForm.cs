@@ -1,41 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace PIE
 {
     public partial class ColumnEditForm : Form
     {
-        static string[] bitSelect = { "8", "16", "32", "64" };
-        public DataInfo column { get; private set; }
+        static string[] BitSelect = { "8", "16", "32", "64" };
+        public ColumnDescriptor Column { get; private set; }
 
         public ColumnEditForm()
         {
             InitializeComponent();
         }
 
-        public ColumnEditForm(DataInfo init)
+        public ColumnEditForm(ColumnDescriptor init)
         {
             InitializeComponent();
-            nameTextBox.Text = init.name;
-            typeComboBox.Text = init.dataType;
-            sizeComboBox.Text = init.size.ToString();
-            if (init.intFormat == IntFormat.Signed)
+            nameTextBox.Text = init.Name;
+            typeComboBox.Text = init.DataType;
+            sizeComboBox.Text = (init.Size / (init.DataType == "String" ? 8 : 1)).ToString();
+            if (init.IntFormat == IntFormat.Signed)
                 signedRadioButton.Checked = true;
-            else if (init.intFormat == IntFormat.Hex)
+            else if (init.IntFormat == IntFormat.Hex)
                 hexRadioButton.Checked = true;
             else
                 noneRadioButton.Checked = true;
-            fractionNumericUpDown.Value = init.fraction;
-            fractionNumericUpDown.Maximum = init.size;
-            if (init.dataType == "String" || init.dataType == "Floating Point")
+            fractionNumericUpDown.Value = init.Fraction;
+            fractionNumericUpDown.Maximum = init.Size;
+            if (init.DataType == "String" || init.DataType == "Floating Point")
                 optionsGroupBox.Enabled = false;
-            else if (init.dataType == "Integer")
+            else if (init.DataType == "Integer")
                 fractionLabel.Enabled = fractionNumericUpDown.Enabled = false;
             else
                 hexRadioButton.Enabled = false;
@@ -59,16 +54,16 @@ namespace PIE
             switch (typeComboBox.SelectedIndex)
             {
                 case 0:
-                    sizeComboBox.Items.AddRange(bitSelect);
+                    sizeComboBox.Items.AddRange(BitSelect);
                     hexRadioButton.Enabled = true;
                     break;
                 case 1:
-                    sizeComboBox.Items.AddRange(bitSelect);
+                    sizeComboBox.Items.AddRange(BitSelect);
                     sizeComboBox.Items.RemoveAt(0);
                     optionsGroupBox.Enabled = false;
                     break;
                 case 2:
-                    sizeComboBox.Items.AddRange(bitSelect);
+                    sizeComboBox.Items.AddRange(BitSelect);
                     break;
                 case 3:
                     optionsGroupBox.Enabled = false;
@@ -94,24 +89,24 @@ namespace PIE
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            column = new DataInfo();
-            column.name = nameTextBox.Text;
-            column.dataType = typeComboBox.Text;
-            if (!int.TryParse(sizeComboBox.Text, out column.size))
+            Column = new ColumnDescriptor();
+            Column.Name = nameTextBox.Text;
+            Column.DataType = typeComboBox.Text;
+            if (!int.TryParse(sizeComboBox.Text, out Column.Size))
             {
                 MessageBox.Show("Size is an invalid value", "Error");
                 return;
             }
-            column.size = int.Parse(sizeComboBox.Text);
+            Column.Size = int.Parse(sizeComboBox.Text);
             if (typeComboBox.SelectedIndex == 3)
-                column.size *= 8;
+                Column.Size *= 8;
             if (signedRadioButton.Checked)
-                column.intFormat = IntFormat.Signed;
+                Column.IntFormat = IntFormat.Signed;
             else if (hexRadioButton.Checked)
-                column.intFormat = IntFormat.Hex;
+                Column.IntFormat = IntFormat.Hex;
             else
-                column.intFormat = IntFormat.None;
-            column.fraction = (int) fractionNumericUpDown.Value;
+                Column.IntFormat = IntFormat.None;
+            Column.Fraction = (int) fractionNumericUpDown.Value;
             DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -128,7 +123,7 @@ namespace PIE
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            column = null;
+            Column = null;
             DialogResult = DialogResult.Cancel;
             this.Close();
         }

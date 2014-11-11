@@ -11,7 +11,7 @@ namespace PIE
         protected long end;
         protected long size;
         protected int baseSize;
-        public TreeNode node { get; protected set; }
+        public TreeNode Node { get; protected set; }
         protected Slice nodeSlice;
         private Slice parentSlice;
 
@@ -23,13 +23,13 @@ namespace PIE
         public ResizeForm(TreeNode node)
         {
             InitializeComponent();
-            this.node = node;
+            this.Node = node;
             nodeSlice = node.Tag as Slice;
             if (node.Parent != null)
             {
                 parentSlice = node.Parent.Tag as Slice;
-                start = parentSlice.Offset + nodeSlice.start;
-                end = parentSlice.Offset + nodeSlice.end;
+                start = parentSlice.Offset + nodeSlice.Start;
+                end = parentSlice.Offset + nodeSlice.End;
                 startTextBox.Text = start.ToString("X");
                 endTextBox.Text = end.ToString("X");
             }
@@ -41,7 +41,7 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < parentSlice.start + parentSlice.Offset || start >= parentSlice.end + nodeSlice.Offset)
+                if (start < parentSlice.Start + parentSlice.Offset || start >= parentSlice.End + nodeSlice.Offset)
                     throw new ArgumentOutOfRangeException("Start");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -56,7 +56,7 @@ namespace PIE
             try
             {
                 end = long.Parse(endTextBox.Text, NumberStyles.HexNumber);
-                if (end <= parentSlice.start + parentSlice.Offset || end > parentSlice.end + nodeSlice.Offset)
+                if (end <= parentSlice.Start + parentSlice.Offset || end > parentSlice.End + nodeSlice.Offset)
                     throw new ArgumentOutOfRangeException("End");
                 if (end < start)
                     throw new Exception("End address must be greater than start address");
@@ -72,18 +72,18 @@ namespace PIE
 
         protected virtual void okButton_Click(object sender, EventArgs e)
         {
-            TreeNode parent = node.Parent;
-            int nodeIndex = node.Index;
+            TreeNode parent = Node.Parent;
+            int nodeIndex = Node.Index;
             bool valid;
 
             try
             {
-                node.Remove();
+                Node.Remove();
                 checkValues(parentSlice.Offset);
-                if (node.Nodes.Count > 0 &&
+                if (Node.Nodes.Count > 0 &&
                     MessageBox.Show("Warning: subslices may be resized or removed", "Resize", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
                     return;
-                nodeSlice.Resize(node, start, end);
+                nodeSlice.Resize(Node, start, end);
                 nodeSlice.Invalidate();
                 valid = true;
             }
@@ -94,8 +94,8 @@ namespace PIE
             }
             finally
             {
-                if (!parent.Nodes.Contains(node))
-                    parent.Nodes.Insert(nodeIndex, node);
+                if (!parent.Nodes.Contains(Node))
+                    parent.Nodes.Insert(nodeIndex, Node);
             }
 
             if (valid)
@@ -128,7 +128,7 @@ namespace PIE
                 checkField(sizeComboBox);
                 end = start + size - 1;
             }
-            if (Slice.IsTaken(node, start, end))
+            if (Slice.IsTaken(Node, start, end))
                 throw new Exception(Properties.Resources.overlapString);
         }
 
@@ -161,7 +161,7 @@ namespace PIE
             {
                 baseSize = int.Parse(sizeComboBox.Text);
                 calculateSize();
-                if (size > (node.Tag as Slice).size)
+                if (size > (Node.Tag as Slice).Size)
                     throw new ArgumentOutOfRangeException("Size");
                 errorProvider1.SetError(sizeComboBox, "");
             }

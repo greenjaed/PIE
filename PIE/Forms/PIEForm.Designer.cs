@@ -1009,11 +1009,6 @@
             this.displayHexBox.TabIndex = 0;
             this.displayHexBox.UseFixedBytesPerLine = true;
             this.displayHexBox.VScrollBarVisible = true;
-            this.displayHexBox.InsertActiveChanged += new System.EventHandler(this.displayHexBox_InsertActiveChanged);
-            this.displayHexBox.SelectionLengthChanged += new System.EventHandler(this.displayHexBox_SelectionLengthChanged);
-            this.displayHexBox.CurrentLineChanged += new System.EventHandler(this.displayHexBox_CurrentLineChanged);
-            this.displayHexBox.CurrentPositionInLineChanged += new System.EventHandler(this.displayHexBox_CurrentPositionInLineChanged);
-            this.displayHexBox.Copied += new System.EventHandler(this.displayHexBox_Copied);
             // 
             // hexContextMenuStrip
             // 
@@ -1120,8 +1115,6 @@
             this.displayDataGridView.Name = "displayDataGridView";
             this.displayDataGridView.Size = new System.Drawing.Size(640, 439);
             this.displayDataGridView.TabIndex = 1;
-            this.displayDataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.displayDataGridView_ColumnAdded);
-            this.displayDataGridView.SelectionChanged += new System.EventHandler(this.displayDataGridView_SelectionChanged);
             // 
             // openFileDialog1
             // 

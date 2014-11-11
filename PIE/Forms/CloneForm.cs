@@ -24,7 +24,7 @@ namespace PIE
             this.node = node;
             parent = node.Parent;
             nodeData = node.Tag as Slice;
-            start = (parent.Tag as Slice).Offset + nodeData.start + nodeData.size;
+            start = (parent.Tag as Slice).Offset + nodeData.Start + nodeData.Size;
             startTextBox.Text = start.ToString("X");
             copies = 1;
         }
@@ -35,7 +35,7 @@ namespace PIE
             try
             {
                 start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < slice.Offset || start >= slice.end)
+                if (start < slice.Offset || start >= slice.End)
                     throw new ArgumentOutOfRangeException("start address");
                 errorProvider1.SetError(startTextBox, "");
             }
@@ -59,7 +59,7 @@ namespace PIE
                 if (errorProvider1.GetError(startTextBox) != "")
                     throw new Exception(errorProvider1.GetError(startTextBox));
                 start -= (node.Parent.Tag as Slice).Offset;
-                if (!repeatCheckBox.Checked && Slice.IsTaken(parent, start, start + nodeData.size - 1))
+                if (!repeatCheckBox.Checked && Slice.IsTaken(parent, start, start + nodeData.Size - 1))
                     throw new Exception(Properties.Resources.overlapString);
 
                 this.Cursor = Cursors.WaitCursor;
@@ -86,7 +86,7 @@ namespace PIE
             foreach (TreeNode t in parent.Nodes)
             {
                 current = t.Tag as Slice;
-                if (current.end < start)
+                if (current.End < start)
                     continue;
                 delIndex = t.Index;
                 break;
@@ -107,9 +107,9 @@ namespace PIE
         private void cloneNode(long position, int cloneID)
         {
             TreeNode subnode = new TreeNode();
-            subnode.Name = (Owner as PIEForm).uniqueID.ToString();
+            subnode.Name = (Owner as PIEForm).UniqueID.ToString();
             subnode.Text = node.Text + " " + cloneID.ToString();
-            Slice subslice = new Slice(parent.Tag as Slice, position, nodeData.size);
+            Slice subslice = new Slice(parent.Tag as Slice, position, nodeData.Size);
             subnode.Tag = subslice;
             parent.Nodes.Add(subnode);
             if (subSliceCheckBox.Checked)
@@ -125,7 +125,7 @@ namespace PIE
             foreach (TreeNode t in original.Nodes)
             {
                 subnode = new TreeNode();
-                subnode.Name = (Owner as PIEForm).uniqueID.ToString();
+                subnode.Name = (Owner as PIEForm).UniqueID.ToString();
                 subnode.Text = t.Text;
                 subslice = new Slice(t.Tag as Slice, clone.Tag as Slice);
                 subnode.Tag = subslice;
@@ -138,9 +138,9 @@ namespace PIE
         //clones a slice
         private bool clone()
         {
-            long size = nodeData.size;
+            long size = nodeData.Size;
             long insertPosition = start;
-            long totalSize = (parent.Tag as Slice).dataByteProvider.Length - 1;
+            long totalSize = (parent.Tag as Slice).Data.Length - 1;
             long max = (totalSize + 1 - insertPosition) / size;
 
             if (repeatCheckBox.Checked)

@@ -7,7 +7,7 @@ namespace PIE
     public partial class FindForm : Form
     {
         private FindOptions findOptions;  //the find options
-        public HexBox searchMedium { get; set; }
+        public HexBox SearchMedium { get; set; }
 
         public FindForm()
         {
@@ -19,7 +19,7 @@ namespace PIE
         {
             InitializeComponent();
             findOptions = new FindOptions();
-            searchMedium = toSearch;
+            SearchMedium = toSearch;
         }
 
         private void textRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -41,7 +41,7 @@ namespace PIE
 
         public void search()
         {
-            long result = searchMedium.Find(findOptions);
+            long result = SearchMedium.Find(findOptions);
             if (result == -1)
                 MessageBox.Show("No match found", "PIE", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else if (result == -2)

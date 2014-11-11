@@ -74,8 +74,13 @@ todo:
   Add table edit button
   Add context menu item functionality (editing, selecting)
   Add csv export feature
-  Add [de]serlialization code
+  Add [de]serialization code
   Remember how a slice was last viewed (change object class altogether?)
+  Properly update positionToolStripMenuItem
   ---
   finish table display
   show unused space in a slice in projectTreeView as slices (disabled)
+
+restructure slices, perhaps go for a mvc-like architecture like mvvm or mvp?
+related: tableslice is a mess.  Look into redoing datatable adapter
+also related: use a bindingsource for the datagridview

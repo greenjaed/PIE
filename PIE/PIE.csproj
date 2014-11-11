@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,12 +26,11 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -76,6 +76,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrossConverter\CrossConverterFactory.cs" />
+    <Compile Include="CrossConverter\Converters\FixedPointCrossConverters.cs" />
+    <Compile Include="CrossConverter\Converters\FloatingPointCrossConverters.cs" />
+    <Compile Include="DataGridViewController.cs" />
+    <Compile Include="HexBoxController.cs" />
+    <Compile Include="ISliceController.cs" />
+    <Compile Include="PIEFileManager.cs" />
     <Compile Include="Forms\CloneForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,7 +101,7 @@
     <Compile Include="Forms\ColumnForm.Designer.cs">
       <DependentUpon>ColumnForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="CrossConverters.cs" />
+    <Compile Include="CrossConverter\ICrossConverter.cs" />
     <Compile Include="Forms\NotesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,6 +114,9 @@
     <Compile Include="Forms\PIEAboutBox.Designer.cs">
       <DependentUpon>PIEAboutBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="CrossConverter\Converters\IntegerCrossConverters.cs" />
+    <Compile Include="PIEInfo.cs" />
+    <Compile Include="PIEProjectManager.cs" />
     <Compile Include="Slice.cs" />
     <Compile Include="Forms\FindForm.cs">
       <SubType>Form</SubType>
@@ -140,6 +150,8 @@
     <Compile Include="Forms\SliceForm.Designer.cs">
       <DependentUpon>SliceForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CrossConverter\Converters\StringCrossConverter.cs" />
+    <Compile Include="PIESliceManager.cs" />
     <Compile Include="TableSlice.cs">
       <SubType>Code</SubType>
     </Compile>

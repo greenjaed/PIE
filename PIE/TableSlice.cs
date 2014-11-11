@@ -3,36 +3,34 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using Be.Windows.Forms;
 
 namespace PIE
 {
     //stores information about the data in  a table column
     [DataContract]
-    public class DataInfo
+    public class ColumnDescriptor
     {
         //The column name
         [DataMember]
-        public string name;
+        public string Name;
         //The data type
         [DataMember]
-        public string dataType;
+        public string DataType;
         //The size of the data type, in bytes
         [DataMember]
-        public int size;
+        public int Size;
         //for ints: how the int is formatted
         [DataMember]
-        public IntFormat intFormat;
+        public IntFormat IntFormat;
         //for fixed: the size of the fraction, in bits
         [DataMember]
-        public int fraction;
+        public int Fraction;
 
         public override string ToString()
         {
-            return name;
+            return Name;
         }
     }
 
@@ -48,20 +46,18 @@ namespace PIE
     public class TableSlice : Slice
     {
         //The table holding the data
-        [DataMember]
         private DataTable sourceTable;
         //The info describing the columns
-        public DataInfo[] ColumnInfo { get; protected set; }
-        //the control the table will be displayed in
-        public DataGridView tableDisplay;
+        [DataMember]
+        public ColumnDescriptor[] ColumnInfo { get; protected set; }
         //array of converters to help serialize/deserialize data
-        public ICrossConverter[] dataConverter { get; protected set; }
+        public ICrossConverter[] DataConverter { get; protected set; }
         //the number of bytes in a row
-        private int rowLength;
+        public int RowLength { get; protected set; }
         //the number of cells in the partial row
-        private int partialRowIndex;
+        public int PartialRowIndex { get; protected set; }
         //indicates if the table needs to be regenerated
-        private bool regenerate;
+        private bool regenerateConverters;
         //Gets the current offset
         public override long Offset
         {
@@ -73,10 +69,19 @@ namespace PIE
             {
                 base.Offset = value;
                 //In order to display the new offset, the table needs to be regenerated
-                tableDisplay.DataSource = null;
-                createColumns();
-                fillTable();
-                setTable();
+                regenerateTable(value);
+            }
+        }
+
+        public DataTable Table
+        {
+            get
+            {
+                if (sourceTable == null)
+                {
+                    regenerateTable(Offset);
+                }
+                return sourceTable;
             }
         }
 
@@ -105,100 +110,77 @@ namespace PIE
 
         }
 
-        //sets the data for the dataGridView, sets up the address column, and disables extra cells
-        private void setTable()
+        private void regenerateTable(long seedValue)
         {
-            tableDisplay.DataSource = sourceTable;
-            tableDisplay.Columns[0].DefaultCellStyle.Format = "X";
-            tableDisplay.Columns[0].Frozen = true;
-            if (partialRowIndex > 0)
+            var table = createTable(seedValue);
+            int count = sourceTable.Columns.Count;
+            foreach (DataRow row in sourceTable.Rows)
             {
-                for (int i = ColumnInfo.Length + 1 - partialRowIndex; i <= ColumnInfo.Length; ++i)
+                DataRow copy = table.NewRow();
+                for (int i = 1; i < count; ++i)
                 {
-                    DataGridViewCell extra = tableDisplay.Rows[tableDisplay.Rows.Count - 1].Cells[i];
-                    extra.ReadOnly = true;
-                    extra.Style.BackColor = System.Drawing.Color.Gray;
+                    copy[i] = row[i];
                 }
+                table.Rows.Add(copy);
             }
+            sourceTable = table;
         }
 
         //creates the data converters used to generate the table
         private void getConverters()
         {
-            dataConverter = new ICrossConverter[ColumnInfo.Length];
-            for (int i = 0; i < dataConverter.Length; ++i)
-                dataConverter[i] = CrossConverterSelector.SelectConverter(ColumnInfo[i]);
+            DataConverter = new ICrossConverter[ColumnInfo.Length];
+            for (int i = 0; i < DataConverter.Length; ++i)
+                DataConverter[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
         }
 
         //calculates the row length
-        private void calcRowLength()
+        public int calcRowLength()
         {
-            rowLength = 0;
-            foreach (DataInfo di in ColumnInfo)
-                rowLength += di.size >> 3;
+            RowLength = 0;
+            foreach (ColumnDescriptor di in ColumnInfo)
+                RowLength += di.Size >> 3;
+            return RowLength;
         }
 
         //converts the bytes to their respective type string representations and puts them in a table
         private void fillTable()
         {
-            Byte[] data = (dataByteProvider as DynamicByteProvider).Bytes.ToArray();
+            Byte[] data = (DataByteProvider as DynamicByteProvider).Bytes.ToArray();
             int index = 0;
             DataRow rowNew;
 
             //Disabling event handler while mucking around with the table
             sourceTable.ColumnChanging -= sourceTable_ColumnChanging;
-            while (index + rowLength <= size)
+            while (index + RowLength <= Size)
             {
                 rowNew = sourceTable.NewRow();
                 for (int i = 0; i < ColumnInfo.Length; ++i)
                 {
                     //array placement is offset because the first row is the address
-                    rowNew[i + 1] = dataConverter[i].ToString(data, index);
-                    index += ColumnInfo[i].size >> 3;
+                    rowNew[i + 1] = DataConverter[i].ToString(data, index);
+                    index += ColumnInfo[i].Size >> 3;
                 }
                 sourceTable.Rows.Add(rowNew);
             }
             //If there's a partial row's worth of data, put it into a row
-            if (index < size)
+            if (index < Size)
             {
                 rowNew = sourceTable.NewRow();
                 for (int i = 0; i < ColumnInfo.Length; ++i)
                 {
-                    if (index + (ColumnInfo[i].size >> 3) > size)
+                    if (index + (ColumnInfo[i].Size >> 3) > Size)
                     {
                         rowNew[i + 1] = "partial";
-                        partialRowIndex = i;
+                        PartialRowIndex = i;
                         break;
                     }
-                    rowNew[i + 1] = dataConverter[i].ToString(data, index);
-                    index += ColumnInfo[i].size >> 3;
+                    rowNew[i + 1] = DataConverter[i].ToString(data, index);
+                    index += ColumnInfo[i].Size >> 3;
                 }
                 sourceTable.Rows.Add(rowNew);
             }
             sourceTable.ColumnChanging += new DataColumnChangeEventHandler(sourceTable_ColumnChanging);
-        }
-
-        //Displays the table
-        public override void Display()
-        {
-            if (dataByteProvider == null)
-                setByteProvider();
-            if (regenerate)
-            {
-                fillTable();
-                regenerate = false;
-            }
-            setTable();
-            tableDisplay.Visible = true;
-            tableDisplay.BringToFront();
-        }
-
-        //Hides the table
-        public override void Hide()
-        {
-            tableDisplay.DataSource = null;
-            tableDisplay.Visible = false;
-            tableDisplay.SendToBack();
         }
 
         //Displays the ColumnForm and gets the edited columns
@@ -206,52 +188,58 @@ namespace PIE
         {
             ColumnForm columnForm = new ColumnForm(this);
             bool result = columnForm.ShowDialog() == DialogResult.OK;
-            regenerate = result;
+            regenerateConverters = result;
             return result;
         }
 
         //creates the columnInfo array and creates the columns
-        public void AddColumns(ListBox.ObjectCollection columns)
+        public void AddColumns(IEnumerable<ColumnDescriptor> columns)
         {
-            ColumnInfo = new DataInfo[columns.Count];
-            columns.CopyTo(ColumnInfo, 0);
+            ColumnInfo = columns.ToArray();
             calcRowLength();
-            createColumns();
         }
 
         //initializes the dataTable
-        private void createColumns()
+        private DataTable createTable(long seedValue)
         {
+            DataTable freshTable = new DataTable();
             if (sourceTable != null)
                 sourceTable.ColumnChanging -= sourceTable_ColumnChanging;
-            sourceTable = new DataTable();
-            sourceTable.ColumnChanging += new DataColumnChangeEventHandler(sourceTable_ColumnChanging);
-            dataConverter = new ICrossConverter[ColumnInfo.Length];
+            freshTable.ColumnChanging += new DataColumnChangeEventHandler(sourceTable_ColumnChanging);
             DataColumn addrColumn = new DataColumn("Address", typeof(int));
             addrColumn.AutoIncrement = true;
-            addrColumn.AutoIncrementSeed = this.lastStart;
-            addrColumn.AutoIncrementStep = rowLength;
+            addrColumn.AutoIncrementSeed = seedValue;
+            addrColumn.AutoIncrementStep = RowLength;
             addrColumn.ReadOnly = true;
-            sourceTable.Columns.Add(addrColumn);
-            for (int i = 0; i < ColumnInfo.Length; ++i)
+            freshTable.Columns.Add(addrColumn);
+            foreach (ColumnDescriptor columnInfo in ColumnInfo)
             {
-                sourceTable.Columns.Add(ColumnInfo[i].name, typeof(string));
-                dataConverter[i] = CrossConverterSelector.SelectConverter(ColumnInfo[i]);
+                freshTable.Columns.Add(columnInfo.Name, typeof(string));
             }
+            if (regenerateConverters)
+            {
+                DataConverter = new ICrossConverter[ColumnInfo.Length];
+                for (int i = 0; i < ColumnInfo.Length; ++i)
+                {
+                    DataConverter[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
+                }
+                regenerateConverters = false;
+            }
+            return freshTable;
         }
 
         //when the table is altered, move the changes to the data source
         void sourceTable_ColumnChanging(object sender, DataColumnChangeEventArgs e)
         {
             byte[] changes;
-            DynamicByteProvider data = dataByteProvider as DynamicByteProvider;
-            if (dataConverter[e.Column.Ordinal - 1].ToBytes(e.ProposedValue as string, out changes))
+            DynamicByteProvider data = DataByteProvider as DynamicByteProvider;
+            if (DataConverter[e.Column.Ordinal - 1].TryToBytes(e.ProposedValue as string, out changes))
             {
                 int insertPoint = (int)e.Row["Address"] - (int)Offset;
                 for (int i = 1; i < e.Column.Ordinal; ++i)
-                    insertPoint += ColumnInfo[i - 1].size;
+                    insertPoint += ColumnInfo[i - 1].Size;
                 //if the entry point is invalid, clear the data
-                if (insertPoint > size - 1)
+                if (insertPoint > Size - 1)
                 {
                     e.ProposedValue = "";
                     return;
@@ -261,21 +249,6 @@ namespace PIE
             }
             else
                 e.ProposedValue = e.Row[e.Column];
-        }
-
-        public override void ScrollToAddress(long address)
-        {
-            tableDisplay.FirstDisplayedScrollingRowIndex = (int) address / rowLength;
-        }
-
-        public override void Copy()
-        {
-            base.Copy();
-        }
-
-        public override void SelectAll()
-        {
-            tableDisplay.SelectAll();
         }
     }
 }

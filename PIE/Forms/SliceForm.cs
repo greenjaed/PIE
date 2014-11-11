@@ -26,7 +26,7 @@ namespace PIE
             startTextBox.Validating += new CancelEventHandler(startTextBox_Validating);
             okButton.Text = "Slice";
 
-            offsetEnd = nodeSlice.Offset + nodeSlice.end;
+            offsetEnd = nodeSlice.Offset + nodeSlice.End;
             start = nodeSlice.Offset;
             end = offsetEnd;
             endTextBox.Text = end.ToString("X");
@@ -46,11 +46,11 @@ namespace PIE
         {
             TreeNode subnode = new TreeNode();
             String nodeText = nameTextBox.Text == "" ? "new slice" : nameTextBox.Text;
-            subnode.Name = (Owner as PIEForm).uniqueID.ToString();
+            subnode.Name = (Owner as PIEForm).UniqueID.ToString();
             subnode.Text = nodeText;
             Slice subslice = new Slice(nodeSlice, start, size);
             subnode.Tag = subslice;
-            node.Nodes.Add(subnode);
+            Node.Nodes.Add(subnode);
         }
 
         private void clearExistingSlices()
@@ -58,16 +58,16 @@ namespace PIE
             Slice current;
             int delIndex = 0;
             
-            foreach (TreeNode t in node.Nodes)
+            foreach (TreeNode t in Node.Nodes)
             {
                 current = t.Tag as Slice;
-                if (current.end < start)
+                if (current.End < start)
                     continue;
                 delIndex = t.Index;
                 break;
             }
-            while (node.Nodes.Count > delIndex)
-                node.Nodes[delIndex].Remove();
+            while (Node.Nodes.Count > delIndex)
+                Node.Nodes[delIndex].Remove();
         }
 
         private void sliceButton_Click(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace PIE
             {
                 checkValues(nodeSlice.Offset);
                 this.Cursor = Cursors.WaitCursor;
-                size = Math.Min(nodeSlice.size, size);
+                size = Math.Min(nodeSlice.Size, size);
                 createSlice();
                 this.Cursor = Cursors.Arrow;
                 DialogResult = DialogResult.OK;

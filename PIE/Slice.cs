@@ -13,39 +13,50 @@ namespace PIE
     {
         //a custom start address for displaying the data
         [DataMember]
-        public long customStart { get; set; }
-        //the HexBox showing the data
-        public HexBox display;
+        protected long CustomStart;
         //the end address in parentSlice where the data comes from
         [DataMember]
-        public long end { get; protected set; }
+        public long End { get; protected set; }
         //indicates if the slice has been changed or not. if no data, returns false
-        public bool isChanged
+        public bool IsChanged
         {
-            get { return dataByteProvider != null ? dataByteProvider.HasChanges() : false; }
+            get { return DataByteProvider != null ? DataByteProvider.HasChanges() : false; }
         }
         //the last selected start address
         [DataMember]
-        protected long lastStart;
+        protected long LastStart;
         //stores notes about the slice
         [DataMember]
-        public string notes;
+        public string Notes { get; set; }
         //the slice the current one is contained in
-        protected Slice parentSlice;
+        protected Slice ParentSlice;
         //the size of the slice
         [DataMember]
-        public long size { get; protected set; }
+        public long Size { get; protected set; }
         //the start address in parentSlice where the data comes from
         [DataMember]
-        public long start { get; protected set; }
+        public long Start { get; protected set; }
         //the data itself
-        public IByteProvider dataByteProvider { get; protected set; }
+        protected IByteProvider DataByteProvider;
+
+        public IByteProvider Data
+        {
+            get
+            {
+                if (DataByteProvider == null)
+                {
+                    setByteProvider(ParentSlice.getBytes(Start, Size));
+                }
+                return DataByteProvider;
+            }
+        }
+
         public Slice Parent
         {
             set
             {
                 if (value != null)
-                    parentSlice = value;
+                    ParentSlice = value;
             }
         }
 
@@ -53,123 +64,118 @@ namespace PIE
         {
             get
             {
-                return lastStart;
+                return LastStart;
             }
             set
             {
-                display.LineInfoOffset = value;
-                lastStart = value;
-                if (value != 0 || value != start)
-                    customStart = value;
+                LastStart = value;
+                if (value != 0 || value != Start)
+                    CustomStart = value;
             }
         }
 
         //required for serialization
-        public Slice()
-        {
+        public Slice()  { }
 
-        }
+        public Slice(Slice toCopy) : this(toCopy, toCopy.ParentSlice) { }
 
-        //copy constructor
-        public Slice(Slice toCopy)
-        {
-            copySlice(toCopy);
-        }
-
-        //copy constructor with a different parent
         public Slice(Slice source, Slice parent)
         {
-            copySlice(source);
-            parentSlice = parent;
-        }
-
-        //copies data from toCopy to the slice
-        protected void copySlice(Slice toCopy)
-        {
-            customStart = toCopy.customStart;
-            lastStart = toCopy.lastStart;
-            start = toCopy.start;
-            size = toCopy.size;
-            end = toCopy.end;
-            notes = toCopy.notes;
-            parentSlice = toCopy.parentSlice;
-            display = toCopy.display;
+            CustomStart = source.CustomStart;
+            LastStart = source.LastStart;
+            Start = source.Start;
+            Size = source.Size;
+            End = source.End;
+            Notes = source.Notes;
+            ParentSlice = source.ParentSlice;
+            ParentSlice = parent;
         }
 
         //constructs the main slice with the fileByteProvider
         public Slice(DynamicFileByteProvider fileByteProvider)
         {
-            this.dataByteProvider = fileByteProvider;
-            size = fileByteProvider.Length;
-            end = size - 1;
+            this.DataByteProvider = fileByteProvider;
+            Size = fileByteProvider.Length;
+            End = Size - 1;
         }
 
         //constructs all other slices
         public Slice(Slice parentSlice, long start, long size)
         {
-            this.start = start;
-            this.size = size;
-            end = start + size - 1;
-            this.parentSlice = parentSlice;
-            lastStart = start;
+            this.Start = start;
+            this.Size = size;
+            End = start + size - 1;
+            this.ParentSlice = parentSlice;
+            LastStart = start;
         }
 
         //updates the main slice ONLY
-        public void UpdateMainSlice(DynamicFileByteProvider fileByteProvider)
+        public void SetMainSlice(DynamicFileByteProvider fileByteProvider)
         {
-            if (parentSlice == null)
-                dataByteProvider = fileByteProvider;
+            if (ParentSlice == null)
+            {
+                DataByteProvider = fileByteProvider;
+            }
         }
 
         //gets the bytes for the slice. if none are present, retrieves them from the parent
         private byte[] getBytes(long start, long size)
         {
-            if (dataByteProvider != null)
+            if (DataByteProvider != null)
             {
                 byte[] bytes = new byte[size];
 
                 for (int i = 0; i < size; ++i)
-                    bytes[i] = dataByteProvider.ReadByte(start + i);
+                    bytes[i] = DataByteProvider.ReadByte(start + i);
                 return bytes;
             }
             else
-                return parentSlice.getBytes(start + this.start, size);
+            {
+                return ParentSlice.getBytes(start + this.Start, size);
+            }
         }
 
         //recurses up the slices until a nonempty dataByteProvider is found and saves toInsert to it
         private void setBytes(long start, byte[] toInsert)
         {
-            if (dataByteProvider != null)
+            if (DataByteProvider != null)
             {
-                dataByteProvider.DeleteBytes(start, toInsert.Length);
-                dataByteProvider.InsertBytes(start, toInsert);
+                DataByteProvider.DeleteBytes(start, toInsert.Length);
+                DataByteProvider.InsertBytes(start, toInsert);
             }
             else
-                parentSlice.setBytes(start + this.start, toInsert);
+            {
+                ParentSlice.setBytes(start + this.Start, toInsert);
+            }
         }
 
         protected void setByteProvider()
         {
-            setByteProvider(parentSlice.getBytes(start, size));
+            setByteProvider(ParentSlice.getBytes(Start, Size));
         }
 
-        //sets dataByteProvider
         private void setByteProvider(byte[] bytes)
         {
-            if (dataByteProvider != null)
-                dataByteProvider.LengthChanged -= dataByteProvider_LengthChanged;
-            dataByteProvider = new DynamicByteProvider(bytes);
-            dataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
+            if (DataByteProvider != null)
+            {
+                DataByteProvider.LengthChanged -= dataByteProvider_LengthChanged;
+            }
+            DataByteProvider = new DynamicByteProvider(bytes);
+            DataByteProvider.LengthChanged += new EventHandler(dataByteProvider_LengthChanged);
         }
 
         //when editing a slice, it must stay the same size
         //The main slice will never trigger this event
         protected void dataByteProvider_LengthChanged(object sender, EventArgs e)
         {
-            if (dataByteProvider.Length > size)
-                dataByteProvider.DeleteBytes(size, dataByteProvider.Length - size);
-            else if (dataByteProvider.Length < size)
-                dataByteProvider.InsertBytes(dataByteProvider.Length, new byte[size - dataByteProvider.Length]);
+            if (DataByteProvider.Length > Size)
+            {
+                DataByteProvider.DeleteBytes(Size, DataByteProvider.Length - Size);
+            }
+            else if (DataByteProvider.Length < Size)
+            {
+                DataByteProvider.InsertBytes(DataByteProvider.Length, new byte[Size - DataByteProvider.Length]);
+            }
         }
 
         //adds the start addresses to addrSelector 
@@ -177,84 +183,40 @@ namespace PIE
         {
             addrSelector.Items.Clear();
             addrSelector.Items.Add("0");
-            if (start != 0)
-                addrSelector.Items.Add(start.ToString("X"));
-            if (customStart != 0)
-                addrSelector.Items.Add(customStart.ToString("X"));
-            addrSelector.Items.Add(size.ToString("X"));
+            if (Start != 0)
+            {
+                addrSelector.Items.Add(Start.ToString("X"));
+            }
+            if (CustomStart != 0)
+            {
+                addrSelector.Items.Add(CustomStart.ToString("X"));
+            }
+            addrSelector.Items.Add(Size.ToString("X"));
             if (addrSelector.Text != "")
-                addrSelector.Text = lastStart.ToString("X");
-        }
-
-        //Displays the current slice in the hex editor
-        public void DisplayHex()
-        {
-            if (dataByteProvider == null)
-                setByteProvider(parentSlice.getBytes(start, size));
-            display.ByteProvider = dataByteProvider;
-            display.LineInfoOffset = lastStart;
-            display.Visible = true;
-            display.BringToFront();
-        }
-
-        //Displays the data
-        public virtual void Display()
-        {
-            DisplayHex();
-        }
-
-        //changes the address offset
-        public void ChangeOffset(long offset)
-        {
-            display.LineInfoOffset = offset;
-            lastStart = offset;
-            if (offset != 0 || offset != start)
-                customStart = offset;
-        }
-
-        //Hides the data
-        public virtual void Hide()
-        {
-            display.ByteProvider = null;
-            display.Visible = false;
-            display.SendToBack();
-        }
-
-        public virtual void Cut()
-        {
-            display.Cut();
-        }
-
-        public virtual void Paste()
-        {
-            display.Paste();
-        }
-
-        public virtual void Copy()
-        {
-            display.Copy();
-        }
-
-        public virtual void Delete()
-        {
-            dataByteProvider.DeleteBytes(display.SelectionStart, display.SelectionLength);
+            {
+                addrSelector.Text = LastStart.ToString("X");
+            }
         }
 
         //resizes the slice and internal slices
         public void Resize(TreeNode node, long start, long end)
         {
-            this.start = start;
-            this.end = end;
-            size = (end - start) + 1;
-            if (parentSlice != null)
-                dataByteProvider = null;
-            
+            this.Start = start;
+            this.End = end;
+            Size = (end - start) + 1;
+            if (ParentSlice != null)
+                DataByteProvider = null;
+
             foreach (TreeNode t in node.Nodes)
+            {
                 resize(t, start, end);
+            }
             for (int i = 0; i < node.Nodes.Count; ++i)
             {
                 while (i < node.Nodes.Count && node.Nodes[i].Tag == null)
+                {
                     node.Nodes[i].Remove();
+                }
             }
         }
 
@@ -262,44 +224,41 @@ namespace PIE
         private void resize(TreeNode node, long start, long end)
         {
             Slice current = node.Tag as Slice;
-            long nStart = current.start;
-            long nEnd = current.end;
+            long nStart = current.Start;
+            long nEnd = current.End;
 
-            if (current.end < start || current.start > end)
+            if (current.End < start || current.Start > end)
+            {
                 node.Tag = null;
+            }
             else
             {
-                if (current.start < start)
+                if (current.Start < start)
                     nStart = start;
-                if (current.end > end)
+                if (current.End > end)
                     nEnd = end;
-                if (nStart != current.start || nEnd != current.end)
+                if (nStart != current.Start || nEnd != current.End)
                     current.Resize(node, nStart, nEnd);
             }
         }
 
-        public virtual void Save()
-        {
-            Save(true);
-        }
-
         //saves the data.  If propagateUp is true, propagates the data to the parent
-        public virtual void Save(bool propagateUp)
+        public virtual void Save(bool propagateUp = true)
         {
-            if (dataByteProvider.HasChanges())
+            if (DataByteProvider.HasChanges())
             {
-                dataByteProvider.ApplyChanges();
-                DynamicByteProvider temp = dataByteProvider as DynamicByteProvider;
+                DataByteProvider.ApplyChanges();
+                DynamicByteProvider byteProvider = DataByteProvider as DynamicByteProvider;
 
                 //if Data is not the root, propagate the changes up the slice(s)
-                if (temp != null)
+                if (byteProvider != null)
                 {
-                    byte[] bytes = temp.Bytes.ToArray();
+                    byte[] bytes = byteProvider.Bytes.ToArray();
 
                     if (propagateUp)
                         saveUp(bytes);
                     else
-                        parentSlice.setBytes(start, bytes);
+                        ParentSlice.setBytes(Start, bytes);
                 }
             }
         }
@@ -307,48 +266,50 @@ namespace PIE
         //Changes parent and addresses of slice
         public void Merge(Slice parent, long offset)
         {
-            parentSlice = parent;
-            start -= offset;
-            end -= offset;
+            ParentSlice = parent;
+            Start -= offset;
+            End -= offset;
         }
 
         //Dissolves the parent slice and moves this one up a level
         public void Split()
         {
-            start += parentSlice.start;
-            end += parentSlice.start;
-            parentSlice = parentSlice.parentSlice;
+            Start += ParentSlice.Start;
+            End += ParentSlice.Start;
+            ParentSlice = ParentSlice.ParentSlice;
         }
 
         //saves any changes and applies the changes up the slices
         private void saveUp(byte[] changes)
         {
-            Slice parent = this.parentSlice; //the parent
-            IByteProvider tempParent; //temporary parent data
-            long currentStart = start; //the start address to insert at
-            bool hadChanges; //indicates the state of the data before insertion
+            Slice parent = this.ParentSlice;
+            IByteProvider parentByteProvider;
+            long currentStart = Start;
+            bool hadChanges;
 
             do
             {
-                tempParent = parent.dataByteProvider;
-                if (tempParent != null)
+                parentByteProvider = parent.DataByteProvider;
+                if (parentByteProvider != null)
                 {
-                    hadChanges = parent.isChanged;
-                    tempParent.DeleteBytes(currentStart, size);
-                    tempParent.InsertBytes(currentStart, changes);
+                    hadChanges = parent.IsChanged;
+                    parentByteProvider.DeleteBytes(currentStart, Size);
+                    parentByteProvider.InsertBytes(currentStart, changes);
                     //if the only changes were those that occurred when inserting the new data, apply them
                     if (!hadChanges)
-                        parent.dataByteProvider.ApplyChanges();
+                    {
+                        parent.DataByteProvider.ApplyChanges();
+                    }
                 }
-                currentStart += parent.start;
-                parent = parent.parentSlice;
+                currentStart += parent.Start;
+                parent = parent.ParentSlice;
             } while (parent != null);
         }
 
         //Wrapper for IsTaken
         public static bool IsTaken(TreeNode toSlice, Slice toCheck)
         {
-            return IsTaken(toSlice, toCheck.start, toCheck.end);
+            return IsTaken(toSlice, toCheck.Start, toCheck.End);
         }
 
         /*checks the Slice object passed in against all slices of the same tier
@@ -364,9 +325,9 @@ namespace PIE
             {
                 currentData = d.Tag as Slice;
 
-                if (start > currentData.end)
+                if (start > currentData.End)
                     continue;
-                else if (end < currentData.start)
+                else if (end < currentData.Start)
                     break;
                 else
                     return true;
@@ -376,17 +337,15 @@ namespace PIE
 
         public void Invalidate()
         {
-            dataByteProvider = null;
+            DataByteProvider = null;
         }
 
-        //serializes the slice
         public virtual void Serialize(XmlDictionaryWriter writer)
         {
             DataContractSerializer dcs = new DataContractSerializer(typeof(Slice));
             dcs.WriteObject(writer, this);
         }
 
-        //deserializes a Slice and returns it
         public static Slice Deserialize(XmlDictionaryReader reader)
         {
             DataContractSerializer deserializer = new DataContractSerializer(typeof(Slice));
@@ -398,7 +357,7 @@ namespace PIE
         {
             using (FileStream export = new FileStream(fileName, FileMode.Create))
             {
-                byte[] sliceBytes = (dataByteProvider as DynamicByteProvider).Bytes.ToArray();
+                byte[] sliceBytes = (DataByteProvider as DynamicByteProvider).Bytes.ToArray();
                 export.Write(sliceBytes, 0, sliceBytes.Length);
             }
         }
@@ -412,23 +371,13 @@ namespace PIE
             byte[] bytes;
             using (FileStream import = new FileStream(fileName, FileMode.Open))
             {
-                readLength = Math.Min(size, import.Length);
+                readLength = Math.Min(Size, import.Length);
                 bytes = new byte[readLength];
                 import.Read(bytes, 0, (int) readLength);
                 setByteProvider(bytes);
-                if (readLength < size)
-                    dataByteProvider.InsertBytes(readLength, new byte[size - readLength]);
+                if (readLength < Size)
+                    DataByteProvider.InsertBytes(readLength, new byte[Size - readLength]);
             }
-        }
-
-        public virtual void ScrollToAddress(long address)
-        {
-            display.ScrollByteIntoView(address);
-        }
-
-        public virtual void SelectAll()
-        {
-            display.SelectAll();
         }
     }
 }
