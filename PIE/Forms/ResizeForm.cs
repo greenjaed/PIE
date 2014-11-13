@@ -9,7 +9,7 @@ namespace PIE
     {
         protected long Start;
         protected long End;
-        protected long Size;
+        protected long SliceSize;
         protected int BaseSize;
         public TreeNode Node { get; protected set; }
         protected Slice NodeSlice;
@@ -137,12 +137,12 @@ namespace PIE
             {
                 checkField(endTextBox);
                 End -= offset;
-                Size = 1 + End - Start;
+                SliceSize = 1 + End - Start;
             }
             else
             {
                 checkField(sizeComboBox);
-                End = Start + Size - 1;
+                End = Start + SliceSize - 1;
             }
             if (Slice.IsTaken(Node, Start, End))
             {
@@ -179,7 +179,7 @@ namespace PIE
             {
                 BaseSize = int.Parse(sizeComboBox.Text);
                 calculateSize();
-                if (Size > (Node.Tag as Slice).Size)
+                if (SliceSize > (Node.Tag as Slice).Size)
                 {
                     throw new ArgumentOutOfRangeException("Size");
                 }
@@ -200,7 +200,7 @@ namespace PIE
             }
             else
             {
-                Size = BaseSize << (10 * bytesComboBox.SelectedIndex);
+                SliceSize = BaseSize << (10 * bytesComboBox.SelectedIndex);
             }
         }
     }

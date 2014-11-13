@@ -114,6 +114,16 @@ namespace PIE
             throw new NotImplementedException();
         }
 
+        public void Insert(int amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
         public void ScrollToAddress(long address)
         {
             View.FirstDisplayedScrollingRowIndex = (int)address / ModelSlice.RowLength;
@@ -139,7 +149,7 @@ namespace PIE
 
         private long LookUpPosition(DataGridViewCell cell)
         {
-            long address = View.Rows[cell.RowIndex].Cells[0].Value;
+            long address = (long) View.Rows[cell.RowIndex].Cells[0].Value;
             if (cell.ColumnIndex > 1)
             {
                 address += ModelSlice.OffsetOfCell(cell.ColumnIndex - 1);

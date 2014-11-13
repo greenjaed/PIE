@@ -56,7 +56,9 @@ namespace PIE
             set
             {
                 if (value != null)
+                {
                     ParentSlice = value;
+                }
             }
         }
 
@@ -70,7 +72,9 @@ namespace PIE
             {
                 LastStart = value;
                 if (value != 0 || value != Start)
+                {
                     CustomStart = value;
+                }
             }
         }
 
@@ -400,6 +404,11 @@ namespace PIE
                     DataByteProvider.InsertBytes(readLength, new byte[Size - readLength]);
                 }
             }
+        }
+
+        public void Insert(long position, int amount)
+        {
+            DataByteProvider.InsertBytes(position, new byte[amount]);
         }
     }
 }

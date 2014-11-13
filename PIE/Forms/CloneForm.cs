@@ -10,7 +10,7 @@ namespace PIE
         private long Start; //the starting address
         private long Copies; //the number of times the slice is cloned;
         private TreeNode Node; //the node to clone
-        private TreeNode Parent; //the parent node
+        private TreeNode ParentNode; //the parent node
         private Slice NodeData; //the slice to clone
 
         public CloneForm()
@@ -22,16 +22,16 @@ namespace PIE
         {
             InitializeComponent();
             this.Node = node;
-            Parent = node.Parent;
+            ParentNode = node.Parent;
             NodeData = node.Tag as Slice;
-            Start = (Parent.Tag as Slice).Offset + NodeData.Start + NodeData.Size;
+            Start = (ParentNode.Tag as Slice).Offset + NodeData.Start + NodeData.Size;
             startTextBox.Text = Start.ToString("X");
             Copies = 1;
         }
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
         {
-            Slice slice = Parent.Tag as Slice;
+            Slice slice = ParentNode.Tag as Slice;
             try
             {
                 Start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
@@ -61,7 +61,7 @@ namespace PIE
                     throw new Exception(errorProvider1.GetError(startTextBox));
 				}
                 Start -= (Node.Parent.Tag as Slice).Offset;
-                if (!repeatCheckBox.Checked && Slice.IsTaken(Parent, Start, Start + NodeData.Size - 1))
+                if (!repeatCheckBox.Checked && Slice.IsTaken(ParentNode, Start, Start + NodeData.Size - 1))
                 {
                     throw new Exception(Properties.Resources.overlapString);
                 }
@@ -87,7 +87,7 @@ namespace PIE
             Slice current;
             int deletionIndex = -1;
 
-            foreach (TreeNode t in Parent.Nodes)
+            foreach (TreeNode t in ParentNode.Nodes)
             {
                 current = t.Tag as Slice;
                 if (current.End < Start)
@@ -103,9 +103,9 @@ namespace PIE
                 }
                 else
                 {
-                    while (Parent.Nodes.Count > deletionIndex)
+                    while (ParentNode.Nodes.Count > deletionIndex)
                     {
-                        Parent.Nodes[deletionIndex].Remove();
+                        ParentNode.Nodes[deletionIndex].Remove();
                     }
                 }
             }
@@ -119,9 +119,9 @@ namespace PIE
             TreeNode subnode = new TreeNode();
             subnode.Name = (Owner as PIEForm).UniqueID.ToString();
             subnode.Text = Node.Text + " " + cloneID.ToString();
-            Slice subslice = new Slice(Parent.Tag as Slice, position, NodeData.Size);
+            Slice subslice = new Slice(ParentNode.Tag as Slice, position, NodeData.Size);
             subnode.Tag = subslice;
-            Parent.Nodes.Add(subnode);
+            ParentNode.Nodes.Add(subnode);
             if (subSliceCheckBox.Checked)
             {
                 cloneNode(Node, subnode);
@@ -154,7 +154,7 @@ namespace PIE
         {
             long size = NodeData.Size;
             long insertPosition = Start;
-            long totalSize = (Parent.Tag as Slice).Data.Length - 1;
+            long totalSize = (ParentNode.Tag as Slice).Data.Length - 1;
             long max = (totalSize + 1 - insertPosition) / size;
 
             if (repeatCheckBox.Checked)

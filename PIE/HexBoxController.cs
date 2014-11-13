@@ -162,9 +162,9 @@ namespace PIE
             ModelSlice.Data.DeleteBytes(View.SelectionStart, View.SelectionLength);
         }
 
-        public void Insert()
+        public void Insert(int amount)
         {
-            throw new NotImplementedException();
+            ModelSlice.Insert(View.CurrentPositionInLine, amount);
         }
 
         public void Clear()

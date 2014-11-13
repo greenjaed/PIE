@@ -42,7 +42,7 @@ namespace PIE
             }
             else
             {
-                Size = BaseSize << (10 * bytesComboBox.SelectedIndex);
+                SliceSize = BaseSize << (10 * bytesComboBox.SelectedIndex);
             }
         }
 
@@ -52,7 +52,7 @@ namespace PIE
             String nodeText = string.IsNullOrEmpty(nameTextBox.Text) ? "new slice" : nameTextBox.Text;
             subnode.Name = (Owner as PIEForm).UniqueID.ToString();
             subnode.Text = nodeText;
-            Slice subslice = new Slice(NodeSlice, Start, Size);
+            Slice subslice = new Slice(NodeSlice, Start, SliceSize);
             subnode.Tag = subslice;
             Node.Nodes.Add(subnode);
         }
@@ -84,7 +84,7 @@ namespace PIE
             {
                 checkValues(NodeSlice.Offset);
                 this.Cursor = Cursors.WaitCursor;
-                Size = Math.Min(NodeSlice.Size, Size);
+                SliceSize = Math.Min(NodeSlice.Size, SliceSize);
                 createSlice();
                 this.Cursor = Cursors.Arrow;
                 DialogResult = DialogResult.OK;
