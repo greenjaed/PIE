@@ -122,6 +122,7 @@ namespace PIE
         public void SelectAll()
         {
             View.SelectAll();
+            View.SelectedColumns[0].Selected = false;
         }
 
         public void UpdatePosition()
@@ -138,7 +139,12 @@ namespace PIE
 
         private long LookUpPosition(DataGridViewCell cell)
         {
-            throw new NotImplementedException();
+            long address = View.Rows[cell.RowIndex].Cells[0].Value;
+            if (cell.ColumnIndex > 1)
+            {
+                address += ModelSlice.OffsetOfCell(cell.ColumnIndex - 1);
+            }
+            return address;
         }
 
         private void configureView()

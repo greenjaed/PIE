@@ -12,7 +12,7 @@ namespace PIE
 {
     public partial class ColumnForm : Form
     {
-        private TableSlice slice;
+        private TableSlice Slice;
 
         public ColumnForm()
         {
@@ -22,7 +22,7 @@ namespace PIE
         public ColumnForm(TableSlice slice)
         {
             InitializeComponent();
-            this.slice = slice;
+            this.Slice = slice;
             if (slice.ColumnInfo != null)
             {
                 columnListBox.Items.AddRange(slice.ColumnInfo);
@@ -55,7 +55,7 @@ namespace PIE
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            slice.AddColumns(columnListBox.Items.Cast<ColumnDescriptor>());
+            Slice.AddColumns(columnListBox.Items.Cast<ColumnDescriptor>());
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -69,7 +69,9 @@ namespace PIE
         private void removeButton_Click(object sender, EventArgs e)
         {
             if (columnListBox.SelectedItem != null)
+            {
                 columnListBox.Items.Remove(columnListBox.SelectedItem);
+            }
             if (columnListBox.Items.Count == 0)
             {
                 removeButton.Enabled = false;

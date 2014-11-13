@@ -81,6 +81,11 @@ todo:
   finish table display
   show unused space in a slice in projectTreeView as slices (disabled)
 
-restructure slices, perhaps go for a mvc-like architecture like mvvm or mvp?
-related: tableslice is a mess.  Look into redoing datatable adapter
-also related: use a bindingsource for the datagridview
+behavior of cut/copy/paste for tables:
+copy/cut/paste will only work on the data in the rows, not the rows themselves.
+  paste would behave like paste Over (which should probably be disabled)
+Inserting rows will be a separate action, will insert blank rows
+  should add insert action to interface (e.g. could insert so many bytes into hexView)
+  on the same vein, a clear action might also be useful
+Removing rows will be done with delete action
+in all cases, the address row will be ignored

@@ -6,40 +6,40 @@ namespace PIE
     //Converts a Fixed point value between its binary and string representations
     public class FixedCrossConverter : ICrossConverter
     {
-        private int length; //the fixed length in bytes
-        private long signBit; //the sign bit
-        private long signExtension; //the sign extension
-        private Decimal scaleFactor; //the value used to scale the integer
-        private Decimal maxValue; //the max value of the fixed value
-        private Decimal minValue; //the min value of the float
+        private int Length; //the fixed length in bytes
+        private long SignBit; //the sign bit
+        private long SignExtension; //the sign extension
+        private Decimal ScaleFactor; //the value used to scale the integer
+        private Decimal MaxValue; //the max value of the fixed value
+        private Decimal MinValue; //the min value of the fixed value
 
         public FixedCrossConverter(int length, int fraction)
         {
-            this.length = length >> 3; //length comes in as bits
-            signBit = (long)1 << (length - 1);
+            this.Length = length >> 3; //length comes in as bits
+            SignBit = (long)1 << (length - 1);
             //fixed values are partially processed as longs; if it is 64 bits, no need for a sign extension
-            signExtension = length == 64 ? 0 : ~((1 << length) - 1);
-            scaleFactor = (ulong)1 << fraction;
-            long tempMax = signBit - 1;
-            long tempMin = signBit | signExtension;
-            maxValue = (Decimal)tempMax / scaleFactor;
-            minValue = (Decimal)tempMin / scaleFactor;
+            SignExtension = length == sizeof(long) << 3 ? 0 : ~((1 << length) - 1);
+            ScaleFactor = (ulong)1 << fraction;
+            long maxValue = SignBit - 1;
+            long minValue = SignBit | SignExtension;
+            MaxValue = (Decimal)maxValue / ScaleFactor;
+            MinValue = (Decimal)minValue / ScaleFactor;
         }
 
         public byte[] ToBytes(string Source)
         {
-            Decimal tempDecimal = Decimal.Round(Decimal.Parse(Source) * scaleFactor);
-            long temp = (long)tempDecimal;
-            Byte[] result = BitConverter.GetBytes(temp);
-            Byte[] bytes = new Byte[length];
-            Array.Copy(result, bytes, length);
-            return bytes;
+            Decimal decimalValue = Decimal.Round(Decimal.Parse(Source) * ScaleFactor);
+            long longValue = (long)decimalValue;
+            Byte[] longBytes = BitConverter.GetBytes(longValue);
+            Byte[] fixedBytes = new Byte[Length];
+            Array.Copy(longBytes, fixedBytes, Length);
+            return fixedBytes;
         }
 
         public bool TryToBytes(string Source, out byte[] result)
         {
             Decimal test;
-            if (Decimal.TryParse(Source, out test) && test <= maxValue && test >= minValue)
+            if (Decimal.TryParse(Source, out test) && test <= MaxValue && test >= MinValue)
             {
                 result = ToBytes(Source);
                 return true;
@@ -54,17 +54,19 @@ namespace PIE
         public string ToString(byte[] Source, int Index)
         {
             Byte[] bytes = new Byte[8];
-            Array.Copy(Source, Index, bytes, 0, length);
-            Int64 temp = BitConverter.ToInt64(bytes, 0);
-            if ((temp & signBit) != 0)
-                temp |= signExtension;
-            Decimal result = (Decimal)temp / scaleFactor;
-            return result.ToString();
+            Array.Copy(Source, Index, bytes, 0, Length);
+            Int64 longValue = BitConverter.ToInt64(bytes, 0);
+			if ((longValue & SignBit) != 0)
+			{
+				longValue |= SignExtension;
+			}
+            Decimal decimalValue = (Decimal)longValue / ScaleFactor;
+            return decimalValue.ToString();
         }
 
         public bool TryToString(byte[] Source, int Index, out string result)
         {
-            if (Source.Length + -1 + -Index >= length)
+            if (Source.Length + -1 + -Index >= Length)
             {
                 result = ToString(Source, Index);
                 return true;
@@ -80,32 +82,32 @@ namespace PIE
     //Converts an Unsigned fixed point value between its binary and string representations
     public class UFixedCrossConverter : ICrossConverter
     {
-        private int length; //the length in bytes
-        private Decimal scaleFactor; //the scale factor
-        private Decimal maxValue; //the max value
+        private int Length; //the length in bytes
+        private Decimal ScaleFactor; //the scale factor
+        private Decimal MaxValue; //the max value
 
         public UFixedCrossConverter(int length, int fraction)
         {
-            this.length = length >> 3;
-            scaleFactor = (ulong)1 << fraction;
-            ulong tempMax = length == 64 ? ulong.MaxValue : (ulong)(1 << length) - 1;
-            maxValue = (Decimal)tempMax / scaleFactor;
+            this.Length = length >> 3;
+            ScaleFactor = (ulong)1 << fraction;
+            ulong maxValue = length == sizeof(ulong) << 3 ? ulong.MaxValue : (ulong)(1 << length) - 1;
+            MaxValue = (Decimal)maxValue / ScaleFactor;
         }
 
         public byte[] ToBytes(string Source)
         {
-            Decimal tempDecimal = Decimal.Round(Decimal.Parse(Source) * scaleFactor);
-            ulong temp = (ulong)tempDecimal;
-            Byte[] result = BitConverter.GetBytes(temp);
-            Byte[] bytes = new byte[length];
-            Array.Copy(bytes, result, length);
-            return bytes;
+            Decimal decimalValue = Decimal.Round(Decimal.Parse(Source) * ScaleFactor);
+            ulong ulongValue = (ulong)decimalValue;
+            Byte[] ulongBytes = BitConverter.GetBytes(ulongValue);
+            Byte[] fixedBytes = new byte[Length];
+            Array.Copy(fixedBytes, ulongBytes, Length);
+            return fixedBytes;
         }
 
         public bool TryToBytes(string Source, out byte[] result)
         {
             Decimal test;
-            if (Decimal.TryParse(Source, out test) && test <= maxValue && test >= 0)
+            if (Decimal.TryParse(Source, out test) && test <= MaxValue && test >= 0)
             {
                 result = ToBytes(Source);
                 return true;
@@ -120,15 +122,15 @@ namespace PIE
         public string ToString(byte[] Source, int Index)
         {
             Byte[] bytes = new Byte[8];
-            Array.Copy(Source, Index, bytes, 0, length);
-            UInt64 temp = BitConverter.ToUInt64(bytes, 0);
-            Decimal result = (Decimal)temp / scaleFactor;
-            return result.ToString();
+            Array.Copy(Source, Index, bytes, 0, Length);
+            UInt64 ulongValue = BitConverter.ToUInt64(bytes, 0);
+            Decimal decimalValue = (Decimal)ulongValue / ScaleFactor;
+            return decimalValue.ToString();
         }
 
         public bool TryToString(byte[] Source, int Index, out string result)
         {
-            if (Source.Length + -1 + -Index >= length)
+            if (Source.Length + -1 + -Index >= Length)
             {
                 result = ToString(Source, Index);
                 return true;

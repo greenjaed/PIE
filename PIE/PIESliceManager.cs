@@ -37,8 +37,9 @@ namespace PIE
             currentTreeNode.Nodes.Add(slice);
 
             if (!currentTreeNode.IsExpanded)
+            {
                 currentTreeNode.Expand();
-
+            }
             PieInfo.ProjectChanged = true;
         }
 
@@ -51,7 +52,9 @@ namespace PIE
             ExportSliceSaveFileDialog.Filter = "bin | *.bin | All files | *.*";
 
             if (ExportSliceSaveFileDialog.ShowDialog(PieInfo.PieForm) == DialogResult.Cancel)
+            {
                 return;
+            }
             try
             {
                 PieInfo.ActiveSlice.Export(ExportSliceSaveFileDialog.FileName);
@@ -67,10 +70,12 @@ namespace PIE
         {
             OpenFileDialog ImportSliceOpenFileDialog = new OpenFileDialog();
             ImportSliceOpenFileDialog.InitialDirectory = PieInfo.FilePath;
-            ImportSliceOpenFileDialog.Filter = "";
+            ImportSliceOpenFileDialog.Filter = string.Empty;
 
             if (ImportSliceOpenFileDialog.ShowDialog(PieInfo.PieForm) == DialogResult.Cancel)
+            {
                 return;
+            }
             try
             {
                 var activeSlice = PieInfo.ActiveSlice;
@@ -89,9 +94,13 @@ namespace PIE
         public void DeleteSlice(TreeNode selectionStart, TreeNode selectionEnd)
         {
             if (selectionEnd == selectionStart)
+            {
                 deleteSlice(true);
+            }
             else
+            {
                 deleteSlices(selectionStart, selectionEnd);
+            }
         }
 
         private void deleteSlice(bool singleSliceSelected)
@@ -103,20 +112,28 @@ namespace PIE
                 {
                     //if the slice is sliced and the user doesn't want to remove them all, cancel
                     if (ProjectTreeView.SelectedNode.Nodes.Count > 0 &&
-                        MessageBox.Show("All sub-slices will be deleted.", "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning)
-                            == DialogResult.Cancel)
+                        MessageBox.Show("All sub-slices will be deleted.",
+                                        "Warning",
+                                        MessageBoxButtons.OKCancel,
+                                        MessageBoxIcon.Warning) == DialogResult.Cancel)
+                    {
                         return;
+                    }
                 }
                 else if (ProjectTreeView.SelectedNode.Nodes.Count > 0)
                 {
                     var confirm = new YesNoAllForm("All sub-slices will be deleted.", "Warning");
                     if (confirm.Result == yesNoAllResult.NoAll)
+                    {
                         return;
+                    }
                     else if (confirm.Result != yesNoAllResult.YesAll)
                     {
                         confirm.ShowDialog(PieInfo.PieForm);
                         if (confirm.Result == yesNoAllResult.No || confirm.Result == yesNoAllResult.NoAll)
+                        {
                             return;
+                        }
                     }
                 }
                 if (ProjectTreeView.SelectedNode == PieInfo.CurrentTreeNode)
@@ -131,7 +148,9 @@ namespace PIE
                 PieInfo.ProjectChanged = true;
             }
             else
+            {
                 MessageBox.Show("Cannot delete base", "PIE", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+            }
         }
 
         private void deleteSlices(TreeNode selectionStart, TreeNode selectionEnd)
@@ -148,11 +167,17 @@ namespace PIE
             }
 
             if (nodes.Count > start)
+            {
                 ProjectTreeView.SelectedNode = nodes[start];
+            }
             else if (nodes.Count > 0)
+            {
                 ProjectTreeView.SelectedNode = nodes[nodes.Count - 1];
+            }
             else
+            {
                 ProjectTreeView.SelectedNode = parent;
+            }
 
             selectionStart = selectionEnd = ProjectTreeView.SelectedNode;
             clearSelection(selectionStart);
@@ -176,7 +201,10 @@ namespace PIE
             TreeNode selectedTreeNode = ProjectTreeView.SelectedNode;
             Slice selectedData = selectedTreeNode.Tag as Slice;
             if (selectedData.Data.HasChanges() &&
-                MessageBox.Show("Revert all changes?", "PIE", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                MessageBox.Show("Revert all changes?",
+                            "PIE",
+                            MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Question) == DialogResult.No)
             {
                 return;
             }
@@ -204,9 +232,13 @@ namespace PIE
             foreach (TreeNode t in current.Nodes)
             {
                 if (!AnySlicesChanged(t))
+                {
                     continue;
+                }
                 else
+                {
                     return true;
+                }
             }
             return (current.Tag as Slice).IsChanged;
         }
@@ -221,7 +253,9 @@ namespace PIE
             foreach (TreeNode t in current.Nodes)
             {
                 if (t.Nodes.Count > 0)
+                {
                     saveAllSlices(t);
+                }
                 (t.Tag as Slice).Save(false);
                 t.Text = t.Text.TrimEnd(PIEForm.Changed);
             }
@@ -243,7 +277,9 @@ namespace PIE
             foreach (TreeNode n in current.Nodes)
             {
                 if (n.Nodes.Count > 0)
+                {
                     PropagateSliceChanges(n);
+                }
                 (n.Tag as Slice).Invalidate();
                 n.Text = n.Text.TrimEnd(PIEForm.Changed);
             }
@@ -273,7 +309,9 @@ namespace PIE
         {
             var currentTreeNode = PieInfo.CurrentTreeNode;
             if (!currentTreeNode.Text.EndsWith("*"))
+            {
                 currentTreeNode.Text += "*";
+            }
         }
 
         public void MergeSlices(TreeNode selectionStart, TreeNode selectionEnd)

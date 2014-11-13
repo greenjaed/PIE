@@ -17,6 +17,8 @@ namespace PIE
         void Paste();
         void PasteOver();
         void Delete();
+        void Insert();
+        void Clear();
         void ScrollToAddress(long address);
         void SelectAll();
         void UpdatePosition();

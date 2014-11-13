@@ -60,28 +60,28 @@ namespace PIE
             View.SelectionLengthChanged += new EventHandler(View_SelectionLengthChanged);
         }
 
-        void View_SelectionLengthChanged(object sender, EventArgs e)
+        private void View_SelectionLengthChanged(object sender, EventArgs e)
         {
             MainController.ToggleEnable(View.CanCopy());
             UpdatePosition();
         }
 
-        void View_InsertActiveChanged(object sender, EventArgs e)
+        private void View_InsertActiveChanged(object sender, EventArgs e)
         {
             MainController.InsertRemove.Text = View.InsertActive ? "Insert" : "Overwrite";
         }
 
-        void View_CurrentPositionInLineChanged(object sender, EventArgs e)
+        private void View_CurrentPositionInLineChanged(object sender, EventArgs e)
         {
             UpdatePosition();
         }
 
-        void View_CurrentLineChanged(object sender, EventArgs e)
+        private void View_CurrentLineChanged(object sender, EventArgs e)
         {
             UpdatePosition();
         }
 
-        void View_Copied(object sender, EventArgs e)
+        private void View_Copied(object sender, EventArgs e)
         {
             MainController.TogglePaste(true);
         }
@@ -160,6 +160,16 @@ namespace PIE
         public void Delete()
         {
             ModelSlice.Data.DeleteBytes(View.SelectionStart, View.SelectionLength);
+        }
+
+        public void Insert()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
         }
 
         public void ScrollToAddress(long address)

@@ -5,7 +5,7 @@ namespace PIE
 {
     public partial class NotesForm : Form
     {
-        private Slice slice;
+        private Slice Slice;
 
         public NotesForm()
         {
@@ -15,17 +15,17 @@ namespace PIE
         public NotesForm(Slice slice)
         {
             InitializeComponent();
-            this.slice = slice;
+            this.Slice = slice;
         }
 
         private void InfoForm_Load(object sender, EventArgs e)
         {
-            infoTextBox.Text = slice.Notes;
+            infoTextBox.Text = Slice.Notes;
         }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
-            slice.Notes = infoTextBox.Text;
+            Slice.Notes = infoTextBox.Text;
             this.Close();
         }
     }

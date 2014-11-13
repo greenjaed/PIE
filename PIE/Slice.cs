@@ -126,7 +126,9 @@ namespace PIE
                 byte[] bytes = new byte[size];
 
                 for (int i = 0; i < size; ++i)
+                {
                     bytes[i] = DataByteProvider.ReadByte(start + i);
+                }
                 return bytes;
             }
             else
@@ -192,7 +194,7 @@ namespace PIE
                 addrSelector.Items.Add(CustomStart.ToString("X"));
             }
             addrSelector.Items.Add(Size.ToString("X"));
-            if (addrSelector.Text != "")
+            if (!string.IsNullOrEmpty(addrSelector.Text))
             {
                 addrSelector.Text = LastStart.ToString("X");
             }
@@ -205,7 +207,9 @@ namespace PIE
             this.End = end;
             Size = (end - start) + 1;
             if (ParentSlice != null)
+            {
                 DataByteProvider = null;
+            }
 
             foreach (TreeNode t in node.Nodes)
             {
@@ -234,11 +238,17 @@ namespace PIE
             else
             {
                 if (current.Start < start)
+                {
                     nStart = start;
+                }
                 if (current.End > end)
+                {
                     nEnd = end;
+                }
                 if (nStart != current.Start || nEnd != current.End)
+                {
                     current.Resize(node, nStart, nEnd);
+                }
             }
         }
 
@@ -256,9 +266,13 @@ namespace PIE
                     byte[] bytes = byteProvider.Bytes.ToArray();
 
                     if (propagateUp)
+                    {
                         saveUp(bytes);
+                    }
                     else
+                    {
                         ParentSlice.setBytes(Start, bytes);
+                    }
                 }
             }
         }
@@ -326,11 +340,17 @@ namespace PIE
                 currentData = d.Tag as Slice;
 
                 if (start > currentData.End)
+                {
                     continue;
+                }
                 else if (end < currentData.Start)
+                {
                     break;
+                }
                 else
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -376,7 +396,9 @@ namespace PIE
                 import.Read(bytes, 0, (int) readLength);
                 setByteProvider(bytes);
                 if (readLength < Size)
+                {
                     DataByteProvider.InsertBytes(readLength, new byte[Size - readLength]);
+                }
             }
         }
     }

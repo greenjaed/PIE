@@ -21,19 +21,31 @@ namespace PIE
             typeComboBox.Text = init.DataType;
             sizeComboBox.Text = (init.Size / (init.DataType == "String" ? 8 : 1)).ToString();
             if (init.IntFormat == IntFormat.Signed)
+            {
                 signedRadioButton.Checked = true;
+            }
             else if (init.IntFormat == IntFormat.Hex)
+            {
                 hexRadioButton.Checked = true;
+            }
             else
+            {
                 noneRadioButton.Checked = true;
+            }
             fractionNumericUpDown.Value = init.Fraction;
             fractionNumericUpDown.Maximum = init.Size;
             if (init.DataType == "String" || init.DataType == "Floating Point")
+            {
                 optionsGroupBox.Enabled = false;
+            }
             else if (init.DataType == "Integer")
+            {
                 fractionLabel.Enabled = fractionNumericUpDown.Enabled = false;
+            }
             else
+            {
                 hexRadioButton.Enabled = false;
+            }
 
         }
 
@@ -83,7 +95,9 @@ namespace PIE
                 fractionLabel.Enabled = fractionNumericUpDown.Enabled = true;
                 fractionNumericUpDown.Maximum = int.Parse(sizeComboBox.Text);
                 if (signedRadioButton.Checked)
+                {
                     --fractionNumericUpDown.Maximum;
+                }
             }
         }
 
@@ -99,13 +113,21 @@ namespace PIE
             }
             Column.Size = int.Parse(sizeComboBox.Text);
             if (typeComboBox.SelectedIndex == 3)
+            {
                 Column.Size *= 8;
+            }
             if (signedRadioButton.Checked)
+            {
                 Column.IntFormat = IntFormat.Signed;
+            }
             else if (hexRadioButton.Checked)
+            {
                 Column.IntFormat = IntFormat.Hex;
+            }
             else
+            {
                 Column.IntFormat = IntFormat.None;
+            }
             Column.Fraction = (int) fractionNumericUpDown.Value;
             DialogResult = DialogResult.OK;
             this.Close();
@@ -114,9 +136,8 @@ namespace PIE
         private void sizeComboBox_Validating(object sender, CancelEventArgs e)
         {
             int test;
-            if (typeComboBox.SelectedIndex == 3)
+            if (typeComboBox.SelectedIndex == 3 && !int.TryParse(sizeComboBox.Text, out test))
             {
-                if (!int.TryParse(sizeComboBox.Text, out test))
                     sizeComboBox.Text = "0";
             }
         }
@@ -130,12 +151,16 @@ namespace PIE
 
         private void signedCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (typeComboBox.SelectedIndex == 2 && sizeComboBox.Text != "")
+            if (typeComboBox.SelectedIndex == 2 && !string.IsNullOrEmpty(sizeComboBox.Text))
             {
                 if (signedRadioButton.Checked)
+                {
                     --fractionNumericUpDown.Maximum;
+                }
                 else
+                {
                     ++fractionNumericUpDown.Maximum;
+                }
             }
         }
 

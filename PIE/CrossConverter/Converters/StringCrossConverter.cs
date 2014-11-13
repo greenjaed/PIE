@@ -21,8 +21,10 @@ namespace PIE
 
         public bool TryToBytes(string Source, out byte[] result)
         {
-            if (Source == null)
-                result = new byte[length];
+			if (Source == null)
+			{
+				result = new byte[length];
+			}
             else
             {
                 result = ToBytes(Source);

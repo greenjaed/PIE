@@ -7,11 +7,11 @@ namespace PIE
 {
     public partial class CloneForm : Form
     {
-        long start; //the starting address
-        long copies; //the number of times the slice is cloned;
-        TreeNode node; //the node to clone
-        TreeNode parent; //the parent node
-        Slice nodeData; //the slice to clone
+        private long Start; //the starting address
+        private long Copies; //the number of times the slice is cloned;
+        private TreeNode Node; //the node to clone
+        private TreeNode Parent; //the parent node
+        private Slice NodeData; //the slice to clone
 
         public CloneForm()
         {
@@ -21,23 +21,23 @@ namespace PIE
         public CloneForm(TreeNode node)
         {
             InitializeComponent();
-            this.node = node;
-            parent = node.Parent;
-            nodeData = node.Tag as Slice;
-            start = (parent.Tag as Slice).Offset + nodeData.Start + nodeData.Size;
-            startTextBox.Text = start.ToString("X");
-            copies = 1;
+            this.Node = node;
+            Parent = node.Parent;
+            NodeData = node.Tag as Slice;
+            Start = (Parent.Tag as Slice).Offset + NodeData.Start + NodeData.Size;
+            startTextBox.Text = Start.ToString("X");
+            Copies = 1;
         }
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
         {
-            Slice slice = parent.Tag as Slice;
+            Slice slice = Parent.Tag as Slice;
             try
             {
-                start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
-                if (start < slice.Offset || start >= slice.End)
+                Start = long.Parse(startTextBox.Text, NumberStyles.HexNumber);
+                if (Start < slice.Offset || Start >= slice.End)
                     throw new ArgumentOutOfRangeException("start address");
-                errorProvider1.SetError(startTextBox, "");
+                errorProvider1.SetError(startTextBox, string.Empty);
             }
             catch (Exception ex)
             {
@@ -56,11 +56,15 @@ namespace PIE
             bool cloned;
             try
             {
-                if (errorProvider1.GetError(startTextBox) != "")
+                if (!string.IsNullOrEmpty(errorProvider1.GetError(startTextBox)))
+				{
                     throw new Exception(errorProvider1.GetError(startTextBox));
-                start -= (node.Parent.Tag as Slice).Offset;
-                if (!repeatCheckBox.Checked && Slice.IsTaken(parent, start, start + nodeData.Size - 1))
+				}
+                Start -= (Node.Parent.Tag as Slice).Offset;
+                if (!repeatCheckBox.Checked && Slice.IsTaken(Parent, Start, Start + NodeData.Size - 1))
+                {
                     throw new Exception(Properties.Resources.overlapString);
+                }
 
                 this.Cursor = Cursors.WaitCursor;
                 cloned = clone();
@@ -81,23 +85,29 @@ namespace PIE
         private bool clearExistingSlices()
         {
             Slice current;
-            int delIndex = -1;
+            int deletionIndex = -1;
 
-            foreach (TreeNode t in parent.Nodes)
+            foreach (TreeNode t in Parent.Nodes)
             {
                 current = t.Tag as Slice;
-                if (current.End < start)
+                if (current.End < Start)
                     continue;
-                delIndex = t.Index;
+                deletionIndex = t.Index;
                 break;
             }
-            if (delIndex >= 0)
+            if (deletionIndex >= 0)
             {
                 if (MessageBox.Show("Warning: operation will overwrite existing slices", "Slice", MessageBoxButtons.OKCancel) == DialogResult.Cancel)
+                {
                     return false;
+                }
                 else
-                    while (parent.Nodes.Count > delIndex)
-                        parent.Nodes[delIndex].Remove();
+                {
+                    while (Parent.Nodes.Count > deletionIndex)
+                    {
+                        Parent.Nodes[deletionIndex].Remove();
+                    }
+                }
             }
             
             return true;
@@ -108,12 +118,14 @@ namespace PIE
         {
             TreeNode subnode = new TreeNode();
             subnode.Name = (Owner as PIEForm).UniqueID.ToString();
-            subnode.Text = node.Text + " " + cloneID.ToString();
-            Slice subslice = new Slice(parent.Tag as Slice, position, nodeData.Size);
+            subnode.Text = Node.Text + " " + cloneID.ToString();
+            Slice subslice = new Slice(Parent.Tag as Slice, position, NodeData.Size);
             subnode.Tag = subslice;
-            parent.Nodes.Add(subnode);
+            Parent.Nodes.Add(subnode);
             if (subSliceCheckBox.Checked)
-                cloneNode(node, subnode);
+            {
+                cloneNode(Node, subnode);
+            }
         }
 
         //mass clones a slice
@@ -131,26 +143,32 @@ namespace PIE
                 subnode.Tag = subslice;
                 clone.Nodes.Add(subnode);
                 if (t.Nodes.Count > 0)
+                {
                     cloneNode(t, subnode);
+                }
             }
         }
 
         //clones a slice
         private bool clone()
         {
-            long size = nodeData.Size;
-            long insertPosition = start;
-            long totalSize = (parent.Tag as Slice).Data.Length - 1;
+            long size = NodeData.Size;
+            long insertPosition = Start;
+            long totalSize = (Parent.Tag as Slice).Data.Length - 1;
             long max = (totalSize + 1 - insertPosition) / size;
 
             if (repeatCheckBox.Checked)
-                copies = max;
+            {
+                Copies = max;
+            }
             else
-                copies = Math.Min(copies, max);
+            {
+                Copies = Math.Min(Copies, max);
+            }
 
             if (clearExistingSlices())
             {
-                for (int i = 0; i < copies; ++i)
+                for (int i = 0; i < Copies; ++i)
                 {
                     cloneNode(insertPosition, i + 1);
                     insertPosition += size;
@@ -158,17 +176,21 @@ namespace PIE
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
 
         private void copiesTextBox_Validating(object sender, CancelEventArgs e)
         {
             try
             {
-                copies = int.Parse(copiesTextBox.Text);
-                if (copies <= 0)
+                Copies = int.Parse(copiesTextBox.Text);
+                if (Copies <= 0)
+                {
                     throw new Exception("The number of copies must be 1 or greater");
-                errorProvider1.SetError(copiesTextBox, "");
+                }
+                errorProvider1.SetError(copiesTextBox, string.Empty);
             }
             catch (Exception ex)
             {

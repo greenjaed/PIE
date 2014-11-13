@@ -131,7 +131,9 @@ namespace PIE
         {
             DataConverter = new ICrossConverter[ColumnInfo.Length];
             for (int i = 0; i < DataConverter.Length; ++i)
+            {
                 DataConverter[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
+            }
         }
 
         //calculates the row length
@@ -139,7 +141,9 @@ namespace PIE
         {
             RowLength = 0;
             foreach (ColumnDescriptor di in ColumnInfo)
+            {
                 RowLength += di.Size >> 3;
+            }
             return RowLength;
         }
 
@@ -204,7 +208,9 @@ namespace PIE
         {
             DataTable freshTable = new DataTable();
             if (sourceTable != null)
+            {
                 sourceTable.ColumnChanging -= sourceTable_ColumnChanging;
+            }
             freshTable.ColumnChanging += new DataColumnChangeEventHandler(sourceTable_ColumnChanging);
             DataColumn addrColumn = new DataColumn("Address", typeof(int));
             addrColumn.AutoIncrement = true;
@@ -229,7 +235,7 @@ namespace PIE
         }
 
         //when the table is altered, move the changes to the data source
-        void sourceTable_ColumnChanging(object sender, DataColumnChangeEventArgs e)
+        private void sourceTable_ColumnChanging(object sender, DataColumnChangeEventArgs e)
         {
             byte[] changes;
             DynamicByteProvider data = DataByteProvider as DynamicByteProvider;
@@ -237,18 +243,27 @@ namespace PIE
             {
                 int insertPoint = (int)e.Row["Address"] - (int)Offset;
                 for (int i = 1; i < e.Column.Ordinal; ++i)
+                {
                     insertPoint += ColumnInfo[i - 1].Size;
+                }
                 //if the entry point is invalid, clear the data
                 if (insertPoint > Size - 1)
                 {
-                    e.ProposedValue = "";
+                    e.ProposedValue = string.Empty;
                     return;
                 }
                 data.Bytes.RemoveRange(insertPoint, changes.Length);
                 data.Bytes.InsertRange(insertPoint, changes);
             }
             else
+            {
                 e.ProposedValue = e.Row[e.Column];
+            }
+        }
+
+        public int OffsetOfCell(int columnIndex)
+        {
+            return ColumnInfo.Take(columnIndex).Select(c => c.Size).Sum();
         }
     }
 }

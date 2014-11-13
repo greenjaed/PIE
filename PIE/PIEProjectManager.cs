@@ -40,7 +40,9 @@ namespace PIE
         public void OpenProject(string projectPath)
         {
             if (ChangedMind)
+            {
                 return;
+            }
             ProjectPath = projectPath;
             openProject();
         }
@@ -48,7 +50,9 @@ namespace PIE
         public void OpenProject()
         {
             if (ChangedMind)
+            {
                 return;
+            }
             ProjectPath = getFilename();
             if (!string.IsNullOrEmpty(ProjectPath))
             {
@@ -130,7 +134,9 @@ namespace PIE
                 current.Nodes.Add(node);
                 //if this TreeNode has children, recurse
                 if (xdr.IsStartElement())
+                {
                     loadNodes(node, xdr);
+                }
             } while (xdr.ReadToNextSibling("Node"));
         }
 
@@ -174,9 +180,13 @@ namespace PIE
         public void Save()
         {
             if (PieInfo.CurrentTreeNode.Parent == null)
+            {
                 FileManager.SaveFile(false);
+            }
             else
+            {
                 SliceManager.SaveChangedSlices(false);
+            }
         }
 
         public bool SaveAll()
@@ -195,7 +205,9 @@ namespace PIE
             rootData = new Slice(PieInfo.FileBytes);
             rootNode.Tag = rootData;
             if (ProjectTreeView.Nodes.Count > 0)
+            {
                 ProjectTreeView.Nodes.Clear();
+            }
             ProjectTreeView.Nodes.Add(rootNode);
             PieInfo.ActiveSlice = rootData;
             PieInfo.CurrentTreeNode = rootNode;
@@ -205,7 +217,9 @@ namespace PIE
         {
             if (PieInfo.ProjectChanged)
             {
-                DialogResult result = MessageBox.Show("Apply changes to project before closing?", "PIE", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                DialogResult result = MessageBox.Show("Apply changes to project before closing?",
+                                                      "PIE", MessageBoxButtons.YesNoCancel,
+                                                      MessageBoxIcon.Question);
 
                 if ((result == DialogResult.Yes && SaveProject()) || result == DialogResult.No)
                 {
@@ -234,9 +248,13 @@ namespace PIE
                 if (!File.Exists(ProjectPath))
                 {
                     if (ProjectSaveFileDialog.ShowDialog(PieInfo.PieForm) == DialogResult.Cancel)
+                    {
                         return false;
+                    }
                     else
+                    {
                         ProjectPath = ProjectSaveFileDialog.FileName;
+                    }
                 }
 
                 using (XmlWriter projectFile = XmlWriter.Create(ProjectPath, writerSettings))
@@ -256,7 +274,9 @@ namespace PIE
                 {
                     Properties.Settings.Default.mru.Add(ProjectPath);
                     if (Properties.Settings.Default.mru.Count > 10)
+                    {
                         Properties.Settings.Default.mru.RemoveAt(10);
+                    }
                     Properties.Settings.Default.Save();
                     PieInfo.PieForm.addRecent(ProjectPath);
                     //recentProjectsToolStripMenuItem.Enabled = true;
@@ -280,7 +300,9 @@ namespace PIE
             writer.WriteElementString("Text", current.Text);
             (current.Tag as Slice).Serialize(writer);
             foreach (TreeNode t in current.Nodes)
+            {
                 serializeSlices(t, writer);
+            }
             writer.WriteEndElement();
         }
 
@@ -291,9 +313,13 @@ namespace PIE
             {
                 TableSlice table;
                 if (ProjectTreeView.Focused)
+                {
                     table = new TableSlice(ProjectTreeView.SelectedNode.Tag as Slice);
+                }
                 else
+                {
                     table = new TableSlice(PieInfo.ActiveSlice);
+                }
                 if (table.EditColumns())
                 {
                     PieInfo.CurrentTreeNode.Tag = PieInfo.ActiveSlice = table;
@@ -306,7 +332,9 @@ namespace PIE
                 }
             }
             else
+            {
                 PieInfo.PieForm.ViewController.Display();
+            }
         }
     }
 }

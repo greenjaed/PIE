@@ -62,7 +62,9 @@ namespace PIE
                     PieInfo.FileBytes.Dispose();
                 }
                 else if (result == DialogResult.Cancel)
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -93,7 +95,9 @@ namespace PIE
                 {
                     var FileOpenFileDialog = new OpenFileDialog();
                     if (FileOpenFileDialog.ShowDialog() == DialogResult.Cancel)
+                    {
                         return false;
+                    }
                     else
                         PieInfo.FilePath = FileOpenFileDialog.FileName;
                 }
@@ -130,7 +134,9 @@ namespace PIE
                 //this.Cursor = Cursors.WaitCursor;
                 //if the file length has changed, update any slices
                 if (LengthChanged)
+                {
                     (ProjectTreeView.Nodes[0].Tag as Slice).Resize(ProjectTreeView.Nodes[0], 0, PieInfo.FileBytes.Length - 1);
+                }
                 SliceManager.SaveChangedSlices(isClosing);
                 //this.Cursor = Cursors.Arrow;
             }

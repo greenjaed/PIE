@@ -6,19 +6,19 @@ namespace PIE
 {
     public partial class FindForm : Form
     {
-        private FindOptions findOptions;  //the find options
+        private FindOptions FindOptions;  //the find options
         public HexBox SearchMedium { get; set; }
 
         public FindForm()
         {
             InitializeComponent();
-            findOptions = new FindOptions();
+            FindOptions = new FindOptions();
         }
 
         public FindForm(HexBox toSearch)
         {
             InitializeComponent();
-            findOptions = new FindOptions();
+            FindOptions = new FindOptions();
             SearchMedium = toSearch;
         }
 
@@ -35,35 +35,45 @@ namespace PIE
         private void findButton_Click(object sender, EventArgs e)
         {
             validateFindOptions();
-            if (findOptions.IsValid)
+            if (FindOptions.IsValid)
+            {
                 search();
+            }
         }
 
         public void search()
         {
-            long result = SearchMedium.Find(findOptions);
+            long result = SearchMedium.Find(FindOptions);
             if (result == -1)
+            {
                 MessageBox.Show("No match found", "PIE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             else if (result == -2)
+            {
                 return;
+            }
         }
 
         private void validateFindOptions()
         {
-            findOptions.MatchCase = caseCheckBox.Checked;
+            FindOptions.MatchCase = caseCheckBox.Checked;
             if (textRadioButton.Checked)
             {
-                findOptions.Text = searchTextBox.Text;
-                findOptions.Type = FindType.Text;
-                findOptions.IsValid = true;
+                FindOptions.Text = searchTextBox.Text;
+                FindOptions.Type = FindType.Text;
+                FindOptions.IsValid = true;
             }
             else
             {
-                if ((findOptions.Hex = hexToByteArray()) == null)
-                    findOptions.IsValid = false;
+                if ((FindOptions.Hex = hexToByteArray()) == null)
+                {
+                    FindOptions.IsValid = false;
+                }
                 else
-                    findOptions.IsValid = true;
-                findOptions.Type = FindType.Hex;
+                {
+                    FindOptions.IsValid = true;
+                }
+                FindOptions.Type = FindType.Hex;
             }
         }
 
@@ -74,16 +84,20 @@ namespace PIE
             byte[] bytes;
             int numberOfBytes;
 
-            hexString = hexString.Replace(" ", "");
+            hexString = hexString.Replace(" ", string.Empty);
             if ((hexString.Length & 1) == 1)
+            {
                 hexString = "0" + hexString;
+            }
             numberOfBytes = hexString.Length / 2;
             bytes = new byte[numberOfBytes];
 
             try
             {
                 for (int i = 0; i < numberOfBytes; ++i)
+                {
                     bytes[i] = Convert.ToByte(hexString.Substring(2 * i, 2), 16);
+                }
             }
             catch (Exception ex)
             {
@@ -96,9 +110,13 @@ namespace PIE
         private void searchTextBox_TextChanged(object sender, EventArgs e)
         {
             if (searchTextBox.Text.Length > 0)
+            {
                 findButton.Enabled = true;
+            }
             else
+            {
                 findButton.Enabled = false;
+            }
         }
     }
 }
