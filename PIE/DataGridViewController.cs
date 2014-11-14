@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,6 +84,7 @@ namespace PIE
 
         public void Hide()
         {
+            UpdateModel();
             View.DataSource = null;
             View.Visible = false;
             View.SendToBack();
@@ -140,21 +141,35 @@ namespace PIE
             if (ModelSlice != null)
             {
                 var selectedCells = View.SelectedCells.Cast<DataGridViewCell>();
-                MainController.CurrentPosition = LookUpPosition(selectedCells.First());
-                long currentPosition = MainController.CurrentPosition;
-                MainController.PositionDisplay.Text = currentPosition.ToString("X")
-                    + (MainController.IsSelecting ? string.Format("-{0:X}", currentPosition + LookUpPosition(selectedCells.Last())) : string.Empty);
+                MainController.PositionDisplay.Text = string.Format("{0:X}-{1:X}",
+                                                                    LookUpPosition(selectedCells.First()),
+                                                                    LookUpPosition(selectedCells.Last()), true);
             }
         }
 
-        private long LookUpPosition(DataGridViewCell cell)
+        private long LookUpPosition(DataGridViewCell cell, bool endOfSelection = false)
         {
             long address = (long) View.Rows[cell.RowIndex].Cells[0].Value;
-            if (cell.ColumnIndex > 1)
+            int column = cell.ColumnIndex;
+            if (!endOfSelection)
             {
-                address += ModelSlice.OffsetOfCell(cell.ColumnIndex - 1);
+                --column;
+            }
+            if (column > 0)
+            {
+                address += ModelSlice.OffsetOfCell(column - 1);
             }
             return address;
+        }
+
+        private void UpdateModel()
+        {
+            var data = View.Rows.Cast<DataGridViewRow>()
+                .SelectMany(rs => rs.Cells.Cast<DataGridViewCell>()
+                    .Skip(1).Zip(ModelSlice.DataConverters, (c, d) => d.ToBytes(c.Value)))
+                .SelectMany(ds => ds)
+                .ToArray();
+            ModelSlice.UpdateData(data);
         }
 
         private void configureView()
@@ -163,6 +178,7 @@ namespace PIE
             View.DataSource = ViewBinder;
             View.Columns[0].DefaultCellStyle.Format = "X";
             View.Columns[0].Frozen = true;
+            View.Columns[0].ReadOnly = true;
             int partialRowIndex = ModelSlice.PartialRowIndex;
             var columnInfo = ModelSlice.ColumnInfo;
 

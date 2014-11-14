@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using System.Xml;
 using Be.Windows.Forms;
+using System.Collections.Generic;
 
 namespace PIE
 {
@@ -185,23 +187,15 @@ namespace PIE
         }
 
         //adds the start addresses to addrSelector 
-        public void FillAddresses(ToolStripComboBox addrSelector)
+        public string[] Addresses()
         {
-            addrSelector.Items.Clear();
-            addrSelector.Items.Add("0");
-            if (Start != 0)
-            {
-                addrSelector.Items.Add(Start.ToString("X"));
-            }
-            if (CustomStart != 0)
-            {
-                addrSelector.Items.Add(CustomStart.ToString("X"));
-            }
-            addrSelector.Items.Add(Size.ToString("X"));
-            if (!string.IsNullOrEmpty(addrSelector.Text))
-            {
-                addrSelector.Text = LastStart.ToString("X");
-            }
+            List<long> addresses = new List<long>();
+            addresses.Add(LastStart);
+            addresses.Add(CustomStart);
+            addresses.Add(Start);
+            addresses.Add(Size);
+            addresses.Add(0L);
+            return addresses.Distinct().Select(a => a.ToString("X")).ToArray();
         }
 
         //resizes the slice and internal slices
@@ -409,6 +403,12 @@ namespace PIE
         public void Insert(long position, int amount)
         {
             DataByteProvider.InsertBytes(position, new byte[amount]);
+        }
+
+        public void Clear(long position, int amount)
+        {
+            DataByteProvider.RemoveBytes(position, amount);
+            Insert(position, amount);
         }
     }
 }

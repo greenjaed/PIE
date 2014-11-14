@@ -51,7 +51,7 @@ namespace PIE
         [DataMember]
         public ColumnDescriptor[] ColumnInfo { get; protected set; }
         //array of converters to help serialize/deserialize data
-        public ICrossConverter[] DataConverter { get; protected set; }
+        public ICrossConverter[] DataConverters { get; protected set; }
         //the number of bytes in a row
         public int RowLength { get; protected set; }
         //the number of cells in the partial row
@@ -129,10 +129,10 @@ namespace PIE
         //creates the data converters used to generate the table
         private void getConverters()
         {
-            DataConverter = new ICrossConverter[ColumnInfo.Length];
-            for (int i = 0; i < DataConverter.Length; ++i)
+            DataConverters = new ICrossConverter[ColumnInfo.Length];
+            for (int i = 0; i < DataConverters.Length; ++i)
             {
-                DataConverter[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
+                DataConverters[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
             }
         }
 
@@ -162,7 +162,7 @@ namespace PIE
                 for (int i = 0; i < ColumnInfo.Length; ++i)
                 {
                     //array placement is offset because the first row is the address
-                    rowNew[i + 1] = DataConverter[i].ToString(data, index);
+                    rowNew[i + 1] = DataConverters[i].ToString(data, index);
                     index += ColumnInfo[i].Size >> 3;
                 }
                 sourceTable.Rows.Add(rowNew);
@@ -179,7 +179,7 @@ namespace PIE
                         PartialRowIndex = i;
                         break;
                     }
-                    rowNew[i + 1] = DataConverter[i].ToString(data, index);
+                    rowNew[i + 1] = DataConverters[i].ToString(data, index);
                     index += ColumnInfo[i].Size >> 3;
                 }
                 sourceTable.Rows.Add(rowNew);
@@ -224,10 +224,10 @@ namespace PIE
             }
             if (regenerateConverters)
             {
-                DataConverter = new ICrossConverter[ColumnInfo.Length];
+                DataConverters = new ICrossConverter[ColumnInfo.Length];
                 for (int i = 0; i < ColumnInfo.Length; ++i)
                 {
-                    DataConverter[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
+                    DataConverters[i] = CrossConverterFactory.SelectConverter(ColumnInfo[i]);
                 }
                 regenerateConverters = false;
             }
@@ -239,7 +239,7 @@ namespace PIE
         {
             byte[] changes;
             DynamicByteProvider data = DataByteProvider as DynamicByteProvider;
-            if (DataConverter[e.Column.Ordinal - 1].TryToBytes(e.ProposedValue as string, out changes))
+            if (DataConverters[e.Column.Ordinal - 1].TryToBytes(e.ProposedValue as string, out changes))
             {
                 int insertPoint = (int)e.Row["Address"] - (int)Offset;
                 for (int i = 1; i < e.Column.Ordinal; ++i)
@@ -264,6 +264,11 @@ namespace PIE
         public int OffsetOfCell(int columnIndex)
         {
             return ColumnInfo.Take(columnIndex).Select(c => c.Size).Sum();
+        }
+
+        public void UpdateData(byte[] data)
+        {
+            DataByteProvider = new DynamicFileByteProvider(data);
         }
     }
 }

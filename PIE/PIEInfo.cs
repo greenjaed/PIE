@@ -24,6 +24,7 @@ namespace PIE
         public string FilePath { get; set; }
         public DynamicFileByteProvider FileBytes { get; set; }
         public PIEForm PieForm { get; private set; }
+        public static char[] Changed = new char[] { '*' };
 
         public string FileName
         {

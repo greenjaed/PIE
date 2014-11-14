@@ -50,7 +50,7 @@ namespace PIE
         {
             TreeNode subnode = new TreeNode();
             String nodeText = string.IsNullOrEmpty(nameTextBox.Text) ? "new slice" : nameTextBox.Text;
-            subnode.Name = (Owner as PIEForm).UniqueID.ToString();
+            subnode.Name = (Owner as PIEForm).PieInfo.UniqueID.ToString();
             subnode.Text = nodeText;
             Slice subslice = new Slice(NodeSlice, Start, SliceSize);
             subnode.Tag = subslice;

@@ -14,16 +14,8 @@ namespace PIE
     {
         //indicates whether data is being selected
         public bool IsSelecting { get; private set; }
-        //the current position in the data
-        public long CurrentPosition { get; set; }
-        //generates a unique ID
-        public ulong UniqueID { get { return IdIndex++; } }
-        //the unique ID
-        public ulong IdIndex { get; set; }
         //searches for data
         private FindForm SearchForm;
-        //the character indicating the file/slice has changes
-        public static char[] Changed = new char[] { '*' };
         //the start and end of a slice selection
         private TreeNode SelectionStart, SelectionEnd;
 
@@ -69,7 +61,7 @@ namespace PIE
             ViewController = new HexBoxController(this, displayHexBox);
         }
 
-        #region  ToolStripMenuItem Click Events
+        #region  ToolStripMenuItem_Click Event Handlers
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -256,7 +248,8 @@ namespace PIE
             {
                 ViewController.Model = currentTreeNode.Tag as Slice;
                 ViewController.Display();
-                PieInfo.ActiveSlice.FillAddresses(startAddrToolStripComboBox);
+                startAddrToolStripComboBox.Items.Clear();
+                startAddrToolStripComboBox.Items.AddRange(PieInfo.ActiveSlice.Addresses());
             }
         }
 
@@ -265,7 +258,7 @@ namespace PIE
             this.Cursor = Cursors.WaitCursor;
             if (ProjectManager.SaveAll())
             {
-                this.Text.TrimEnd(Changed);
+                this.Text.TrimEnd(PIEInfo.Changed);
             }
             this.Cursor = Cursors.Arrow;
         }
@@ -391,10 +384,10 @@ namespace PIE
         }
 
         //displays a slice
-
         private void displaySliceInfo()
         {
-            PieInfo.ActiveSlice.FillAddresses(startAddrToolStripComboBox);
+            startAddrToolStripComboBox.Items.Clear();
+            startAddrToolStripComboBox.Items.AddRange(PieInfo.ActiveSlice.Addresses());
             //show the slice name and the data range
             sliceToolStripStatusLabel.Text = PieInfo.SliceRange;
             //if the current slice is not the entire file, enable import/export
@@ -484,23 +477,6 @@ namespace PIE
             }
         }
 
-        //shows the current cursor position for displayHexBox
-        //if the user is selecting bytes, shows the range of bytes
-        public void UpdatePosition(string position)
-        {
-            //need to add code for when user is in table view
-            //or add functionality to slice to calculate position
-            if (PieInfo.ActiveSlice != null)
-            {
-                CurrentPosition = (displayHexBox.CurrentLine - 1) * displayHexBox.BytesPerLine + (displayHexBox.CurrentPositionInLine - 1) + PieInfo.ActiveSlice.Offset;
-                statusStrip.Items["positionToolStripStatusLabel"].Text = CurrentPosition.ToString("X");
-                if (IsSelecting)
-                {
-                    statusStrip.Items["positionToolStripStatusLabel"].Text += "-" + (CurrentPosition + displayHexBox.SelectionLength - 1).ToString("X");
-                }
-            }
-        }
-
         private void PIEForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (ProjectManager.ChangedMind)
@@ -527,7 +503,7 @@ namespace PIE
                     propagateSave(n);
                 }
                 (n.Tag as Slice).Invalidate();
-                n.Text = n.Text.TrimEnd(Changed);
+                n.Text = n.Text.TrimEnd(PIEInfo.Changed);
             }
         }
 

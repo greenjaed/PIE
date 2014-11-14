@@ -44,7 +44,7 @@ namespace PIE
                 PieInfo.ReloadFileBytes();
                 (ProjectTreeView.Nodes[0].Tag as Slice).SetMainSlice(PieInfo.FileBytes);
                 PIESliceManager.PropagateSliceChanges(ProjectTreeView.Nodes[0]);
-                ProjectTreeView.Nodes[0].Text = ProjectTreeView.Nodes[0].Text.TrimEnd(PIEForm.Changed);
+                ProjectTreeView.Nodes[0].Text = ProjectTreeView.Nodes[0].Text.TrimEnd(PIEInfo.Changed);
                 PieInfo.PieForm.ViewController.Display();
             }
         }

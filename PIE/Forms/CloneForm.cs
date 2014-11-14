@@ -12,6 +12,7 @@ namespace PIE
         private TreeNode Node; //the node to clone
         private TreeNode ParentNode; //the parent node
         private Slice NodeData; //the slice to clone
+        private PIEInfo Info;
 
         public CloneForm()
         {
@@ -27,6 +28,7 @@ namespace PIE
             Start = (ParentNode.Tag as Slice).Offset + NodeData.Start + NodeData.Size;
             startTextBox.Text = Start.ToString("X");
             Copies = 1;
+            Info = (Owner as PIEForm).PieInfo;
         }
 
         private void startTextBox_Validating(object sender, CancelEventArgs e)
@@ -117,7 +119,7 @@ namespace PIE
         private void cloneNode(long position, int cloneID)
         {
             TreeNode subnode = new TreeNode();
-            subnode.Name = (Owner as PIEForm).UniqueID.ToString();
+            subnode.Name = Info.UniqueID.ToString();
             subnode.Text = Node.Text + " " + cloneID.ToString();
             Slice subslice = new Slice(ParentNode.Tag as Slice, position, NodeData.Size);
             subnode.Tag = subslice;
@@ -137,7 +139,7 @@ namespace PIE
             foreach (TreeNode t in original.Nodes)
             {
                 subnode = new TreeNode();
-                subnode.Name = (Owner as PIEForm).UniqueID.ToString();
+                subnode.Name = Info.UniqueID.ToString();
                 subnode.Text = t.Text;
                 subslice = new Slice(t.Tag as Slice, clone.Tag as Slice);
                 subnode.Tag = subslice;

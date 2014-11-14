@@ -224,7 +224,7 @@ namespace PIE
                 controller.Model = selectedData;
                 controller.Display();
             }
-            selectedTreeNode.Text = selectedTreeNode.Text.TrimEnd(PIEForm.Changed);
+            selectedTreeNode.Text = selectedTreeNode.Text.TrimEnd(PIEInfo.Changed);
         }
 
         public static bool AnySlicesChanged(TreeNode current)
@@ -257,7 +257,7 @@ namespace PIE
                     saveAllSlices(t);
                 }
                 (t.Tag as Slice).Save(false);
-                t.Text = t.Text.TrimEnd(PIEForm.Changed);
+                t.Text = t.Text.TrimEnd(PIEInfo.Changed);
             }
         }
 
@@ -268,7 +268,7 @@ namespace PIE
             if (!isClosing)
             {
                 PropagateSliceChanges(currentTreeNode);
-                currentTreeNode.Text = currentTreeNode.Text.TrimEnd(PIEForm.Changed);
+                currentTreeNode.Text = currentTreeNode.Text.TrimEnd(PIEInfo.Changed);
             }
         }
 
@@ -281,7 +281,7 @@ namespace PIE
                     PropagateSliceChanges(n);
                 }
                 (n.Tag as Slice).Invalidate();
-                n.Text = n.Text.TrimEnd(PIEForm.Changed);
+                n.Text = n.Text.TrimEnd(PIEInfo.Changed);
             }
         }
 

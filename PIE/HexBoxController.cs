@@ -10,6 +10,7 @@ namespace PIE
         private PIEForm MainController;
         private HexBox View;
         private Slice ModelSlice;
+        private long CurrentPosition;
 
         public Slice Model
         {
@@ -169,7 +170,7 @@ namespace PIE
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            ModelSlice.Clear(View.SelectionStart, View.SelectionLength);
         }
 
         public void ScrollToAddress(long address)
