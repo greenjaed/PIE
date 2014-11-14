@@ -17,7 +17,7 @@ namespace PIE
         public string Name;
         //The data type
         [DataMember]
-        public string DataType;
+        public DataType TypeOfData;
         //The size of the data type, in bytes
         [DataMember]
         public int Size;
@@ -27,6 +27,8 @@ namespace PIE
         //for fixed: the size of the fraction, in bits
         [DataMember]
         public int Fraction;
+
+        public string DefaultValue;
 
         public override string ToString()
         {
@@ -39,6 +41,14 @@ namespace PIE
         None,
         Signed,
         Hex
+    }
+
+    public enum DataType
+    {
+        Integer,
+        FloatingPoint,
+        FixedPoint,
+        CharString
     }
 
     //A slice of data interpreted as a table

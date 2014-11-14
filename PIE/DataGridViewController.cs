@@ -122,7 +122,10 @@ namespace PIE
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            foreach (DataGridViewCell cell in View.SelectedCells)
+            {
+                cell.Value = string.Empty;
+            }
         }
 
         public void ScrollToAddress(long address)

@@ -18,8 +18,8 @@ namespace PIE
         {
             InitializeComponent();
             nameTextBox.Text = init.Name;
-            typeComboBox.Text = init.DataType;
-            sizeComboBox.Text = (init.Size / (init.DataType == "String" ? 8 : 1)).ToString();
+            typeComboBox.Text = init.TypeOfData.ToString();
+            sizeComboBox.Text = (init.Size / (init.TypeOfData == DataType.CharString ? 8 : 1)).ToString();
             if (init.IntFormat == IntFormat.Signed)
             {
                 signedRadioButton.Checked = true;
@@ -34,11 +34,11 @@ namespace PIE
             }
             fractionNumericUpDown.Value = init.Fraction;
             fractionNumericUpDown.Maximum = init.Size;
-            if (init.DataType == "String" || init.DataType == "Floating Point")
+            if (init.TypeOfData == DataType.CharString || init.TypeOfData == DataType.FloatingPoint)
             {
                 optionsGroupBox.Enabled = false;
             }
-            else if (init.DataType == "Integer")
+            else if (init.TypeOfData == DataType.Integer)
             {
                 fractionLabel.Enabled = fractionNumericUpDown.Enabled = false;
             }
@@ -103,18 +103,22 @@ namespace PIE
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            Column = new ColumnDescriptor();
-            Column.Name = nameTextBox.Text;
-            Column.DataType = typeComboBox.Text;
             if (!int.TryParse(sizeComboBox.Text, out Column.Size))
             {
                 MessageBox.Show("Size is an invalid value", "Error");
                 return;
             }
-            Column.Size = int.Parse(sizeComboBox.Text);
-            if (typeComboBox.SelectedIndex == 3)
+            Column = new ColumnDescriptor()
             {
-                Column.Size *= 8;
+                Name = nameTextBox.Text,
+                TypeOfData = (DataType) Enum.ToObject(typeof(DataType), typeComboBox.SelectedIndex),
+                Fraction = (int) fractionNumericUpDown.Value,
+                Size = int.Parse(sizeComboBox.Text)
+            };
+            Column.DefaultValue = Column.TypeOfData == DataType.String ? string.Empty : "0";
+            if (Column.TypeOfData == DataType.CharString)
+            {
+                Column.Size << 3;
             }
             if (signedRadioButton.Checked)
             {
@@ -128,7 +132,6 @@ namespace PIE
             {
                 Column.IntFormat = IntFormat.None;
             }
-            Column.Fraction = (int) fractionNumericUpDown.Value;
             DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -163,7 +166,5 @@ namespace PIE
                 }
             }
         }
-
-
     }
 }

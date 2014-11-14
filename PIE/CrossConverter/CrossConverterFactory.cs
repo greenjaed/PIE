@@ -7,18 +7,18 @@
         public static ICrossConverter SelectConverter(ColumnDescriptor parameters)
         {
             ICrossConverter converter;
-            switch (parameters.DataType)
+            switch (parameters.TypeOfData)
             {
-                case "Floating Point":
+                case DataType.FloatingPoint:
                     converter = SelectFloatCC(parameters.Size);
                     break;
-                case "Fixed Point":
+                case DataType.FixedPoint:
                     converter = SelectFixedCC(parameters.Size, parameters.Fraction, parameters.IntFormat);
                     break;
-                case "Integer":
+                case DataType.Integer:
                     converter = SelectIntCC(parameters.Size, parameters.IntFormat);
                     break;
-                case "String":
+                case DataType.CharString:
                     converter = new StringCrossConverter(parameters.Size);
                     break;
                 default:
