@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace PIE
+namespace PIE.CrossConverter
 {
     //Defines an interface for converting between a value's binary and string form
     public interface ICrossConverter

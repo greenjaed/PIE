@@ -7,7 +7,7 @@ using System.Xml;
 using Be.Windows.Forms;
 using System.Collections.Generic;
 
-namespace PIE
+namespace PIE.Slices
 {
     //Describes an object for partitioning, viewing, and editing data
     [DataContract]

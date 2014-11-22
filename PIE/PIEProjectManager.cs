@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using Be.Windows.Forms;
+using PIE.Slices;
 
 namespace PIE
 {
@@ -15,7 +16,6 @@ namespace PIE
         private OpenFileDialog ProjectOpenFileDialog;
         private SaveFileDialog ProjectSaveFileDialog;
         public TreeView ProjectTreeView { get; private set; }
-        public HexBox DisplayHexBox { get; private set; }
         private PIEInfo PieInfo;
 
         public bool ChangedMind
@@ -30,7 +30,6 @@ namespace PIE
         {
             PieInfo = pieInfo;
             ProjectTreeView = PieInfo.ProjectTreeView;
-            DisplayHexBox = PieInfo.DisplayHexBox;
             SliceManager = new PIESliceManager(PieInfo);
             FileManager = new PIEFileManager(SliceManager, PieInfo);
             ProjectOpenFileDialog = new OpenFileDialog();

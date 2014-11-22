@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using PIE.Slices;
 
 namespace PIE
 {
@@ -82,7 +83,7 @@ namespace PIE
                 if (File.Exists(ImportSliceOpenFileDialog.FileName))
                 {
                     activeSlice.Import(ImportSliceOpenFileDialog.FileName);
-                    PieInfo.DisplayHexBox.ByteProvider = activeSlice.Data;
+                    showSlice(activeSlice);
                 }
             }
             catch (Exception ex)
@@ -138,10 +139,7 @@ namespace PIE
                 }
                 if (ProjectTreeView.SelectedNode == PieInfo.CurrentTreeNode)
                 {
-                    var controller = PieInfo.PieForm.ViewController;
-                    controller.Hide();
-                    controller.Model = ProjectTreeView.SelectedNode.Parent.Tag as Slice;
-                    controller.Display();
+                    showSlice(ProjectTreeView.SelectedNode.Parent.Tag as Slice);
                     PieInfo.SetActiveSlice();
                 }
                 ProjectTreeView.SelectedNode.Remove();
@@ -151,6 +149,13 @@ namespace PIE
             {
                 MessageBox.Show("Cannot delete base", "PIE", MessageBoxButtons.OK, MessageBoxIcon.Stop);
             }
+        }
+
+        private void showSlice(Slice slice)
+        {
+            var controller = PieInfo.PieForm.ViewController;
+            controller.Model = slice;
+            controller.Display();
         }
 
         private void deleteSlices(TreeNode selectionStart, TreeNode selectionEnd)
@@ -212,7 +217,7 @@ namespace PIE
             {
                 PieInfo.ReloadFileBytes();
                 selectedData.SetMainSlice(PieInfo.FileBytes);
-                PieInfo.DisplayHexBox.ByteProvider = PieInfo.FileBytes;
+                showSlice(selectedData);
             }
             else
             {
@@ -220,9 +225,7 @@ namespace PIE
             }
             if (selectedTreeNode == PieInfo.CurrentTreeNode)
             {
-                var controller = PieInfo.PieForm.ViewController;
-                controller.Model = selectedData;
-                controller.Display();
+                showSlice(selectedData);
             }
             selectedTreeNode.Text = selectedTreeNode.Text.TrimEnd(PIEInfo.Changed);
         }
@@ -287,7 +290,6 @@ namespace PIE
 
         public void DisplaySlice()
         {
-            var controller = PieInfo.PieForm.ViewController;
             var activeSlice = PieInfo.ActiveSlice;
             //if this is not the first node to be selected, clear the loaded slice and load the new one
             if (ProjectTreeView.SelectedNode != null)
@@ -295,13 +297,12 @@ namespace PIE
                 if (activeSlice != null)
                 {
                     activeSlice.Data.Changed -= dataByteProvider_Changed;
-                    controller.Hide();
+                    PieInfo.PieForm.ViewController.Hide();
                 }
                 PieInfo.SetActiveSlice();
                 activeSlice = PieInfo.ActiveSlice;
             }
-            controller.Model = activeSlice;
-            controller.Display();
+            showSlice(activeSlice);
             activeSlice.Data.Changed += new EventHandler(dataByteProvider_Changed);
         }
 

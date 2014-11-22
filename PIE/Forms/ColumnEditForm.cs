@@ -118,7 +118,7 @@ namespace PIE
             Column.DefaultValue = Column.TypeOfData == DataType.String ? string.Empty : "0";
             if (Column.TypeOfData == DataType.CharString)
             {
-                Column.Size << 3;
+                Column.Size <<= 3;
             }
             if (signedRadioButton.Checked)
             {

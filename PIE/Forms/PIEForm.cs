@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using Be.Windows.Forms;
+using PIE.Slices;
 
 namespace PIE
 {
@@ -53,7 +54,7 @@ namespace PIE
         {
             InitializeComponent();
             projectTreeView.TreeViewNodeSorter = new ProjectTreeSort();
-            PieInfo = new PIEInfo(projectTreeView, displayHexBox, this);
+            PieInfo = new PIEInfo(projectTreeView, this);
             ProjectManager = new PIEProjectManager(PieInfo);
             //ProjectManager = new PIEProjectManager(this, projectTreeView, displayHexBox);
             FileManager = ProjectManager.FileManager;
@@ -114,7 +115,7 @@ namespace PIE
 
         private void editColumnsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if ((PieInfo.ActiveSlice as TableSlice).EditColumns())
+            if (ViewController.Edit())
             {
                 showProjectChanged();
                 Cursor.Current = Cursors.WaitCursor;
@@ -653,7 +654,7 @@ namespace PIE
 
         private void startAddrToolStripComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            PieInfo.ActiveSlice.Offset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
+            ViewController.Offset = long.Parse(startAddrToolStripComboBox.SelectedItem as string, NumberStyles.HexNumber);
             updateSliceInfo();
             ViewController.UpdatePosition();
         }
@@ -686,7 +687,7 @@ namespace PIE
         {
             if (e.KeyCode == Keys.Enter)
             {
-                var activeSlice = PieInfo.ActiveSlice;
+                var activeSlice = ViewController.Model;
                 long gotoAddress;
                 try
                 {

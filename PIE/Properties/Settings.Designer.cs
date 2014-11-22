@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PIE.Properties {
+namespace PIE.CrossConverter {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

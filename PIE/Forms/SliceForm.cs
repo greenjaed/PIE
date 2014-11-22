@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Globalization;
+using PIE.Slices;
 
 namespace PIE
 {

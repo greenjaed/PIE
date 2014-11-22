@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using Be.Windows.Forms;
+using PIE.Slices;
 
 namespace PIE
 {
@@ -58,7 +59,7 @@ namespace PIE
                 {
                     SliceManager.SaveAllSlices();
                     SaveFile(true);
-                    PieInfo.DisplayHexBox.ByteProvider = null;
+                    PieInfo.PieForm.ViewController.Hide();
                     PieInfo.FileBytes.Dispose();
                 }
                 else if (result == DialogResult.Cancel)

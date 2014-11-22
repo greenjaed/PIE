@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace PIE
+namespace PIE.CrossConverter
 {
 
     //Converts an Unsigned integer between its binary and string representations

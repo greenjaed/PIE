@@ -1,4 +1,4 @@
-﻿namespace PIE
+﻿namespace PIE.CrossConverter
 {
     //A group of methods that returns a class that implements the ICrossConverter interface
     public class CrossConverterFactory

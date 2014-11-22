@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PIE
+namespace PIE.CrossConverter
 {
 
     //Converts a Double precision floating point between its binary and string representations

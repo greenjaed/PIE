@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Be.Windows.Forms;
 using System.IO;
+using PIE.Slices;
 
 namespace PIE
 {
@@ -181,6 +182,11 @@ namespace PIE
         public void SelectAll()
         {
             View.SelectAll();
+        }
+
+        public void Edit()
+        {
+            //nothing to do...
         }
     }
 }

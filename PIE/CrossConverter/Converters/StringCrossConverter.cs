@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace PIE
+namespace PIE.CrossConverter
 {
     //Converts a string between its binary and string representations
     //Currently, only ASCII strings supported

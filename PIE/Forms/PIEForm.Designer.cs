@@ -358,7 +358,7 @@
             // pasteOverToolStripMenuItem
             // 
             this.pasteOverToolStripMenuItem.Enabled = false;
-            this.pasteOverToolStripMenuItem.Image = global::PIE.Properties.Resources.PasteOver;
+            this.pasteOverToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.PasteOver;
             this.pasteOverToolStripMenuItem.Name = "pasteOverToolStripMenuItem";
             this.pasteOverToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.V)));
@@ -369,7 +369,7 @@
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Enabled = false;
-            this.deleteToolStripMenuItem.Image = global::PIE.Properties.Resources.Delete;
+            this.deleteToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.Delete;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
@@ -383,7 +383,7 @@
             // findToolStripMenuItem
             // 
             this.findToolStripMenuItem.Enabled = false;
-            this.findToolStripMenuItem.Image = global::PIE.Properties.Resources.Find;
+            this.findToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.Find;
             this.findToolStripMenuItem.Name = "findToolStripMenuItem";
             this.findToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F)));
             this.findToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
@@ -697,7 +697,7 @@
             // 
             this.saveProjectToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.saveProjectToolStripButton.Enabled = false;
-            this.saveProjectToolStripButton.Image = global::PIE.Properties.Resources.SaveProject;
+            this.saveProjectToolStripButton.Image = global::PIE.CrossConverter.Properties.Resources.SaveProject;
             this.saveProjectToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveProjectToolStripButton.Name = "saveProjectToolStripButton";
             this.saveProjectToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -759,7 +759,7 @@
             // 
             this.pasteOverToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.pasteOverToolStripButton.Enabled = false;
-            this.pasteOverToolStripButton.Image = global::PIE.Properties.Resources.PasteOver;
+            this.pasteOverToolStripButton.Image = global::PIE.CrossConverter.Properties.Resources.PasteOver;
             this.pasteOverToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pasteOverToolStripButton.Name = "pasteOverToolStripButton";
             this.pasteOverToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -804,7 +804,7 @@
             // 
             this.sliceToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.sliceToolStripButton.Enabled = false;
-            this.sliceToolStripButton.Image = global::PIE.Properties.Resources.Slice;
+            this.sliceToolStripButton.Image = global::PIE.CrossConverter.Properties.Resources.Slice;
             this.sliceToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.sliceToolStripButton.Name = "sliceToolStripButton";
             this.sliceToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -821,7 +821,7 @@
             // 
             this.hexToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.hexToolStripButton.Enabled = false;
-            this.hexToolStripButton.Image = global::PIE.Properties.Resources.document_binary;
+            this.hexToolStripButton.Image = global::PIE.CrossConverter.Properties.Resources.document_binary;
             this.hexToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.hexToolStripButton.Name = "hexToolStripButton";
             this.hexToolStripButton.Size = new System.Drawing.Size(23, 22);
@@ -1029,7 +1029,7 @@
             // cutHexToolStripMenuItem
             // 
             this.cutHexToolStripMenuItem.Enabled = false;
-            this.cutHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Cut;
+            this.cutHexToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.Cut;
             this.cutHexToolStripMenuItem.Name = "cutHexToolStripMenuItem";
             this.cutHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
             this.cutHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
@@ -1039,7 +1039,7 @@
             // copyHexToolStripMenuItem
             // 
             this.copyHexToolStripMenuItem.Enabled = false;
-            this.copyHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Copy;
+            this.copyHexToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.Copy;
             this.copyHexToolStripMenuItem.Name = "copyHexToolStripMenuItem";
             this.copyHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
             this.copyHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
@@ -1049,7 +1049,7 @@
             // pasteHexToolStripMenuItem
             // 
             this.pasteHexToolStripMenuItem.Enabled = false;
-            this.pasteHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Paste;
+            this.pasteHexToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.Paste;
             this.pasteHexToolStripMenuItem.Name = "pasteHexToolStripMenuItem";
             this.pasteHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
             this.pasteHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
@@ -1059,7 +1059,7 @@
             // pasteOverHexToolStripMenuItem
             // 
             this.pasteOverHexToolStripMenuItem.Enabled = false;
-            this.pasteOverHexToolStripMenuItem.Image = global::PIE.Properties.Resources.PasteOver;
+            this.pasteOverHexToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.PasteOver;
             this.pasteOverHexToolStripMenuItem.Name = "pasteOverHexToolStripMenuItem";
             this.pasteOverHexToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.V)));
@@ -1070,7 +1070,7 @@
             // deleteHexToolStripMenuItem
             // 
             this.deleteHexToolStripMenuItem.Enabled = false;
-            this.deleteHexToolStripMenuItem.Image = global::PIE.Properties.Resources.Delete;
+            this.deleteHexToolStripMenuItem.Image = global::PIE.CrossConverter.Properties.Resources.Delete;
             this.deleteHexToolStripMenuItem.Name = "deleteHexToolStripMenuItem";
             this.deleteHexToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.deleteHexToolStripMenuItem.Size = new System.Drawing.Size(203, 22);

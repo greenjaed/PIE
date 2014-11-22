@@ -5,52 +5,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Forms;
 using Be.Windows.Forms;
+using PIE.CrossConverter;
 
-namespace PIE
+namespace PIE.Slices
 {
-    //stores information about the data in  a table column
-    [DataContract]
-    public class ColumnDescriptor
-    {
-        //The column name
-        [DataMember]
-        public string Name;
-        //The data type
-        [DataMember]
-        public DataType TypeOfData;
-        //The size of the data type, in bytes
-        [DataMember]
-        public int Size;
-        //for ints: how the int is formatted
-        [DataMember]
-        public IntFormat IntFormat;
-        //for fixed: the size of the fraction, in bits
-        [DataMember]
-        public int Fraction;
-
-        public string DefaultValue;
-
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public enum IntFormat
-    {
-        None,
-        Signed,
-        Hex
-    }
-
-    public enum DataType
-    {
-        Integer,
-        FloatingPoint,
-        FixedPoint,
-        CharString
-    }
-
     //A slice of data interpreted as a table
     [DataContract]
     public class TableSlice : Slice
@@ -67,7 +25,7 @@ namespace PIE
         //the number of cells in the partial row
         public int PartialRowIndex { get; protected set; }
         //indicates if the table needs to be regenerated
-        private bool regenerateConverters;
+        public bool regenerateConverters { protected get; set; }
         //Gets the current offset
         public override long Offset
         {

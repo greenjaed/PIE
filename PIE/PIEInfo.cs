@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Be.Windows.Forms;
 using System.Xml;
+using Be.Windows.Forms;
+using PIE.Slices;
 
 namespace PIE
 {
@@ -18,7 +19,6 @@ namespace PIE
         public ulong IdIndex { get; set; }
         public TreeView ProjectTreeView { get; private set; }
         public TreeNode CurrentTreeNode { get; set; }
-        public HexBox DisplayHexBox { get; private set; }
         public Slice ActiveSlice { get; set; }
         public bool ProjectChanged { get; set; }
         public string FilePath { get; set; }
@@ -49,10 +49,9 @@ namespace PIE
             }
         }
 
-        public PIEInfo(TreeView projectTreeview, HexBox displayHexBox, PIEForm pieForm)
+        public PIEInfo(TreeView projectTreeview, PIEForm pieForm)
         {
             ProjectTreeView = projectTreeview;
-            DisplayHexBox = displayHexBox;
             PieForm = pieForm;
         }
 
@@ -62,7 +61,6 @@ namespace PIE
             IdIndex = pieInfo.IdIndex;
             ProjectTreeView = pieInfo.ProjectTreeView;
             CurrentTreeNode = pieInfo.CurrentTreeNode;
-            DisplayHexBox = pieInfo.DisplayHexBox;
             ActiveSlice = pieInfo.ActiveSlice;
             ProjectChanged = pieInfo.ProjectChanged;
             FilePath = pieInfo.FilePath;

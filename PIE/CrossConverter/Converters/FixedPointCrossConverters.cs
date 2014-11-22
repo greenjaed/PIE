@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PIE
+namespace PIE.CrossConverter
 {
 
     //Converts a Fixed point value between its binary and string representations

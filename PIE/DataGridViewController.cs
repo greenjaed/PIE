@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Be.Windows.Forms;
+using PIE.Slices; 
 
 namespace PIE
 {
@@ -56,6 +57,7 @@ namespace PIE
             MainController = mainController;
             View = view;
             ViewBinder = new BindingSource();
+            SetUpEventHandlers();
         }
 
         private void SetUpEventHandlers()
@@ -97,6 +99,7 @@ namespace PIE
 
         public void Cut()
         {
+            Copy();
             throw new NotImplementedException();
         }
 
@@ -194,6 +197,20 @@ namespace PIE
                     extra.Style.BackColor = System.Drawing.Color.Gray;
                 }
             }
+        }
+
+        public void Edit()
+        {
+            ColumnForm columnForm = new ColumnForm(ModelSlice);
+            bool result = columnForm.ShowDialog() == DialogResult.OK;
+            ModelSlice.regenerateConverters = result;
+            if (result)
+            {
+                Cursor.Current = Cursors.WaitCursor;
+                Display();
+                Cursor.Current = Cursors.Default;
+            }
+            return result;
         }
     }
 }
